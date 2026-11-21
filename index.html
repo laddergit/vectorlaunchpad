@@ -61,13 +61,16 @@
       .btn{display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 28px;font-size:clamp(16px,4.62vw,18px);font-weight:500;letter-spacing:-.01em;border-radius:0;transition:background .3s,color .3s,border-color .3s;position:relative;white-space:nowrap}
       .btn .sq{width:7px;height:7px;background:currentColor;flex:none}
       .btn .arr{max-width:0;overflow:hidden;opacity:0;transition:max-width .35s var(--ease),opacity .3s;font-weight:400}
-      .btn:hover .arr{max-width:26px;opacity:1}
       .btn-sky{background:var(--sky);color:#000}
-      .btn-sky:hover{background:#82CDF3}
       .btn-outline{border:1px solid #4A4A4A;color:#fff;background:transparent}
-      .btn-outline:hover{border-color:#fff}
       .btn-outline-dark{border:1px solid #111;color:#111}
-      .btn-outline-dark:hover{background:#111;color:#fff}
+      /* hover states only on devices with a real hover pointer, so a first tap on touch goes straight through to the link */
+      @media (hover:hover) and (pointer:fine){
+        .btn:hover .arr{max-width:26px;opacity:1}
+        .btn-sky:hover{background:#82CDF3}
+        .btn-outline:hover{border-color:#fff}
+        .btn-outline-dark:hover{background:#111;color:#fff}
+      }
       .btn-small{height:46px;padding:0 20px;font-size:15px}
       #burger{display:none;width:10vw;height:10vw;max-width:46px;max-height:46px;background:var(--panel);align-items:center;justify-content:center;flex-direction:column;gap:6px}
       #burger span{display:block;width:20px;height:2px;background:#fff;transition:transform .35s var(--ease)}
@@ -402,7 +405,7 @@
           <a href="#faq">FAQ</a>
         </nav>
         <div class="nav-right">
-          <a class="btn btn-sky" href="#tiers"><span class="sq"></span>Launch a token<span class="arr">→</span></a>
+          <a class="btn btn-sky" href="https://app.vectorlaunchpad.xyz" data-app-link aria-label="Launch a token — open the Vector Pad app"><span class="sq"></span>Launch a token<span class="arr">→</span></a>
           <button id="burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
         </div>
       </div>
@@ -426,7 +429,7 @@
           </div>
         </div>
         <div class="mm-cta">
-          <a class="btn btn-sky" href="#tiers"><span class="sq"></span>Launch a token<span class="arr">→</span></a>
+          <a class="btn btn-sky" href="https://app.vectorlaunchpad.xyz" data-app-link aria-label="Launch a token — open the Vector Pad app"><span class="sq"></span>Launch a token<span class="arr">→</span></a>
         </div>
       </div>
     </header>
@@ -443,7 +446,7 @@
               <p>The first launch is ours: <b style="color:#fff;font-weight:600">$VECTOR</b>, arriving soon on pump.fun.</p>
               <div class="hero-cta">
                 <a class="btn btn-outline" href="#launches"><span class="sq"></span>See launches<span class="arr">→</span></a>
-                <a class="btn btn-sky" href="#tiers"><span class="sq"></span>Start a launch<span class="arr">→</span></a>
+                <a class="btn btn-sky" href="https://app.vectorlaunchpad.xyz" data-app-link><span class="sq"></span>Start a launch<span class="arr">→</span></a>
               </div>
             </div>
           </div>
@@ -653,7 +656,7 @@ $ <span class="caret"></span></div>
                 <li><span class="chk">✓</span>Liquidity locked at graduation</li>
                 <li><span class="chk">✓</span>Listing on the launches board</li>
               </ul>
-              <a class="btn btn-outline-dark" href="#faq"><span class="sq"></span>Start free<span class="arr">→</span></a>
+              <a class="btn btn-outline-dark" href="https://app.vectorlaunchpad.xyz" data-app-link><span class="sq"></span>Start free<span class="arr">→</span></a>
             </article>
             <article class="tcard dark-c rv rv-d1">
               <div class="pop">Most popular</div>
@@ -692,7 +695,7 @@ $ <span class="caret"></span></div>
           <h2 class="rv">Your token deserves<br />a <span class="sky">fair</span> start.</h2>
           <div class="row rv rv-d1">
             <a class="btn btn-outline" href="#tiers"><span class="sq"></span>Read the tiers<span class="arr">→</span></a>
-            <a class="btn btn-sky" href="#launches"><span class="sq"></span>Start your launch<span class="arr">→</span></a>
+            <a class="btn btn-sky" href="https://app.vectorlaunchpad.xyz" data-app-link><span class="sq"></span>Start your launch<span class="arr">→</span></a>
           </div>
           <p class="note rv rv-d2">
             <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
@@ -771,10 +774,20 @@ $ <span class="caret"></span></div>
       document.querySelectorAll('a[href^="#"]').forEach(function(a){
         a.addEventListener("click", function(e){
           var id = a.getAttribute("href");
-          if (id.length > 1) {
-            var el = document.querySelector(id);
-            if (el) { e.preventDefault(); document.getElementById("siteHeader").classList.remove("menu-open"); document.body.classList.remove("menu-lock"); document.getElementById("burger").setAttribute("aria-expanded", "false"); if (lenis) lenis.start(); scrollToEl(el); }
-          }
+          if (id.charAt(0) !== "#" || id.length <= 1) return;
+          var el = document.querySelector(id);
+          if (el) { e.preventDefault(); document.getElementById("siteHeader").classList.remove("menu-open"); document.body.classList.remove("menu-lock"); document.getElementById("burger").setAttribute("aria-expanded", "false"); if (lenis) lenis.start(); scrollToEl(el); }
+        });
+      });
+
+      /* ---------- app links: one click goes straight to the Vector Pad app ---------- */
+      document.querySelectorAll("a[data-app-link]").forEach(function(a){
+        a.addEventListener("click", function(e){
+          e.stopPropagation();
+          if (lenis) lenis.start();
+          document.getElementById("siteHeader").classList.remove("menu-open");
+          document.body.classList.remove("menu-lock");
+          window.location.assign(a.href);
         });
       });
 
