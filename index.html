@@ -1,0 +1,1300 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href="assets/logo-sky.png" />
+    <title>Vector Pad — Fair Token Launchpad on Solana</title>
+    <meta name="description" content="Vector Pad is the fair launchpad on Solana. Launch a token in minutes, trade it instantly, and graduate to Raydium with liquidity locked. $VECTOR launches soon on pump.fun." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+      :root{
+        --bg:#111111; --panel:#161616; --panel2:#1B1B1B; --light:#F4F4F4; --light2:#ECECEC;
+        --sky:#5EB9E8; --sky-deep:#1F8AC6;
+        --white:#FFFFFF; --black:#0A0A0A;
+        --grey:#A8A8A8; --grey2:#B5B5B5; --grey-dim:#6E6E6E;
+        --border:#2A2A2A; --border2:#333333;
+        --green:#3ECF6E; --red:#FF4D3D;
+        --font:'Inter',system-ui,sans-serif; --tight:'Inter Tight','Inter',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,monospace;
+        --ease:cubic-bezier(.22,.8,.28,1);
+      }
+      *{box-sizing:border-box;margin:0;padding:0}
+      html{scroll-behavior:auto}
+      html.lenis,html.lenis body{height:auto}
+      .lenis.lenis-smooth{scroll-behavior:auto!important}
+      body{background:var(--bg);color:var(--white);font-family:var(--font);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+      ::selection{background:var(--sky);color:#000}
+      img{display:block;max-width:100%}
+      a{color:inherit;text-decoration:none}
+      button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit}
+      button,[role="button"],input,summary{min-height:2.75rem}
+      :focus-visible{outline:2px solid var(--sky);outline-offset:3px}
+      .wrap{max-width:1760px;margin:0 auto;padding-left:clamp(20px,4.5vw,88px);padding-right:clamp(20px,4.5vw,88px)}
+      .dotgrid{background-image:radial-gradient(circle,rgba(255,255,255,.13) 1px,transparent 1.2px);background-size:24px 24px}
+      .sky{color:var(--sky)}
+      .mono{font-family:var(--mono)}
+
+      /* ---------- scroll progress ---------- */
+      #progress{position:fixed;top:0;right:0;width:4px;height:100vh;z-index:200;background:rgba(255,255,255,.05)}
+      #progressFill{width:100%;height:0%;background:linear-gradient(180deg,var(--sky),var(--sky-deep))}
+
+      /* ---------- custom cursor ---------- */
+      #cursor{position:fixed;top:0;left:0;width:84px;height:84px;border-radius:50%;background:rgba(20,20,20,.38);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(2px);pointer-events:none;z-index:300;transform:translate(-50%,-50%);transition:width .35s var(--ease),height .35s var(--ease),background .35s,border-color .35s;will-change:transform}
+      #cursor.grow{width:118px;height:118px;background:rgba(94,185,232,.16);border-color:rgba(94,185,232,.65)}
+      @media (hover:none),(pointer:coarse){#cursor{display:none}}
+
+      /* ---------- nav ---------- */
+      header{position:fixed;top:0;left:0;right:0;z-index:150;transition:all .5s var(--ease)}
+      .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;max-width:1840px;margin:0 auto;padding:22px clamp(20px,3vw,56px);transition:all .5s var(--ease);position:relative;z-index:2}
+      header.scrolled .nav-inner{max-width:1060px;margin-top:14px;padding:10px 12px 10px 22px;background:rgba(18,18,18,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--border2);border-radius:999px}
+      .brand{display:flex;align-items:center;gap:12px;font-family:var(--tight);font-weight:600;font-size:21px;letter-spacing:-.02em;min-height:44px}
+      .brand img{width:38px;height:38px;object-fit:contain}
+      .brand em{font-style:normal;color:var(--sky)}
+      nav.main{display:flex;gap:6px}
+      nav.main a{padding:10px 16px;font-size:15.5px;color:var(--grey2);transition:color .25s,background .25s;min-height:44px;display:inline-flex;align-items:center}
+      nav.main a:hover{color:#fff}
+      header.scrolled nav.main a{padding:8px 13px}
+      .nav-right{display:flex;align-items:center;gap:12px}
+      .btn{display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 28px;font-size:clamp(16px,4.62vw,18px);font-weight:500;letter-spacing:-.01em;border-radius:0;transition:background .3s,color .3s,border-color .3s;position:relative;white-space:nowrap}
+      .btn .sq{width:7px;height:7px;background:currentColor;flex:none}
+      .btn .arr{max-width:0;overflow:hidden;opacity:0;transition:max-width .35s var(--ease),opacity .3s;font-weight:400}
+      .btn:hover .arr{max-width:26px;opacity:1}
+      .btn-sky{background:var(--sky);color:#000}
+      .btn-sky:hover{background:#82CDF3}
+      .btn-outline{border:1px solid #4A4A4A;color:#fff;background:transparent}
+      .btn-outline:hover{border-color:#fff}
+      .btn-outline-dark{border:1px solid #111;color:#111}
+      .btn-outline-dark:hover{background:#111;color:#fff}
+      .btn-small{height:46px;padding:0 20px;font-size:15px}
+      #burger{display:none;width:10vw;height:10vw;max-width:46px;max-height:46px;background:var(--panel);align-items:center;justify-content:center;flex-direction:column;gap:6px}
+      #burger span{display:block;width:20px;height:2px;background:#fff;transition:transform .35s var(--ease)}
+      header.menu-open #burger span:nth-child(1){transform:translateY(4px) rotate(45deg)}
+      header.menu-open #burger span:nth-child(2){transform:translateY(-4px) rotate(-45deg)}
+      .mobile-menu{display:none}
+
+      /* ---------- hero ---------- */
+      .hero{position:relative;padding:238px 0 0;overflow:hidden}
+      .hero canvas#coin{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+      .hero .wrap,.hero .marquee{position:relative;z-index:1}
+      .hero-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:clamp(30px,5vw,110px);align-items:end}
+      .hero h1{font-family:var(--tight);font-weight:400;font-size:clamp(2.6rem,6.8vw,6.6rem);line-height:1.08;letter-spacing:-.035em}
+      .hero-side{max-width:440px;justify-self:end;padding-bottom:10px}
+      .hero-side p{color:var(--grey2);font-size:17px;line-height:1.6}
+      .hero-side p + p{margin-top:14px}
+      .hero-cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+      .hero-note{margin-top:110px;text-align:center;color:var(--grey-dim);font-size:14.5px;letter-spacing:.01em}
+      .hero-note b{color:var(--grey);font-weight:500}
+      .marquee{margin-top:44px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;position:relative;padding:20px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+      .marquee-track{display:flex;gap:0;width:max-content;animation:mq 36s linear infinite}
+      .marquee:hover .marquee-track{animation-play-state:paused}
+      .mq-item{display:flex;align-items:center;gap:34px;padding-right:34px;font-family:var(--tight);font-size:21px;font-weight:500;letter-spacing:-.01em;color:#8A8A8A;white-space:nowrap}
+      .mq-item i{width:8px;height:8px;background:var(--sky);flex:none}
+      @keyframes mq{to{transform:translateX(-50%)}}
+
+      /* ---------- reveal ---------- */
+      .rv{opacity:0;transform:translateY(34px);transition:opacity .75s var(--ease),transform .75s var(--ease)}
+      .rv.in{opacity:1;transform:none}
+      .rv-d1{transition-delay:.08s}.rv-d2{transition-delay:.16s}.rv-d3{transition-delay:.24s}.rv-d4{transition-delay:.32s}.rv-d5{transition-delay:.4s}
+
+      /* ---------- light why section ---------- */
+      .why{background:var(--light);color:#111;padding:150px 0 170px}
+      .why-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.1fr);gap:clamp(30px,5vw,120px)}
+      .why-intro{font-size:17px;line-height:1.6;color:#2B2B2B;max-width:250px}
+      .why h2{font-family:var(--tight);font-weight:400;font-size:clamp(2rem,4.5vw,2.5rem);line-height:1.15;letter-spacing:-.03em;color:#111}
+      .why-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.1fr);gap:clamp(30px,5vw,120px);margin-top:96px;align-items:start}
+      .why-list{display:flex;flex-direction:column;gap:6px}
+      .why-item{text-align:left;padding:10px 0;min-height:56px}
+      .why-item .wi-t{font-family:var(--tight);font-size:clamp(28px,2.6vw,40px);font-weight:400;letter-spacing:-.03em;color:#C6C6C6;transition:color .3s;line-height:1.15}
+      .why-item .wi-d{font-size:15.5px;color:#5A5A5A;line-height:1.6;margin-top:8px;max-width:340px;display:none}
+      .why-item.active .wi-t{color:#111}
+      .why-item.active .wi-d{display:block}
+      .why-item:hover .wi-t{color:#111}
+      .panel{background:#101010;color:#fff;min-height:520px;display:flex;flex-direction:column}
+      .panel-tabs{display:flex;justify-content:center;gap:0;padding:26px 20px 0}
+      .ptab{padding:10px 22px;font-size:14.5px;background:#2C2C2C;color:#C9C9C9;min-height:42px;transition:.25s}
+      .ptab.active{background:#fff;color:#111}
+      .panel-body{flex:1;padding:38px clamp(22px,3vw,48px) 44px;display:flex;flex-direction:column}
+      .pane{display:none;flex:1;flex-direction:column}
+      .pane.active{display:flex}
+      .pane-head{display:none}
+      .pane-head h3{font-family:var(--tight);font-size:26px;font-weight:500;letter-spacing:-.02em;line-height:1.25;color:#111}
+      .pane-head p{font-size:16px;color:#5A5A5A;line-height:1.6;margin-top:8px;max-width:520px}
+      .pane-card{display:contents}
+      /* launch preview pane */
+      .lp-head{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+      .lp-logo{width:64px;height:64px;display:flex;align-items:center;justify-content:center;flex:none}
+      .lp-logo img{width:52px;height:52px;object-fit:contain}
+      .lp-name{font-family:var(--tight);font-size:28px;font-weight:500;letter-spacing:-.02em;line-height:1.15}
+      .lp-sub{color:var(--grey);font-size:14.5px;font-family:var(--mono)}
+      .badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border2);padding:7px 13px;font-size:13px;font-family:var(--mono);color:var(--grey2)}
+      .badge i{width:7px;height:7px;background:var(--sky);flex:none}
+      .curve{margin-top:34px}
+      .curve-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:13.5px;color:var(--grey);margin-bottom:10px}
+      .curve-bar{height:10px;background:#242424;position:relative;overflow:hidden}
+      .curve-fill{position:absolute;inset:0;width:0%;background:linear-gradient(90deg,var(--sky),var(--sky-deep));transition:width 1.4s var(--ease)}
+      .pane.active .curve-fill{width:12%}
+      .lp-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:30px}
+      .lp-stat{border:1px solid var(--border);padding:16px}
+      .lp-stat .k{font-family:var(--mono);font-size:12px;color:var(--grey-dim);letter-spacing:.06em;text-transform:uppercase}
+      .lp-stat .v{font-family:var(--tight);font-size:21px;font-weight:500;margin-top:5px}
+      .lp-foot{margin-top:auto;padding-top:30px;color:var(--grey);font-size:15px;line-height:1.65}
+      .lp-foot a{color:#fff;text-decoration:underline;text-underline-offset:3px}
+      /* terminal pane */
+      .term{font-family:var(--mono);font-size:14.5px;line-height:2;color:#7EE787;white-space:pre-wrap;word-break:break-word}
+      .term .dim{color:#5C7A5F}.term .wht{color:#E6E6E6}.term .sk{color:var(--sky)}
+      .caret{display:inline-block;width:9px;height:17px;background:#7EE787;vertical-align:-3px;animation:blink 1s steps(1) infinite}
+      @keyframes blink{50%{opacity:0}}
+      /* tuning pane */
+      .tune-row{margin-bottom:30px}
+      .tune-lab{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+      .tune-lab .tl{font-size:15.5px;color:var(--grey2)}
+      .tune-lab .tv{font-family:var(--mono);font-size:15px;color:#fff}
+      .tune-lab .tv b{color:var(--sky);font-weight:500}
+      input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:26px;background:transparent;cursor:pointer;--fill:50%}
+      input[type=range]::-webkit-slider-runnable-track{height:3px;background:linear-gradient(90deg,var(--sky) var(--fill),#333 var(--fill))}
+      input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;background:#fff;border:none;border-radius:0;margin-top:-6px}
+      input[type=range]::-moz-range-track{height:3px;background:#333}
+      input[type=range]::-moz-range-progress{height:3px;background:var(--sky)}
+      input[type=range]::-moz-range-thumb{width:15px;height:15px;background:#fff;border:none;border-radius:0}
+      .seg{display:flex;gap:0}
+      .seg button{padding:10px 20px;background:#2C2C2C;color:#C9C9C9;font-size:14.5px;min-height:42px;transition:.25s}
+      .seg button.active{background:#fff;color:#111}
+      .tune-demo{margin-top:auto;padding-top:26px}
+      .demo-track{height:52px;background:#1C1C1C;border:1px solid var(--border);position:relative;overflow:hidden}
+      .demo-dot{position:absolute;top:50%;left:14px;width:22px;height:22px;margin-top:-11px;background:var(--sky)}
+      .demo-cap{font-family:var(--mono);font-size:12.5px;color:var(--grey-dim);margin-top:10px}
+
+      /* ---------- transition band ---------- */
+      .band{padding:190px 0}
+      .band p{font-family:var(--tight);font-weight:400;font-size:clamp(25px,2.8vw,40px);line-height:1.3;letter-spacing:-.03em;text-align:center;max-width:1180px;margin:0 auto}
+      .band .w{opacity:.13;transition:opacity .3s}
+      .band .w.on{opacity:1}
+      .band .w.hl{color:var(--sky)}
+
+      /* ---------- comparison ---------- */
+      .compare{padding:40px 0 160px}
+      .compare h2{font-family:var(--tight);font-weight:400;font-size:clamp(2rem,4.5vw,2.5rem);line-height:1.15;letter-spacing:-.03em;text-align:center;max-width:1000px;margin:0 auto}
+      .compare .sub{color:var(--grey2);text-align:center;max-width:760px;margin:30px auto 0;font-size:17px;line-height:1.6}
+      .cmp-labels{display:flex;justify-content:space-between;margin:84px 0 14px;font-size:15px;color:var(--grey2)}
+      .cmp-row{display:grid;grid-template-columns:64px 1fr 64px;align-items:stretch;background:var(--panel);margin-bottom:10px;min-height:74px}
+      .cmp-box{display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:600}
+      .cmp-box.no{background:#0C0C0C;color:var(--red)}
+      .cmp-box.yes{background:#0C0C0C;color:var(--green)}
+      .cmp-mid{display:flex;align-items:center;justify-content:center;gap:16px;padding:16px 22px;font-family:var(--mono);font-size:14.5px;text-align:center;flex-wrap:wrap}
+      .cmp-mid .old{color:#777;text-decoration:line-through;text-decoration-color:rgba(255,77,61,.6)}
+      .cmp-mid .arrw{color:var(--sky)}
+      .cmp-mid .new{color:#EDEDED}
+
+      /* ---------- principles ---------- */
+      .principles{padding:30px 0 170px}
+      .principles .sec-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:60px;flex-wrap:wrap}
+      .principles h2,.catalog h2{font-family:var(--tight);font-weight:400;font-size:clamp(2rem,4.5vw,2.5rem);line-height:1.15;letter-spacing:-.03em}
+      .principles .sec-head p{color:var(--grey);max-width:400px;font-size:17px;line-height:1.6}
+      .pgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+      .pcard{background:var(--panel);border:1px solid var(--border);border-top:5px solid var(--sky);padding:30px 26px 32px;min-height:430px;display:flex;flex-direction:column}
+      .pcard svg{width:40px;height:40px;stroke:var(--sky);fill:none;stroke-width:1.6;stroke-linecap:square}
+      .pcard h3{font-family:var(--tight);font-size:26px;font-weight:500;letter-spacing:-.02em;margin-top:26px;line-height:1.25}
+      .pcard p{color:var(--grey);font-size:16px;line-height:1.6;margin-top:auto;padding-top:44px}
+      .pcard .num{font-family:var(--mono);font-size:12.5px;color:var(--grey-dim);margin-top:14px}
+
+      /* ---------- catalog ---------- */
+      .catalog{padding:20px 0 170px}
+      .catalog h2{text-align:center}
+      .cat-tabs{display:flex;justify-content:center;gap:8px;margin:52px 0 44px;flex-wrap:wrap}
+      .ctab{padding:11px 24px;border-radius:999px;background:#232323;color:#C9C9C9;font-size:15px;min-height:44px;transition:.25s}
+      .ctab:hover{color:#fff}
+      .ctab.active{background:#fff;color:#111;font-weight:500}
+      .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+      .ccard{background:var(--panel);border:1px solid var(--border);display:grid;grid-template-columns:44% 56%;min-height:250px;transition:border-color .3s}
+      .ccard:hover{border-color:#454545}
+      .ccard.hide{display:none}
+      .poster{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:250px}
+      .poster .tick{font-family:var(--tight);font-weight:500;font-size:clamp(30px,2.6vw,42px);letter-spacing:-.03em;color:#fff;text-align:center;line-height:1.05;padding:16px}
+      .poster .tick small{display:block;font-family:var(--mono);font-weight:400;font-size:12px;letter-spacing:.14em;color:rgba(255,255,255,.65);margin-top:10px;text-transform:uppercase}
+      .poster img{width:74px;height:74px;object-fit:contain;margin:0 auto 12px}
+      .p-dots{background:#181818;background-image:radial-gradient(circle,rgba(255,255,255,.16) 1px,transparent 1.2px);background-size:20px 20px}
+      .p-lines{background:#181818 repeating-linear-gradient(45deg,#1D1D1D 0 14px,#161616 14px 28px)}
+      .p-grid{background:#181818;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:26px 26px}
+      .p-ring{background:#181818 radial-gradient(circle at 50% 50%,#232323 0 34%,#141414 70%)}
+      .poster .pflag{position:absolute;top:14px;left:14px;background:var(--sky);color:#000;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;padding:5px 9px;text-transform:uppercase}
+      .poster .pflag.ghost{background:#262626;color:#9A9A9A}
+      .cbody{padding:28px 30px;display:flex;flex-direction:column}
+      .cbody h3{font-family:var(--tight);font-size:26px;font-weight:500;letter-spacing:-.02em;line-height:1.25}
+      .cbody p{color:var(--grey);font-size:16px;line-height:1.6;margin-top:10px}
+      .cbody .clink{margin-top:auto;padding-top:20px}
+      .cbody .clink a,.cbody .clink span{font-size:15.5px;text-decoration:underline;text-underline-offset:4px;color:#fff;display:inline-flex;align-items:center;min-height:36px}
+      .cbody .clink span{color:var(--grey)}
+
+      /* ---------- tiers ---------- */
+      .tiers{background:var(--light);color:#111;padding:150px 0 170px}
+      .tiers-top{display:flex;justify-content:space-between;align-items:end;gap:26px;flex-wrap:wrap;margin-bottom:64px}
+      .tiers h2{font-family:var(--tight);font-weight:400;font-size:clamp(2rem,4.5vw,2.5rem);letter-spacing:-.03em;line-height:1.15}
+      .tiers-top p{color:#4A4A4A;max-width:430px;margin-top:18px;font-size:17px;line-height:1.6}
+      .toggle{display:flex;background:#DFDFDF;padding:4px}
+      .toggle button{padding:10px 22px;font-size:15px;color:#555;min-height:44px;transition:.25s}
+      .toggle button.active{background:#111;color:#fff}
+      .tgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+      .tcard{padding:clamp(30px,3.4vw,54px);position:relative;display:flex;flex-direction:column}
+      .tcard.light-c{background:#fff;color:#111;border:1px solid #DDD}
+      .tcard.dark-c{background:#101010;color:#fff}
+      .pop{position:absolute;top:0;right:0;background:var(--sky);color:#000;font-size:13px;font-weight:600;padding:8px 14px;letter-spacing:.02em}
+      .tcard .tk{font-family:var(--mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;opacity:.6}
+      .tcard h3{font-family:var(--tight);font-size:30px;font-weight:500;letter-spacing:-.02em;line-height:1.25;margin-top:12px}
+      .price{display:flex;align-items:baseline;gap:10px;margin-top:26px}
+      .price .amt{font-family:var(--tight);font-size:clamp(52px,4.6vw,72px);font-weight:500;letter-spacing:-.03em;line-height:1}
+      .price .per{font-size:15.5px;opacity:.6}
+      .tcard .tdesc{margin-top:16px;font-size:16px;line-height:1.65;opacity:.75;max-width:420px}
+      .tfeats{list-style:none;margin:36px 0 44px;display:flex;flex-direction:column;gap:15px}
+      .tfeats li{display:flex;gap:13px;align-items:flex-start;font-size:16px;line-height:1.5}
+      .chk{width:20px;height:20px;background:var(--sky);color:#000;flex:none;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-top:2px}
+      .tcard .btn{margin-top:auto;justify-content:center}
+      .tiers-note{margin-top:26px;color:#5A5A5A;font-size:14.5px}
+
+      /* ---------- faq ---------- */
+      .faq{background:var(--light);color:#111;padding:0 0 170px}
+      .faq h2{font-family:var(--tight);font-weight:400;font-size:clamp(2rem,4.5vw,2.5rem);letter-spacing:-.03em;text-align:center;line-height:1.15}
+      .faq .fsub{text-align:center;color:#4A4A4A;margin:20px auto 64px;max-width:560px;font-size:17px;line-height:1.6}
+      .faq-list{max-width:920px;margin:0 auto}
+      .fitem{border-top:1px solid #111}
+      .fitem:last-child{border-bottom:1px solid #111}
+      .fbtn{width:100%;display:flex;justify-content:space-between;align-items:center;gap:20px;text-align:left;padding:26px 4px;min-height:64px}
+      .fbtn .fq{font-family:var(--tight);font-size:clamp(19px,2vw,24px);font-weight:500;letter-spacing:-.015em;color:#111}
+      .fic{width:34px;height:34px;flex:none;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:400;line-height:1}
+      .fitem.open .fic{color:var(--sky)}
+      .fans{max-height:0;overflow:hidden;transition:max-height .5s var(--ease)}
+      .fans p{padding:0 4px 30px;color:#3D3D3D;font-size:16.5px;line-height:1.7;max-width:760px}
+      .fans a{text-decoration:underline;text-underline-offset:3px}
+
+      /* ---------- final cta ---------- */
+      .cta{padding:180px 0 190px;position:relative;overflow:hidden}
+      .cta h2{font-family:var(--tight);font-weight:400;font-size:clamp(2rem,4.5vw,2.5rem);line-height:1.15;letter-spacing:-.03em;max-width:1000px}
+      .cta .row{display:flex;gap:14px;margin-top:52px;flex-wrap:wrap}
+      .cta .note{display:flex;align-items:center;gap:11px;margin-top:38px;color:var(--grey);font-size:15px}
+      .cta .note svg{width:19px;height:19px;stroke:var(--sky);fill:none;stroke-width:1.8;flex:none}
+      .cta-mark{position:absolute;right:-30px;top:50%;transform:translateY(-50%);width:340px;opacity:.07;pointer-events:none}
+
+      /* ---------- footer ---------- */
+      footer{background:#0C0C0C;border-top:1px solid var(--border);padding:90px 0 0}
+      .fgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:clamp(26px,4vw,70px)}
+      .fbrand img{width:52px;height:52px;object-fit:contain}
+      .fbrand .fb-name{font-family:var(--tight);font-size:23px;font-weight:600;letter-spacing:-.02em;margin-top:16px}
+      .fbrand p{color:var(--grey);font-size:15px;line-height:1.65;margin-top:10px;max-width:300px}
+      .fcol{border-top:1px solid var(--border2);padding-top:20px}
+      .fcol h4{font-size:13.5px;font-family:var(--mono);font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);margin-bottom:16px}
+      .fcol a{display:block;padding:9px 10px;margin:0 -10px;font-size:16px;color:#D8D8D8;min-height:40px;transition:background .2s,color .2s}
+      .fcol a:hover{background:var(--sky);color:#000}
+      .news{margin-top:76px;border-top:1px solid var(--border);padding-top:44px;display:grid;grid-template-columns:1fr 1.2fr;gap:30px;align-items:end}
+      .news h3{font-family:var(--tight);font-size:26px;font-weight:500;letter-spacing:-.02em;line-height:1.25}
+      .news p{color:var(--grey);font-size:15px;margin-top:8px;line-height:1.6}
+      .news-form{display:flex;align-items:flex-end;gap:18px}
+      .news-form input{flex:1;background:transparent;border:none;border-bottom:1px solid #4A4A4A;color:#fff;font-family:var(--font);font-size:17px;padding:12px 2px;border-radius:0;min-height:48px}
+      .news-form input::placeholder{color:#666}
+      .news-form input:focus{outline:none;border-bottom-color:var(--sky)}
+      .news-form button{color:var(--sky);font-size:16.5px;font-weight:500;padding:10px 2px;min-height:48px;display:inline-flex;align-items:center;gap:8px}
+      .news-msg{grid-column:1/-1;font-size:14.5px;color:var(--grey);display:none}
+      .news-msg.show{display:block}
+      .fbottom{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;border-top:1px solid var(--border);margin-top:56px;padding:26px 0 34px;color:#777;font-size:14px}
+      .fbottom .claim{color:#9A9A9A}
+
+      /* ---------- responsive ---------- */
+      @media(max-width:1240px){.pgrid{grid-template-columns:repeat(3,1fr)}.pcard{min-height:380px}}
+      @media(max-width:1024px){
+        nav.main{display:none}
+        #burger{display:flex}
+        .nav-right .btn{display:none}
+        header.scrolled .nav-inner{max-width:none;margin-top:0;padding:22px clamp(20px,3vw,56px);background:transparent;border:none;border-radius:0;backdrop-filter:none;-webkit-backdrop-filter:none}
+        header.menu-open .mobile-menu{display:flex;flex-direction:column;position:fixed;inset:0;background:var(--bg);z-index:1;padding:104px 20px 34px;overflow-y:auto}
+        .mm-sec{border-top:1px solid var(--border)}
+        .mm-sec:last-of-type{border-bottom:1px solid var(--border)}
+        .mm-head{width:100%;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 2px;font-family:var(--tight);font-size:19px;font-weight:500;letter-spacing:-.01em;color:#fff;min-height:58px;text-align:left}
+        .mm-ic{font-size:21px;font-weight:400;color:var(--sky);line-height:1;transition:transform .3s}
+        .mm-sec.open .mm-ic{transform:rotate(45deg)}
+        .mm-body{max-height:0;overflow:hidden;transition:max-height .45s var(--ease)}
+        .mm-body a{display:flex;align-items:center;min-height:50px;padding:6px 2px;font-size:16.5px;color:var(--grey2)}
+        .mm-cta{margin-top:auto;padding-top:28px}
+        .mm-cta .btn{width:100%;justify-content:center;height:auto;padding:14px 20px}
+        body.menu-lock{overflow:hidden}
+        .hero{padding-top:170px}
+        .hero-grid{grid-template-columns:1fr}
+        .hero-side{justify-self:start;max-width:none}
+        .cmp-box{display:none}
+        .cmp-row{grid-template-columns:1fr}
+        .pgrid{display:flex;overflow-x:auto;gap:31px;padding-bottom:14px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+        .pcard{flex:0 0 80vw;min-height:390px;scroll-snap-align:start}
+        .pcard svg{width:70px;height:70px}
+        .pcard h3{font-size:25px}
+        .fgrid{grid-template-columns:1fr 1fr}
+        .fbrand{grid-column:span 2}
+        .news{grid-template-columns:1fr}
+      }
+      @media(max-width:768px){
+        .hero{padding-top:150px}
+        .hero h1{font-size:min(13vw,65px);line-height:1.12}
+        .hero-side p{font-size:clamp(15px,4.1vw,17px)}
+        .hero-cta{flex-direction:column;flex-wrap:nowrap}
+        .hero-cta .btn{width:100%;justify-content:center;height:auto;padding:12px 20px}
+        .hero-note{margin-top:70px}
+        .marquee{margin-top:36px}
+        .mq-item{gap:48px;padding-right:48px}
+        .why,.tiers{padding:100px 0 110px}
+        .why-top,.why-body{grid-template-columns:1fr}
+        .why-body{margin-top:56px}
+        .why-list{display:none}
+        .why-intro{max-width:none}
+        .panel{background:transparent;min-height:0;display:flex;flex-direction:column;gap:54px}
+        .panel .pane{display:flex;flex-direction:column}
+        .pane-head{display:block;margin-bottom:20px}
+        .pane-head h3{font-size:min(5vw,20px)}
+        .pane-card{display:flex;flex-direction:column;background:#101010;color:#fff}
+        .band{padding:120px 0}
+        .band p{font-size:min(6.5vw,31px)}
+        .why h2,.compare h2,.principles h2,.catalog h2,.tiers h2,.faq h2{font-size:min(6.5vw,31px)}
+        .compare .sub{font-size:clamp(15px,4.1vw,17px)}
+        .cmp-labels{margin-top:56px}
+        .cmp-mid{flex-direction:column;gap:10px;padding:20px 18px}
+        .cmp-mid .arrw{transform:rotate(90deg)}
+        .cat-tabs{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+        .cat-tabs::-webkit-scrollbar{display:none}
+        .ctab{flex:none}
+        .cgrid{grid-template-columns:1fr}
+        .ccard{grid-template-columns:1fr;min-height:0}
+        .poster{min-height:0;aspect-ratio:16/10;width:100%}
+        .cbody h3{font-size:min(5vw,20px)}
+        .tgrid{grid-template-columns:1fr}
+        .tcard h3{font-size:26px}
+        .faq{padding-bottom:110px}
+        .fbtn{padding:6vw 4vw}
+        .fic{width:24px;height:24px;font-size:16px}
+        .cta{padding:120px 0 130px}
+        .cta h2{font-size:min(6.5vw,31px);line-height:1.15}
+        .cta .row{flex-direction:column;flex-wrap:nowrap}
+        .cta .row .btn{width:100%;justify-content:center;height:auto;padding:12px 20px}
+        .cta-mark{display:none}
+        footer{padding-top:70px}
+        .fgrid{grid-template-columns:1fr;gap:38px}
+        .fbrand{grid-column:auto}
+        .news h3{font-size:min(5vw,20px)}
+        .fbottom{padding:26px 0 64px}
+        .lp-stats{grid-template-columns:1fr}
+        .btn{padding-left:20px;padding-right:20px}
+      }
+      @media (prefers-reduced-motion: reduce){
+        *,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important}
+        .rv{opacity:1;transform:none}
+        .band .w{opacity:1}
+      }
+    </style>
+  </head>
+  <body>
+    <div id="progress" aria-hidden="true"><div id="progressFill"></div></div>
+    <div id="cursor" aria-hidden="true"></div>
+
+    <header id="siteHeader">
+      <div class="nav-inner">
+        <a class="brand" href="#top" aria-label="Vector Pad home"><img src="assets/logo-sky.png" alt="Vector Pad logo" />Vector<em>Pad</em></a>
+        <nav class="main" aria-label="Main">
+          <a href="#why">Why Vector Pad</a>
+          <a href="#launches">Launches</a>
+          <a href="#tiers">Launch Tiers</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+        <div class="nav-right">
+          <a class="btn btn-sky" href="#tiers"><span class="sq"></span>Launch a token<span class="arr">→</span></a>
+          <button id="burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+        </div>
+      </div>
+      <div class="mobile-menu" id="mobileMenu">
+        <div class="mm-sec open">
+          <button class="mm-head" aria-expanded="true">Explore<span class="mm-ic">+</span></button>
+          <div class="mm-body">
+            <a href="#why">Why Vector Pad</a>
+            <a href="#launches">Launches</a>
+            <a href="#tiers">Launch Tiers</a>
+            <a href="#faq">FAQ</a>
+          </div>
+        </div>
+        <div class="mm-sec">
+          <button class="mm-head" aria-expanded="false">Ecosystem<span class="mm-ic">+</span></button>
+          <div class="mm-body">
+            <a href="https://solana.com" target="_blank" rel="noopener">Solana</a>
+            <a href="https://pump.fun" target="_blank" rel="noopener">pump.fun</a>
+            <a href="https://raydium.io" target="_blank" rel="noopener">Raydium</a>
+            <a href="https://jup.ag" target="_blank" rel="noopener">Jupiter</a>
+          </div>
+        </div>
+        <div class="mm-cta">
+          <a class="btn btn-sky" href="#tiers"><span class="sq"></span>Launch a token<span class="arr">→</span></a>
+        </div>
+      </div>
+    </header>
+
+    <main id="top">
+      <!-- HERO -->
+      <section class="hero dotgrid">
+        <canvas id="coin" aria-hidden="true"></canvas>
+        <div class="wrap">
+          <div class="hero-grid">
+            <h1 class="rv in">Launch tokens<br />at <span class="sky">vector</span><br />speed.</h1>
+            <div class="hero-side rv in rv-d2">
+              <p>Vector Pad is the fair launchpad on Solana. Create a token in minutes, let the market price it on an open bonding curve, and graduate straight to Raydium — no presale, no insider allocation, no hidden fees.</p>
+              <p>The first launch is ours: <b style="color:#fff;font-weight:600">$VECTOR</b>, arriving soon on pump.fun.</p>
+              <div class="hero-cta">
+                <a class="btn btn-outline" href="#launches"><span class="sq"></span>See launches<span class="arr">→</span></a>
+                <a class="btn btn-sky" href="#tiers"><span class="sq"></span>Start a launch<span class="arr">→</span></a>
+              </div>
+            </div>
+          </div>
+          <p class="hero-note">Psst — <b>every launch locks its liquidity</b> when it graduates. No exceptions.</p>
+        </div>
+        <div class="marquee" aria-hidden="true">
+          <div class="marquee-track" id="mqTrack"></div>
+        </div>
+      </section>
+
+      <!-- WHY -->
+      <section class="why" id="why">
+        <div class="wrap">
+          <div class="why-top">
+            <p class="why-intro rv">A launchpad built for speed and fairness, without the backstage deals.</p>
+            <h2 class="rv rv-d1">Built for creators where the <span class="sky">launch is the brand.</span></h2>
+          </div>
+          <div class="why-body">
+            <div class="why-list" role="tablist" aria-label="Vector Pad features">
+              <button class="why-item active" data-pane="pane-launch" role="tab" aria-selected="true">
+                <span class="wi-t">Live in minutes</span>
+                <span class="wi-d">One form — name, ticker, supply, image — and your token is trading on its bonding curve. Watch the launch fill in real time.</span>
+              </button>
+              <button class="why-item" data-pane="pane-cli" role="tab" aria-selected="false">
+                <span class="wi-t">One command deploy</span>
+                <span class="wi-d">Prefer the terminal? Deploy the exact same fair launch from a single command, with every parameter printed before you sign.</span>
+              </button>
+              <button class="why-item" data-pane="pane-tune" role="tab" aria-selected="false">
+                <span class="wi-t">Tune every fee</span>
+                <span class="wi-d">Set the curve and creator fee up front. What you configure is what the chain enforces — nothing changes after launch.</span>
+              </button>
+            </div>
+
+            <div class="panel">
+              <!-- Pane A: launch preview -->
+              <div class="pane active" id="pane-launch">
+                <div class="pane-head"><h3>Live in minutes</h3><p>One form — name, ticker, supply, image — and your token is trading on its bonding curve. Watch the launch fill in real time.</p></div>
+                <div class="pane-card">
+                <div class="panel-tabs" role="tablist" aria-label="Launch preview views">
+                  <button class="ptab active" data-view="overview">Overview</button>
+                  <button class="ptab" data-view="curve">Curve</button>
+                  <button class="ptab" data-view="safety">Safety</button>
+                </div>
+                <div class="panel-body">
+                  <div class="pv" data-pv="overview">
+                    <div class="lp-head">
+                      <div class="lp-logo"><img src="assets/logo-sky.png" alt="" /></div>
+                      <div>
+                        <div class="lp-name">$VECTOR</div>
+                        <div class="lp-sub">VECTORS · SOLANA · PUMP.FUN</div>
+                      </div>
+                      <span class="badge" style="margin-left:auto"><i></i>COMING SOON</span>
+                    </div>
+                    <div class="curve">
+                      <div class="curve-row"><span>BONDING CURVE</span><span>AWAITING LAUNCH</span></div>
+                      <div class="curve-bar"><div class="curve-fill"></div></div>
+                    </div>
+                    <div class="lp-stats">
+                      <div class="lp-stat"><div class="k">Presale</div><div class="v">None</div></div>
+                      <div class="lp-stat"><div class="k">Team allocation</div><div class="v">0%</div></div>
+                      <div class="lp-stat"><div class="k">Liquidity at graduation</div><div class="v">Locked</div></div>
+                    </div>
+                    <p class="lp-foot">The first Vector Pad launch is $VECTOR itself. It goes live on pump.fun with a fixed supply and a public curve — the contract address will be posted here the moment it exists. Until then, anything calling itself $VECTOR is not ours.</p>
+                  </div>
+                  <div class="pv" data-pv="curve" hidden>
+                    <p style="color:var(--grey2);line-height:1.7;font-size:16px">Every Vector Pad launch trades on a public bonding curve from the first second. Price is set by buys and sells on the curve — not by a presale round, not by a whitelist. When the curve completes, the token graduates to Raydium and trading continues there.</p>
+                    <div class="lp-stats">
+                      <div class="lp-stat"><div class="k">Curve start</div><div class="v">Open to all</div></div>
+                      <div class="lp-stat"><div class="k">Graduation</div><div class="v">→ Raydium</div></div>
+                      <div class="lp-stat"><div class="k">Price discovery</div><div class="v">100% market</div></div>
+                    </div>
+                    <p class="lp-foot">No staged rounds. No early links. The curve is the launch.</p>
+                  </div>
+                  <div class="pv" data-pv="safety" hidden>
+                    <p style="color:var(--grey2);line-height:1.7;font-size:16px">Safety is a launch rule here, not a badge you buy. Mint and freeze authority are renounced at creation, and liquidity is locked automatically when a launch graduates — so the pool a community builds cannot be pulled out from under it.</p>
+                    <div class="lp-stats">
+                      <div class="lp-stat"><div class="k">Mint authority</div><div class="v">Renounced</div></div>
+                      <div class="lp-stat"><div class="k">Freeze authority</div><div class="v">Renounced</div></div>
+                      <div class="lp-stat"><div class="k">LP tokens</div><div class="v">Locked</div></div>
+                    </div>
+                    <p class="lp-foot">Every step is verifiable on-chain. If a launch ever skips a rule, it does not list on Vector Pad.</p>
+                  </div>
+                </div>
+                </div>
+              </div>
+              <!-- Pane B: terminal -->
+              <div class="pane" id="pane-cli">
+                <div class="pane-head"><h3>One command deploy</h3><p>Prefer the terminal? Deploy the exact same fair launch from a single command, with every parameter printed before you sign.</p></div>
+                <div class="pane-card">
+                <div class="panel-body">
+                  <div class="term"><span class="dim"># deploy a fair launch on Solana</span>
+$ vector launch --name "Vector" --ticker VECTOR \
+    --supply 1000000000 --curve fair
+
+<span class="wht">✓</span> metadata pinned        <span class="dim">image + description</span>
+<span class="wht">✓</span> mint authority         <span class="sk">renounced</span>
+<span class="wht">✓</span> freeze authority       <span class="sk">renounced</span>
+<span class="wht">✓</span> bonding curve          <span class="dim">live, open to everyone</span>
+<span class="wht">✓</span> graduation target      <span class="dim">Raydium · LP locked</span>
+
+<span class="dim">launch live in 41s — no presale, no whitelist.</span>
+$ <span class="caret"></span></div>
+                  <p class="lp-foot">The same rules as the web flow — fixed supply, renounced authorities, locked liquidity — printed in plain text before anything is signed.</p>
+                </div>
+                </div>
+              </div>
+              <!-- Pane C: tuning -->
+              <div class="pane" id="pane-tune">
+                <div class="pane-head"><h3>Tune every fee</h3><p>Set the curve and creator fee up front. What you configure is what the chain enforces — nothing changes after launch.</p></div>
+                <div class="pane-card">
+                <div class="panel-body">
+                  <div class="tune-row">
+                    <div class="tune-lab"><span class="tl">Launch window</span><span class="tv"><b id="durVal">72</b> hours</span></div>
+                    <input type="range" id="durRange" min="1" max="168" value="72" aria-label="Launch window in hours" />
+                  </div>
+                  <div class="tune-row">
+                    <div class="tune-lab"><span class="tl">Creator fee share</span><span class="tv"><b id="stagVal">50</b>% of curve fees</span></div>
+                    <input type="range" id="stagRange" min="0" max="100" value="50" aria-label="Creator fee share percent" />
+                  </div>
+                  <div class="tune-row">
+                    <div class="tune-lab"><span class="tl">Curve shape</span></div>
+                    <div class="seg" id="easeSeg" role="group" aria-label="Curve shape">
+                      <button class="active" data-ease="linear">Linear</button>
+                      <button data-ease="ease-out">Steep start</button>
+                      <button data-ease="spring">Flat start</button>
+                    </div>
+                  </div>
+                  <div class="tune-demo">
+                    <div class="demo-track"><div class="demo-dot" id="demoDot"></div></div>
+                    <p class="demo-cap" id="demoCap">PREVIEW · price travel along the curve — drag the sliders, pick a shape.</p>
+                  </div>
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TRANSITION BAND -->
+      <section class="band dotgrid">
+        <div class="wrap">
+          <p id="bandText">Fair launches, instant liquidity, and rules the chain enforces — not promises a team makes. Preview a launch the moment you create it, watch the curve fill in the open, then graduate to Raydium with liquidity locked. No presale. No insiders. No black box. Just a token, a curve, and a market that starts fair.</p>
+        </div>
+      </section>
+
+      <!-- COMPARISON -->
+      <section class="compare">
+        <div class="wrap">
+          <h2 class="rv">Launching the old way is <span class="sky">harder</span> than it looks</h2>
+          <p class="sub rv rv-d1">Anyone can deploy a token. What is hard is everything around it — the presale politics, the unlocked liquidity, the fees nobody quoted. Get any of it wrong and the launch is the reason the project dies. Vector Pad is engineered around that discipline by default.</p>
+          <div class="cmp-labels rv"><span>The old way</span><span>The Vector Pad way</span></div>
+          <div id="cmpRows"></div>
+        </div>
+      </section>
+
+      <!-- PRINCIPLES -->
+      <section class="principles">
+        <div class="wrap">
+          <div class="sec-head">
+            <h2 class="rv">Five rules every<br />launch <span class="sky">inherits.</span></h2>
+            <p class="rv rv-d1">Not features you toggle on. These are the defaults a Vector Pad launch cannot switch off.</p>
+          </div>
+          <div class="pgrid" id="pgrid"></div>
+        </div>
+      </section>
+
+      <!-- CATALOG -->
+      <section class="catalog" id="launches">
+        <div class="wrap">
+          <h2 class="rv">Every launch starts<br /><span class="sky">somewhere.</span></h2>
+          <div class="cat-tabs rv" role="tablist" aria-label="Launch categories">
+            <button class="ctab active" data-cat="all">All</button>
+            <button class="ctab" data-cat="live">Live</button>
+            <button class="ctab" data-cat="upcoming">Upcoming</button>
+            <button class="ctab" data-cat="graduated">Graduated</button>
+            <button class="ctab" data-cat="community">Community</button>
+          </div>
+          <div class="cgrid" id="cgrid"></div>
+        </div>
+      </section>
+
+      <!-- TIERS -->
+      <section class="tiers" id="tiers">
+        <div class="wrap">
+          <div class="tiers-top">
+            <div class="rv">
+              <h2>Launch tiers,<br /><span class="sky">honestly</span> priced.</h2>
+              <p>Launching on Vector Pad is free. You pay Solana network fees and the curve's trading fee — both shown before you sign. Featured placement pricing is still being set, so it is marked TBA rather than invented.</p>
+            </div>
+            <div class="toggle rv rv-d1" role="group" aria-label="Billing period">
+              <button class="active" data-period="launch">Per launch</button>
+              <button data-period="month">Per month</button>
+            </div>
+          </div>
+          <div class="tgrid">
+            <article class="tcard light-c rv">
+              <div class="tk">Tier 01</div>
+              <h3>Standard Launch</h3>
+              <div class="price"><span class="amt">Free</span><span class="per" data-per>/ launch</span></div>
+              <p class="tdesc">Everything a fair launch needs. Create the token, open the curve, graduate to Raydium — the full Vector Pad rule set included.</p>
+              <ul class="tfeats">
+                <li><span class="chk">✓</span>Token creation with fixed supply</li>
+                <li><span class="chk">✓</span>Public bonding curve, open to everyone</li>
+                <li><span class="chk">✓</span>Mint &amp; freeze authority renounced</li>
+                <li><span class="chk">✓</span>Automatic graduation to Raydium</li>
+                <li><span class="chk">✓</span>Liquidity locked at graduation</li>
+                <li><span class="chk">✓</span>Listing on the launches board</li>
+              </ul>
+              <a class="btn btn-outline-dark" href="#faq"><span class="sq"></span>Start free<span class="arr">→</span></a>
+            </article>
+            <article class="tcard dark-c rv rv-d1">
+              <div class="pop">Most popular</div>
+              <div class="tk">Tier 02</div>
+              <h3>Featured Launch</h3>
+              <div class="price"><span class="amt">TBA</span><span class="per" data-per>/ launch</span></div>
+              <p class="tdesc">The same fair launch, with front-page placement on the board and a pinned slot in the launch window. Same rules — more eyes.</p>
+              <ul class="tfeats">
+                <li><span class="chk">✓</span>Everything in Standard Launch</li>
+                <li><span class="chk">✓</span>Pinned placement on the launches board</li>
+                <li><span class="chk">✓</span>Featured slot during your launch window</li>
+                <li><span class="chk">✓</span>Launch review before you go live</li>
+                <li><span class="chk">✓</span>Priority support from the team</li>
+                <li><span class="chk">✓</span>Fee: <b>&nbsp;TBA</b>&nbsp;— announced before it opens</li>
+              </ul>
+              <a class="btn btn-sky" href="#launches"><span class="sq"></span>See the board<span class="arr">→</span></a>
+            </article>
+          </div>
+          <p class="tiers-note rv">Network and curve fees are Solana's and the pool's, not Vector Pad markups — the exact amounts appear in your wallet before you confirm any transaction.</p>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="faq" id="faq">
+        <div class="wrap">
+          <h2 class="rv">Questions, <span class="sky">answered.</span></h2>
+          <p class="fsub rv rv-d1">The short version of how Vector Pad works — and what it refuses to do.</p>
+          <div class="faq-list" id="faqList"></div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="cta dotgrid">
+        <img class="cta-mark" src="assets/logo-sky.png" alt="" aria-hidden="true" />
+        <div class="wrap">
+          <h2 class="rv">Your token deserves<br />a <span class="sky">fair</span> start.</h2>
+          <div class="row rv rv-d1">
+            <a class="btn btn-outline" href="#tiers"><span class="sq"></span>Read the tiers<span class="arr">→</span></a>
+            <a class="btn btn-sky" href="#launches"><span class="sq"></span>Start your launch<span class="arr">→</span></a>
+          </div>
+          <p class="note rv rv-d2">
+            <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            Liquidity locks automatically when a launch graduates to Raydium. It is a rule of the platform, not an option.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="wrap">
+        <div class="fgrid">
+          <div class="fbrand">
+            <img src="assets/logo-sky.png" alt="Vector Pad logo" />
+            <div class="fb-name">Vector<span class="sky">Pad</span></div>
+            <p>The fair launchpad on Solana. Fixed supply, open curves, locked liquidity — every launch, every time.</p>
+          </div>
+          <div class="fcol">
+            <h4>Product</h4>
+            <a href="#launches">Launches</a>
+            <a href="#why">Why Vector Pad</a>
+            <a href="#tiers">Launch tiers</a>
+            <a href="#faq">FAQ</a>
+          </div>
+          <div class="fcol">
+            <h4>Launch</h4>
+            <a href="#why">How it works</a>
+            <a href="#why">Fair launch rules</a>
+            <a href="#launches">The $VECTOR launch</a>
+            <a href="#tiers">Featured launches</a>
+          </div>
+          <div class="fcol">
+            <h4>Ecosystem</h4>
+            <a href="https://solana.com" target="_blank" rel="noopener">Solana</a>
+            <a href="https://pump.fun" target="_blank" rel="noopener">pump.fun</a>
+            <a href="https://raydium.io" target="_blank" rel="noopener">Raydium</a>
+            <a href="https://jup.ag" target="_blank" rel="noopener">Jupiter</a>
+          </div>
+        </div>
+        <div class="news">
+          <div>
+            <h3>First to know when $VECTOR drops.</h3>
+            <p>Launch announcements and new board openings. No spam, no shilling other people's tokens.</p>
+          </div>
+          <form class="news-form" id="newsForm" novalidate>
+            <input type="email" id="newsEmail" placeholder="your@email.com" aria-label="Email address" autocomplete="email" />
+            <button type="submit">Subscribe →</button>
+          </form>
+          <p class="news-msg" id="newsMsg" role="status"></p>
+        </div>
+        <div class="fbottom">
+          <span class="claim">Fair launches only. If the liquidity is not locked, it is not a Vector Pad launch.</span>
+          <span>© 2026 Vector Pad · Built on Solana</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+    <script>
+    (function(){
+      "use strict";
+      var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      /* ---------- Lenis smooth scroll ---------- */
+      var lenis = null;
+      if (!reduced && typeof Lenis !== "undefined") {
+        lenis = new Lenis({ duration: 1.5, smoothWheel: true, wheelMultiplier: 0.92, easing: function(t){ return 1 - Math.pow(1 - t, 4); } });
+        var rafL = function(t){ lenis.raf(t); requestAnimationFrame(rafL); };
+        requestAnimationFrame(rafL);
+      }
+      function scrollToEl(el){
+        if (lenis) lenis.scrollTo(el, { offset: -90 });
+        else el.scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
+      }
+      document.querySelectorAll('a[href^="#"]').forEach(function(a){
+        a.addEventListener("click", function(e){
+          var id = a.getAttribute("href");
+          if (id.length > 1) {
+            var el = document.querySelector(id);
+            if (el) { e.preventDefault(); document.getElementById("siteHeader").classList.remove("menu-open"); document.body.classList.remove("menu-lock"); document.getElementById("burger").setAttribute("aria-expanded", "false"); if (lenis) lenis.start(); scrollToEl(el); }
+          }
+        });
+      });
+
+      /* ---------- nav morph + progress ---------- */
+      var header = document.getElementById("siteHeader");
+      var fill = document.getElementById("progressFill");
+      function onScroll(){
+        var y = window.scrollY || 0;
+        header.classList.toggle("scrolled", y > 70);
+        var h = document.documentElement.scrollHeight - window.innerHeight;
+        fill.style.height = (h > 0 ? (y / h) * 100 : 0) + "%";
+      }
+      window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
+
+      var burger = document.getElementById("burger");
+      burger.addEventListener("click", function(){
+        var open = header.classList.toggle("menu-open");
+        burger.setAttribute("aria-expanded", open ? "true" : "false");
+        document.body.classList.toggle("menu-lock", open);
+        if (lenis) { if (open) lenis.stop(); else lenis.start(); }
+        if (open) {
+          document.querySelectorAll(".mm-sec.open .mm-body").forEach(function(b){ b.style.maxHeight = b.scrollHeight + "px"; });
+        }
+      });
+
+      /* ---------- mobile menu: collapsible sections ---------- */
+      document.querySelectorAll(".mm-sec").forEach(function(sec){
+        var head = sec.querySelector(".mm-head"), mBody = sec.querySelector(".mm-body");
+        head.addEventListener("click", function(){
+          var isOpen = sec.classList.toggle("open");
+          head.setAttribute("aria-expanded", isOpen ? "true" : "false");
+          mBody.style.maxHeight = isOpen ? mBody.scrollHeight + "px" : "0px";
+        });
+      });
+      document.querySelectorAll(".mobile-menu a").forEach(function(a){
+        a.addEventListener("click", function(){
+          header.classList.remove("menu-open");
+          document.body.classList.remove("menu-lock");
+          burger.setAttribute("aria-expanded", "false");
+          if (lenis) lenis.start();
+        });
+      });
+
+      /* ---------- custom cursor ---------- */
+      var cursor = document.getElementById("cursor");
+      if (window.matchMedia("(hover:hover) and (pointer:fine)").matches && !reduced) {
+        var mx = innerWidth/2, my = innerHeight/2, cx = mx, cy = my;
+        document.addEventListener("mousemove", function(e){ mx = e.clientX; my = e.clientY; });
+        (function loop(){
+          cx += (mx - cx) * 0.16; cy += (my - cy) * 0.16;
+          cursor.style.transform = "translate(" + (cx) + "px," + (cy) + "px) translate(-50%,-50%)";
+          requestAnimationFrame(loop);
+        })();
+        document.querySelectorAll("a, button, input, .why-item, .ctab").forEach(function(el){
+          el.addEventListener("mouseenter", function(){ cursor.classList.add("grow"); });
+          el.addEventListener("mouseleave", function(){ cursor.classList.remove("grow"); });
+        });
+      } else { cursor.style.display = "none"; }
+
+      /* ---------- marquee ---------- */
+      var items = ["Solana","Raydium","Jupiter","pump.fun","Metaplex","SPL Token","Token-2022","Bonding Curves","Locked Liquidity","Fair Launch"];
+      var half = items.map(function(t){ return '<span class="mq-item">' + t + '<i></i></span>'; }).join("");
+      document.getElementById("mqTrack").innerHTML = half + half;
+
+      /* ---------- reveal on scroll ---------- */
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){ if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
+      }, { threshold: 0.12 });
+      document.querySelectorAll(".rv").forEach(function(el){ io.observe(el); });
+
+      /* ---------- why: left list <-> panes ---------- */
+      var whyItems = document.querySelectorAll(".why-item");
+      whyItems.forEach(function(item){
+        item.addEventListener("click", function(){
+          whyItems.forEach(function(i){ i.classList.remove("active"); i.setAttribute("aria-selected","false"); });
+          item.classList.add("active"); item.setAttribute("aria-selected","true");
+          document.querySelectorAll(".panel .pane").forEach(function(p){ p.classList.remove("active"); });
+          document.getElementById(item.getAttribute("data-pane")).classList.add("active");
+        });
+      });
+      /* inner preview tabs */
+      document.querySelectorAll(".ptab").forEach(function(tab){
+        tab.addEventListener("click", function(){
+          document.querySelectorAll(".ptab").forEach(function(t){ t.classList.remove("active"); });
+          tab.classList.add("active");
+          var v = tab.getAttribute("data-view");
+          document.querySelectorAll("[data-pv]").forEach(function(pv){
+            if (pv.getAttribute("data-pv") === v) { pv.hidden = false; } else { pv.hidden = true; }
+          });
+        });
+      });
+
+      /* ---------- tuning sliders ---------- */
+      function paintRange(r){
+        var pct = (r.value - r.min) / (r.max - r.min) * 100;
+        r.style.setProperty("--fill", pct + "%");
+      }
+      var dur = document.getElementById("durRange"), stag = document.getElementById("stagRange");
+      var durVal = document.getElementById("durVal"), stagVal = document.getElementById("stagVal");
+      var dot = document.getElementById("demoDot"), cap = document.getElementById("demoCap");
+      var easeMap = { "linear":"linear", "ease-out":"cubic-bezier(.16,.84,.3,1)", "spring":"cubic-bezier(.34,1.4,.44,1)" };
+      var curEase = "linear", dotRight = false;
+      function runDemo(){
+        var ms = 500 + (168 - dur.value) * 8 + stag.value * 4;
+        dot.style.transition = "left " + ms + "ms " + easeMap[curEase];
+        var track = dot.parentElement;
+        var target = dotRight ? 14 : (track.clientWidth - 36);
+        dot.style.left = target + "px";
+        dotRight = !dotRight;
+        cap.textContent = "PREVIEW · window " + dur.value + "h · creator share " + stag.value + "% · shape " + curEase + " · travel " + Math.round(ms) + "ms";
+      }
+      [dur, stag].forEach(function(r){
+        paintRange(r);
+        r.addEventListener("input", function(){
+          paintRange(r); durVal.textContent = dur.value; stagVal.textContent = stag.value; runDemo();
+        });
+      });
+      document.querySelectorAll("#easeSeg button").forEach(function(b){
+        b.addEventListener("click", function(){
+          document.querySelectorAll("#easeSeg button").forEach(function(x){ x.classList.remove("active"); });
+          b.classList.add("active"); curEase = b.getAttribute("data-ease"); runDemo();
+        });
+      });
+
+      /* ---------- word-by-word band reveal ---------- */
+      var band = document.getElementById("bandText");
+      var words = band.textContent.trim().split(/\s+/);
+      band.innerHTML = words.map(function(w){
+        var hl = (w === "fair." || w === "locked.") ? " hl" : "";
+        return '<span class="w' + hl + '">' + w + "</span>";
+      }).join(" ");
+      var spans = band.querySelectorAll(".w");
+      function bandUpdate(){
+        var r = band.getBoundingClientRect();
+        var total = r.height + window.innerHeight * 0.55;
+        var done = Math.min(Math.max((window.innerHeight * 0.82 - r.top) / total, 0), 1);
+        var n = Math.floor(done * spans.length * 1.25);
+        spans.forEach(function(s, i){ s.classList.toggle("on", i < n); });
+      }
+      window.addEventListener("scroll", bandUpdate, { passive: true }); bandUpdate();
+
+      /* ---------- comparison rows ---------- */
+      var cmp = [
+        ["Manual deploys, hours of setup and scripts","One form — live on the curve in minutes"],
+        ["Fees revealed only when you claim","Every fee shown before you sign"],
+        ["Presales that dump on day one","No presale — everyone buys the same curve"],
+        ["Liquidity unlocked, rug risk priced in","Liquidity locked automatically at graduation"],
+        ["Insider allocations and quiet team wallets","Fixed supply, zero insider allocation"],
+        ["Dead charts with no discovery","Instant Raydium listing at graduation"],
+        ["Support tickets and guesswork","On-chain proof for every step"]
+      ];
+      document.getElementById("cmpRows").innerHTML = cmp.map(function(r, i){
+        return '<div class="cmp-row rv' + (i % 2 ? " rv-d1" : "") + '"><div class="cmp-box no">✕</div><div class="cmp-mid"><span class="old">' + r[0] + '</span><span class="arrw">→</span><span class="new">' + r[1] + '</span></div><div class="cmp-box yes">✓</div></div>';
+      }).join("");
+      document.querySelectorAll("#cmpRows .rv").forEach(function(el){ io.observe(el); });
+
+      /* ---------- principles ---------- */
+      var icons = {
+        fair:'<svg viewBox="0 0 24 24"><path d="M12 3v18M5 7l7-4 7 4M3 13l2-6 2 6a3.5 3.5 0 0 1-4 0ZM17 13l2-6 2 6a3.5 3.5 0 0 1-4 0ZM8 21h8"/></svg>',
+        bolt:'<svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>',
+        shield:'<svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3Z"/><path d="M9 12l2 2 4-4"/></svg>',
+        lock:'<svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 15v2"/></svg>',
+        people:'<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5M16 5.5a3.5 3.5 0 0 1 0 6M21 20c0-3-1.6-4.7-4-5.3"/></svg>'
+      };
+      var principles = [
+        ["fair","Fair Launch","01","Every launch opens on a public bonding curve at the same price for everyone. No presale rounds, no whitelist, no early links — the market starts together or it does not start."],
+        ["bolt","Instant Liquidity","02","Your token trades from the first second on its curve, and graduates straight to a Raydium pool the moment the curve completes. No waiting rooms, no manual pool setup."],
+        ["shield","No Presale","03","There is no allocation to sell before launch, so there is nothing to dump on the people who arrive at launch. Supply is fixed at creation and visible to everyone."],
+        ["lock","Locked Liquidity","04","When a launch graduates, its liquidity locks automatically. The pool the community built cannot be pulled by the creator — that rule is enforced by the platform, not by trust."],
+        ["people","Community First","05","Creators earn from curve fees, not from insider bags. The launches board is ordered by the market, and the first launch on it — $VECTOR — follows exactly the same rules as yours."]
+      ];
+      document.getElementById("pgrid").innerHTML = principles.map(function(p, i){
+        return '<article class="pcard rv rv-d' + (i+1) + '">' + icons[p[0]] + '<h3>' + p[1] + '</h3><div class="num">/ ' + p[2] + '</div><p>' + p[3] + '</p></article>';
+      }).join("");
+      document.querySelectorAll("#pgrid .rv").forEach(function(el){ io.observe(el); });
+
+      /* ---------- catalog ---------- */
+      var cards = [
+        { tick:"$VECTOR", sub:"First launch · pump.fun", pat:"p-dots", flag:"Coming soon", cats:"upcoming community", title:"$VECTOR — the first launch", body:"Vector Pad's own token, launched the same way as every other launch here: fixed supply, open curve, no presale. It goes live on pump.fun soon — the contract address appears here the moment it exists.", link:"Get launch updates", href:"#faq", logo:true },
+        { tick:"SLOT 01", sub:"Reserved · Upcoming", pat:"p-lines", flag:"Open slot", flagGhost:true, cats:"upcoming", title:"Your token here", body:"This board slot is empty on purpose. The first community launches take these places — created on Vector Pad, traded on the curve, graduated to Raydium.", link:"How to launch", href:"#tiers" },
+        { tick:"SLOT 02", sub:"Reserved · Upcoming", pat:"p-grid", flag:"Open slot", flagGhost:true, cats:"upcoming", title:"Your token here", body:"Bring a name, a ticker and an image. Vector Pad handles the mint, the curve and the graduation — you handle the community.", link:"How to launch", href:"#tiers" },
+        { tick:"LIVE", sub:"Nothing live yet", pat:"p-ring", flag:"Honest board", flagGhost:true, cats:"live", title:"No live launches — yet", body:"We would rather show an empty live board than invent one. Live launches appear here in real time once the first curve opens, starting with $VECTOR.", link:"See what's coming", href:"#launches" },
+        { tick:"GRAD", sub:"First graduate · TBD", pat:"p-lines", flag:"Awaiting", flagGhost:true, cats:"graduated", title:"The first graduate", body:"Graduation means the curve completed and the token moved to Raydium with liquidity locked. This slot belongs to whichever launch gets there first.", link:"How graduation works", href:"#why" },
+        { tick:"COMM", sub:"Community pick", pat:"p-grid", flag:"Reserved", flagGhost:true, cats:"community", title:"A launch the community picks", body:"One board slot is reserved for a community-chosen launch. Details land with the $VECTOR announcement — no token, no address, nothing to buy yet.", link:"Get launch updates", href:"#faq" },
+        { tick:"SLOT 03", sub:"Reserved · Upcoming", pat:"p-ring", flag:"Open slot", flagGhost:true, cats:"upcoming community", title:"Your token here", body:"Fair rules apply to every slot on this board: renounced authorities, fixed supply, locked liquidity at graduation. No slot can buy its way around them.", link:"Read the rules", href:"#why" },
+        { tick:"SOON", sub:"Board opens at launch", pat:"p-dots", flag:"Stay tuned", flagGhost:true, cats:"upcoming", title:"More slots at $VECTOR launch", body:"The full board opens when $VECTOR goes live on pump.fun. Until then this page is the source of truth — if a token claims a Vector Pad launch before that, it is not real.", link:"Why Vector Pad", href:"#why" }
+      ];
+      document.getElementById("cgrid").innerHTML = cards.map(function(c){
+        var posterInner = (c.logo ? '<div><img src="assets/logo-sky.png" alt="" /><div class="tick">' + c.tick + '<small>' + c.sub + '</small></div></div>'
+                                   : '<div class="tick">' + c.tick + '<small>' + c.sub + '</small></div>');
+        return '<article class="ccard rv" data-cats="' + c.cats + '"><div class="poster ' + c.pat + '"><span class="pflag' + (c.flagGhost ? " ghost" : "") + '">' + c.flag + '</span>' + posterInner + '</div><div class="cbody"><h3>' + c.title + '</h3><p>' + c.body + '</p><div class="clink"><a href="' + c.href + '">' + c.link + ' →</a></div></div></article>';
+      }).join("");
+      document.querySelectorAll("#cgrid .rv").forEach(function(el){ io.observe(el); });
+      document.querySelectorAll(".ctab").forEach(function(tab){
+        tab.addEventListener("click", function(){
+          document.querySelectorAll(".ctab").forEach(function(t){ t.classList.remove("active"); });
+          tab.classList.add("active");
+          var cat = tab.getAttribute("data-cat");
+          document.querySelectorAll(".ccard").forEach(function(card){
+            var show = cat === "all" || card.getAttribute("data-cats").split(" ").indexOf(cat) !== -1;
+            card.classList.toggle("hide", !show);
+            if (show) { card.classList.add("in"); }
+          });
+        });
+      });
+
+      /* ---------- pricing toggle ---------- */
+      document.querySelectorAll(".toggle button").forEach(function(b){
+        b.addEventListener("click", function(){
+          document.querySelectorAll(".toggle button").forEach(function(x){ x.classList.remove("active"); });
+          b.classList.add("active");
+          var per = b.getAttribute("data-period") === "month" ? "/ month" : "/ launch";
+          document.querySelectorAll("[data-per]").forEach(function(el){ el.textContent = per; });
+        });
+      });
+
+      /* ---------- FAQ ---------- */
+      var faqs = [
+        ["What is Vector Pad?","Vector Pad is a token launchpad on Solana. You create a token with a fixed supply, it trades immediately on a public bonding curve, and when the curve completes it graduates to Raydium with its liquidity locked. The whole flow — creation, curve, graduation — follows one fixed rule set that no launch can opt out of."],
+        ["Why Solana?","Speed and cost. Solana settles in fractions of a second and a launch costs a fraction of a cent in network fees, which is what makes instant, open-to-everyone curves practical. Vector Pad uses standard Solana tooling — SPL / Token-2022 tokens, Raydium pools and Jupiter routing — so everything is verifiable with the explorers and tools you already know."],
+        ["What is the $VECTOR token, and when does it launch?","$VECTOR is Vector Pad's own token, and it will be the platform's first launch — created on pump.fun under the same rules as every other launch here: fixed supply, no presale, no team allocation. It has not launched yet and there is no contract address. When it goes live, the address will be posted on this page. Anything selling itself as $VECTOR before that announcement is not ours."],
+        ["How much does it cost to launch a token?","Launching on Vector Pad is free — the Standard tier carries no platform fee. You pay the Solana network fee for creation and the curve's trading fees as trades happen, and both are shown in your wallet before you sign anything. A Featured tier with front-page placement is planned; its price is still TBA and will be published before it opens."],
+        ["How do I launch my own token?","When the board opens: pick a name, ticker and image, set your supply and curve options, and confirm in your wallet. Your token is trading on its curve within minutes. Until the board opens, the launches page shows exactly which slots exist and what state they are in — the first slot is $VECTOR itself."],
+        ["How does Vector Pad keep launches safe?","By removing the usual exit routes. Mint and freeze authority are renounced at creation, so supply cannot change and wallets cannot be frozen. There is no presale allocation to dump. And when a launch graduates to Raydium, its liquidity locks automatically — the creator cannot pull the pool. Every one of those facts is checkable on-chain for any launch on the board."]
+      ];
+      var faqList = document.getElementById("faqList");
+      faqList.innerHTML = faqs.map(function(f, i){
+        return '<div class="fitem' + (i === 0 ? " open" : "") + '"><button class="fbtn" aria-expanded="' + (i === 0) + '"><span class="fq">' + f[0] + '</span><span class="fic">' + (i === 0 ? "−" : "+") + '</span></button><div class="fans"><p>' + f[1] + '</p></div></div>';
+      }).join("");
+      faqList.querySelectorAll(".fitem").forEach(function(item){
+        var btn = item.querySelector(".fbtn"), ans = item.querySelector(".fans"), ic = item.querySelector(".fic");
+        if (item.classList.contains("open")) ans.style.maxHeight = ans.scrollHeight + "px";
+        btn.addEventListener("click", function(){
+          var isOpen = item.classList.toggle("open");
+          btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+          ic.textContent = isOpen ? "−" : "+";
+          ans.style.maxHeight = isOpen ? ans.scrollHeight + "px" : "0px";
+        });
+      });
+
+      /* ---------- newsletter (no fake signup) ---------- */
+      document.getElementById("newsForm").addEventListener("submit", function(e){
+        e.preventDefault();
+        var msg = document.getElementById("newsMsg");
+        var email = document.getElementById("newsEmail").value.trim();
+        msg.classList.add("show");
+        if (!email || email.indexOf("@") === -1) {
+          msg.textContent = "Enter a valid email address first — the list opens when $VECTOR launches on pump.fun.";
+        } else {
+          msg.textContent = "Noted on this device only — subscriptions officially open when $VECTOR launches on pump.fun. This page is the source of truth until then.";
+        }
+      });
+
+      window.addEventListener("resize", function(){ bandUpdate(); });
+    })();
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+    /* ---------- hero coin: giant floating 3D coin (Three.js) ---------- */
+    (function(){
+      "use strict";
+      var canvas = document.getElementById("coin");
+      var hero = document.querySelector(".hero");
+      if (!canvas || !hero) return;
+      var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (typeof THREE === "undefined") { canvas.style.display = "none"; return; }
+
+      var renderer = null;
+      try {
+        renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true, powerPreference: "high-performance" });
+      } catch (e) { renderer = null; }
+      if (!renderer) { canvas.style.display = "none"; return; }
+      renderer.setClearColor(0x000000, 0);
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.12;
+
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+      camera.position.set(0, 0, 7.4);
+
+      /* ----- procedural studio environment: moving reflections on the metal ----- */
+      function makeEnvTexture(){
+        var c = document.createElement("canvas"); c.width = 1024; c.height = 512;
+        var g = c.getContext("2d");
+        var grad = g.createLinearGradient(0, 0, 0, 512);
+        grad.addColorStop(0, "#4a4a4a"); grad.addColorStop(0.45, "#101010"); grad.addColorStop(1, "#232323");
+        g.fillStyle = grad; g.fillRect(0, 0, 1024, 512);
+        g.globalCompositeOperation = "lighter";
+        function blob(x, y, r, rgb, a){
+          var rg = g.createRadialGradient(x, y, 0, x, y, r);
+          rg.addColorStop(0, "rgba(" + rgb + "," + a + ")");
+          rg.addColorStop(1, "rgba(" + rgb + ",0)");
+          g.fillStyle = rg; g.fillRect(x - r, y - r, r * 2, r * 2);
+        }
+        blob(215, 105, 235, "255,255,255", 0.95);   /* key softbox */
+        blob(815, 150, 265, "94,185,232", 0.90);      /* sky softbox */
+        blob(560, 430, 300, "170,215,245", 0.35);   /* cool floor bounce */
+        blob(90, 330, 150, "200,210,255", 0.30);    /* cool fill */
+        g.globalCompositeOperation = "source-over";
+        g.fillStyle = "rgba(255,255,255,0.85)";
+        g.fillRect(120, 40, 190, 26);               /* hard strip lights */
+        g.fillStyle = "rgba(110,190,240,0.8)";
+        g.fillRect(730, 60, 170, 22);
+        var tex = new THREE.CanvasTexture(c);
+        tex.encoding = THREE.sRGBEncoding;
+        return tex;
+      }
+      var pmrem = new THREE.PMREMGenerator(renderer);
+      pmrem.compileEquirectangularShader();
+      scene.environment = pmrem.fromEquirectangular(makeEnvTexture()).texture;
+
+      /* lights on top of the environment, so highlights sweep as the coin turns */
+      var key = new THREE.DirectionalLight(0xffffff, 0.85); key.position.set(-4, 5, 6); scene.add(key);
+      var rim = new THREE.DirectionalLight(0x7ccbf2, 1.1); rim.position.set(5, -2, -4); scene.add(rim);
+      var fill = new THREE.PointLight(0xbfd0ff, 0.35, 40); fill.position.set(-6, -3, 4); scene.add(fill);
+      scene.add(new THREE.AmbientLight(0x222222, 0.6));
+
+      /* ----- coin face texture: dark metal, Vector Pad mark engraved in the centre ----- */
+      function tinted(img, color){
+        var c = document.createElement("canvas");
+        c.width = img.naturalWidth || img.width; c.height = img.naturalHeight || img.height;
+        var g = c.getContext("2d");
+        g.drawImage(img, 0, 0);
+        g.globalCompositeOperation = "source-in";
+        g.fillStyle = color; g.fillRect(0, 0, c.width, c.height);
+        return c;
+      }
+      function makeFaceCanvas(logoImg){
+        var S = 1024, cx = S / 2, cy = S / 2;
+        var c = document.createElement("canvas"); c.width = S; c.height = S;
+        var g = c.getContext("2d");
+        var rg = g.createRadialGradient(cx, cy, S * 0.04, cx, cy, S * 0.52);
+        rg.addColorStop(0, "#333333"); rg.addColorStop(0.72, "#242424"); rg.addColorStop(1, "#161616");
+        g.fillStyle = rg;
+        g.beginPath(); g.arc(cx, cy, S / 2, 0, Math.PI * 2); g.fill();
+        /* faint brushed-metal rings */
+        for (var i = 0; i < 46; i++) {
+          g.beginPath();
+          g.arc(cx, cy, 30 + i * 10.6 + (i % 3), 0, Math.PI * 2);
+          g.strokeStyle = i % 2 ? "rgba(255,255,255,0.016)" : "rgba(0,0,0,0.05)";
+          g.lineWidth = 5; g.stroke();
+        }
+        function engRing(r, w){
+          g.lineWidth = w;
+          g.strokeStyle = "rgba(255,255,255,0.14)";
+          g.beginPath(); g.arc(cx, cy + 3.5, r, 0, Math.PI * 2); g.stroke();
+          g.strokeStyle = "rgba(0,0,0,0.62)";
+          g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.stroke();
+        }
+        engRing(S * 0.472, 5);
+        engRing(S * 0.335, 4);
+        /* beaded circle, each bead engraved */
+        var beads = 72, br = S * 0.405;
+        for (var b = 0; b < beads; b++) {
+          var a = (b / beads) * Math.PI * 2, bx = cx + Math.cos(a) * br, by = cy + Math.sin(a) * br;
+          g.fillStyle = "rgba(255,255,255,0.13)";
+          g.beginPath(); g.arc(bx, by + 2, 5.2, 0, Math.PI * 2); g.fill();
+          g.fillStyle = "rgba(0,0,0,0.55)";
+          g.beginPath(); g.arc(bx, by, 5.2, 0, Math.PI * 2); g.fill();
+        }
+        /* the mark, engraved: pale lip below, dark cut above */
+        var mw = S * 0.46;
+        if (logoImg) {
+          var iw = logoImg.naturalWidth || logoImg.width, ih = logoImg.naturalHeight || logoImg.height;
+          var mh = mw * (ih / Math.max(1, iw));
+          var dark = tinted(logoImg, "#060606"), lip = tinted(logoImg, "#8a8a8a");
+          g.globalAlpha = 0.30; g.drawImage(lip, cx - mw / 2, cy - mh / 2 - S * 0.045 + 5, mw, mh);
+          g.globalAlpha = 0.88; g.drawImage(dark, cx - mw / 2, cy - mh / 2 - S * 0.045, mw, mh);
+          g.globalAlpha = 1;
+        } else {
+          g.textAlign = "center"; g.textBaseline = "middle";
+          g.font = "600 330px Arial, sans-serif";
+          g.fillStyle = "rgba(255,255,255,0.13)"; g.fillText("V", cx, cy - S * 0.045 + 5);
+          g.fillStyle = "rgba(0,0,0,0.6)"; g.fillText("V", cx, cy - S * 0.045);
+        }
+        /* engraved word under the mark */
+        g.textAlign = "center"; g.textBaseline = "middle";
+        g.font = "500 40px 'Courier New', monospace";
+        try { g.letterSpacing = "14px"; } catch (e) {}
+        g.fillStyle = "rgba(255,255,255,0.13)"; g.fillText("VECTOR", cx, cy + S * 0.235 + 3);
+        g.fillStyle = "rgba(0,0,0,0.62)"; g.fillText("VECTOR", cx, cy + S * 0.235);
+        return c;
+      }
+
+      /* ----- reeded edge bump: fine vertical stripes around the rim ----- */
+      function makeReedTexture(){
+        var c = document.createElement("canvas"); c.width = 1024; c.height = 32;
+        var g = c.getContext("2d");
+        for (var x = 0; x < 1024; x += 8) {
+          g.fillStyle = "#8c8c8c"; g.fillRect(x, 0, 4, 32);
+          g.fillStyle = "#e8e8e8"; g.fillRect(x + 4, 0, 4, 32);
+        }
+        var tex = new THREE.CanvasTexture(c);
+        tex.wrapS = THREE.RepeatWrapping;
+        return tex;
+      }
+
+      var pivot = new THREE.Group(); scene.add(pivot);   /* mouse tilt + scroll zoom */
+      var spinner = new THREE.Group(); pivot.add(spinner); /* continuous spin */
+      var coin = null;
+
+      function buildCoin(logoImg){
+        var faceCanvas = makeFaceCanvas(logoImg);
+        var maxAniso = renderer.capabilities.getMaxAnisotropy();
+        var faceTexF = new THREE.CanvasTexture(faceCanvas);
+        faceTexF.encoding = THREE.sRGBEncoding; faceTexF.anisotropy = maxAniso;
+        var faceTexB = new THREE.CanvasTexture(faceCanvas);
+        faceTexB.encoding = THREE.sRGBEncoding; faceTexB.anisotropy = maxAniso;
+        faceTexB.wrapS = THREE.RepeatWrapping; faceTexB.repeat.x = -1; /* un-mirror the back face */
+
+        var skyMetal = new THREE.MeshStandardMaterial({
+          color: 0x5eb9e8, metalness: 1.0, roughness: 0.27, envMapIntensity: 1.25
+        });
+        var edgeMat = new THREE.MeshStandardMaterial({
+          color: 0x5eb9e8, metalness: 1.0, roughness: 0.30, envMapIntensity: 1.25,
+          bumpMap: makeReedTexture(), bumpScale: 0.6
+        });
+        var faceMatF = new THREE.MeshStandardMaterial({
+          map: faceTexF, metalness: 0.88, roughness: 0.36, envMapIntensity: 0.95
+        });
+        var faceMatB = new THREE.MeshStandardMaterial({
+          map: faceTexB, metalness: 0.88, roughness: 0.36, envMapIntensity: 0.95
+        });
+
+        var geo = new THREE.CylinderGeometry(2.2, 2.2, 0.34, 128, 1, false);
+        geo.rotateX(Math.PI / 2); /* faces point at the camera */
+        coin = new THREE.Mesh(geo, [edgeMat, faceMatF, faceMatB]);
+
+        var rimGeo = new THREE.TorusGeometry(2.13, 0.05, 20, 140);
+        var rimF = new THREE.Mesh(rimGeo, skyMetal); rimF.position.z = 0.17;
+        var rimB = new THREE.Mesh(rimGeo, skyMetal); rimB.position.z = -0.17;
+        var innerGeo = new THREE.TorusGeometry(1.47, 0.028, 16, 120);
+        var inF = new THREE.Mesh(innerGeo, skyMetal); inF.position.z = 0.172;
+        var inB = new THREE.Mesh(innerGeo, skyMetal); inB.position.z = -0.172;
+
+        var grp = new THREE.Group();
+        grp.add(coin); grp.add(rimF); grp.add(rimB); grp.add(inF); grp.add(inB);
+        spinner.add(grp);
+      }
+
+      /* ----- sizing: DPR capped, coin fitted to the hero ----- */
+      var baseScale = 1, baseY = 0.38;
+      function layout(){
+        var w = Math.max(1, canvas.clientWidth), h = Math.max(1, canvas.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 640 ? 1.5 : 2));
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        var viewH = 2 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+        var viewW = viewH * camera.aspect;
+        var fit = Math.min(viewH, viewW) / 4.55;
+        var portrait = w < 760;
+        baseScale = fit * (portrait ? 0.94 : 0.82);
+        pivot.position.x = portrait ? 0 : 1.02;
+        baseY = portrait ? 0.62 : 0.38;
+        pivot.position.y = baseY;
+      }
+      layout();
+      window.addEventListener("resize", layout);
+
+      /* ----- interaction state ----- */
+      var mTX = 0, mTY = 0, mX = 0, mY = 0;         /* mouse tilt, -1..1 */
+      hero.addEventListener("mousemove", function(e){
+        var r = hero.getBoundingClientRect();
+        if (r.width < 1 || r.height < 1) return;
+        mTX = ((e.clientX - r.left) / r.width) * 2 - 1;
+        mTY = ((e.clientY - r.top) / r.height) * 2 - 1;
+      });
+      hero.addEventListener("mouseleave", function(){ mTX = 0; mTY = 0; });
+
+      var spin = 0.7, progS = 0, running = true, heroVisible = true, lastT = performance.now();
+      function drawFrame(now){
+        var dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+        spin += dt * 0.45;                                            /* slow continuous spin */
+        mX += (mTX - mX) * 0.045; mY += (mTY - mY) * 0.045;
+        var pTarget = Math.min(1, Math.max(0, (window.scrollY || 0) / Math.max(1, hero.offsetHeight)));
+        progS += (pTarget - progS) * 0.07;
+
+        spinner.rotation.y = spin + progS * Math.PI * 1.6;            /* scroll spins it further */
+        pivot.rotation.x = 0.34 + mY * 0.30;                          /* tilt follows the mouse */
+        pivot.rotation.y = mX * 0.38;
+        pivot.rotation.z = -0.05 + mX * 0.06;
+        var s = baseScale * (1 + progS * 0.13);                       /* slight zoom on scroll */
+        pivot.scale.set(s, s, s);
+        pivot.position.y = baseY + Math.sin(now * 0.0009) * 0.07 + progS * 0.3; /* float + scroll parallax */
+        renderer.render(scene, camera);
+      }
+
+      function start(){
+        layout();
+        if (reduced) {
+          /* one static frame: coin posed, no motion */
+          spinner.rotation.y = 0.7;
+          pivot.rotation.x = 0.34;
+          pivot.scale.set(baseScale, baseScale, baseScale);
+          renderer.render(scene, camera);
+          window.addEventListener("resize", function(){
+            layout();
+            pivot.scale.set(baseScale, baseScale, baseScale);
+            renderer.render(scene, camera);
+          });
+          return;
+        }
+        if ("IntersectionObserver" in window) {
+          new IntersectionObserver(function(en){ heroVisible = en[0].isIntersecting; }, { threshold: 0 }).observe(hero);
+        }
+        document.addEventListener("visibilitychange", function(){ running = !document.hidden; lastT = performance.now(); });
+        (function loop(now){
+          requestAnimationFrame(loop);
+          if (!running || !heroVisible) { lastT = performance.now(); return; }
+          drawFrame(now || performance.now());
+        })(performance.now());
+      }
+
+      var logoImg = new Image();
+      logoImg.onload = function(){ buildCoin(logoImg); start(); };
+      logoImg.onerror = function(){ buildCoin(null); start(); };
+      logoImg.src = "assets/logo-sky.png";
+    })();
+    </script>
+  </body>
+</html>
