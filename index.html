@@ -6,7 +6,7 @@
     <meta name="color-scheme" content="dark" />
     <link rel="icon" href="assets/logo-sky.png" />
     <title>Vector Pad — Fair Token Launchpad on Solana</title>
-    <meta name="description" content="Vector Pad is the fair launchpad on Solana. Launch a token in minutes, trade it instantly, and graduate to Raydium with liquidity locked. $VECTOR is live on pump.fun." />
+    <meta name="description" content="Vector Pad is the fair launchpad on Solana. Launch a token in minutes, trade it instantly, and graduate to Raydium with liquidity locked. $VECTOR — the first launch — is coming soon." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -154,9 +154,7 @@
         .ca-box{max-width:100%}
       }
       .ca-grid>*{min-width:0}
-      #xCaption{overflow-wrap:anywhere;word-break:break-word}
       .cbody p,.fans p{overflow-wrap:anywhere}
-      #ca h2{overflow-wrap:break-word}
       @media(max-width:900px){.ca-grid{grid-template-columns:1fr!important}}
       .curve{margin-top:34px}
       .curve-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:13.5px;color:var(--grey);margin-bottom:10px}
@@ -467,10 +465,10 @@
             <h1 class="rv in">Launch tokens<br />at <span class="sky">vector</span><br />speed.</h1>
             <div class="hero-side rv in rv-d2">
               <p>Vector Pad is the fair launchpad on Solana. Create a token in minutes, let the market price it on an open bonding curve, and graduate straight to Raydium — no presale, no insider allocation, no hidden fees.</p>
-              <p>The first launch is ours: <b style="color:#fff;font-weight:600">$VECTOR</b> — now <b style="color:var(--green);font-weight:600">LIVE</b> on pump.fun.</p>
+              <p>The first launch is ours: <b style="color:#fff;font-weight:600">$VECTOR</b> — <b style="color:var(--sky);font-weight:600">COMING SOON</b>.</p>
               <div class="ca-box hero-ca">
-                <div class="ca-label"><span>$VECTOR · Live on pump.fun</span><b>● LIVE</b></div>
-                <p style="color:var(--grey2);font-size:14.5px;line-height:1.6;margin-top:10px">Trading now on its public curve. <a href="#ca" style="color:#fff;text-decoration:underline;text-underline-offset:3px">Verify the official contract address →</a></p>
+                <div class="ca-label"><span>$VECTOR · First launch</span><b style="color:var(--sky)">● SOON</b></div>
+                <p style="color:var(--grey2);font-size:14.5px;line-height:1.6;margin-top:10px">A new token is being prepared as the platform's first launch. Watch this page and the launches board for the opening.</p>
               </div>
               <div class="hero-cta">
                 <a class="btn btn-outline" href="#launches"><span class="sq"></span>See launches<span class="arr">→</span></a>
@@ -483,43 +481,6 @@
         <div class="marquee" aria-hidden="true">
           <div class="marquee-track" id="mqTrack"></div>
         </div>
-      </section>
-
-      <!-- OFFICIAL CA + X CAPTION -->
-      <section id="ca" style="padding:72px 0 84px;border-top:1px solid var(--border);background:#0E0E0E">
-        <div class="wrap">
-          <div style="display:grid;grid-template-columns:1.1fr .9fr;gap:28px" class="ca-grid">
-            <div>
-              <p class="mono" style="font-size:12px;letter-spacing:.12em;color:var(--green);text-transform:uppercase">● $VECTOR — Live on pump.fun</p>
-              <h2 style="font-family:var(--tight);font-weight:400;font-size:clamp(28px,3.4vw,44px);line-height:1.12;letter-spacing:-.03em;margin-top:14px">Official contract address.<br /><span class="sky">Verify before you buy.</span></h2>
-              <div class="ca-box" style="margin-top:26px">
-                <div class="ca-label"><span>Contract Address (CA) · Solana</span><b>● LIVE</b></div>
-                <div class="ca-addr" id="officialCaAddr" style="font-size:15px">86uJ5yrXfcVFsap5L8DGnPonAyZ7qt9Ev34ApG7Dpump</div>
-                <div class="ca-actions">
-                  <button type="button" data-copy-ca>Copy CA</button>
-                  <a href="https://pump.fun/coin/86uJ5yrXfcVFsap5L8DGnPonAyZ7qt9Ev34ApG7Dpump" target="_blank" rel="noopener">Trade on pump.fun →</a>
-                </div>
-                <p style="color:var(--grey);font-size:14px;line-height:1.6;margin-top:14px">This page is the source of truth for $VECTOR. If the address does not match exactly — <span class="mono" style="color:#fff">…pump</span> at the end — it is not ours.</p>
-              </div>
-            </div>
-            <div style="background:var(--panel);border:1px solid var(--border);padding:26px">
-              <p class="mono" style="font-size:12px;letter-spacing:.12em;color:var(--grey);text-transform:uppercase">Ready to post on X</p>
-              <p id="xCaption" style="white-space:pre-line;color:#EDEDED;font-size:15.5px;line-height:1.7;margin-top:16px">$VECTOR is LIVE on pump.fun.
-
-Vector Pad — the fair launchpad on Solana. Launch a coin in one click, pair it with tokenized stocks, ride the curve to Raydium. One app. Every coin.
-
-App: https://app.vectorlaunchpad.xyz
-
-Verify the official CA on the Vector Pad site before you buy — any other address is not $VECTOR.</p>
-              <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
-                <button type="button" id="copyCaptionBtn" style="flex:1;min-width:140px;min-height:44px;border:1px solid var(--border2);color:#fff;background:#1E1E1E;font-weight:500">Copy caption</button>
-                <a id="postOnX" href="https://twitter.com/intent/tweet?text=%24VECTOR%20is%20LIVE%20on%20pump.fun.%0A%0AVector%20Pad%20%E2%80%94%20the%20fair%20launchpad%20on%20Solana.%20One%20app.%20Every%20coin.%0A%0AApp%3A%20https%3A%2F%2Fapp.vectorlaunchpad.xyz" target="_blank" rel="noopener" style="flex:1;min-width:140px;display:inline-flex;align-items:center;justify-content:center;min-height:44px;background:var(--sky);color:#000;font-weight:600">Post on X →</a>
-              </div>
-              <p id="copyMsg" role="status" style="color:var(--grey);font-size:13.5px;margin-top:12px;min-height:20px"></p>
-            </div>
-          </div>
-        </div>
-        <style>@media(max-width:900px){.ca-grid{grid-template-columns:1fr!important}}</style>
       </section>
 
       <!-- WHY -->
@@ -561,24 +522,24 @@ Verify the official CA on the Vector Pad site before you buy — any other addre
                       <div class="lp-logo"><img src="assets/logo-sky.png" alt="" /></div>
                       <div>
                         <div class="lp-name">$VECTOR</div>
-                        <div class="lp-sub">VECTORS · SOLANA · PUMP.FUN</div>
+                        <div class="lp-sub">VECTOR · SOLANA · UPCOMING</div>
                       </div>
-                      <span class="badge live" style="margin-left:auto"><i></i>LIVE ON PUMP.FUN</span>
+                      <span class="badge" style="margin-left:auto"><i></i>COMING SOON</span>
                     </div>
                     <div class="curve">
-                      <div class="curve-row"><span>BONDING CURVE</span><span>LIVE · TRADING NOW</span></div>
+                      <div class="curve-row"><span>BONDING CURVE</span><span>COMING SOON · NOT OPEN YET</span></div>
                       <div class="curve-bar"><div class="curve-fill"></div></div>
                     </div>
                     <div class="ca-box" style="margin-top:22px">
-                      <div class="ca-label"><span>$VECTOR · Live on pump.fun</span><b>● LIVE</b></div>
-                      <p style="color:var(--grey2);font-size:14.5px;line-height:1.6;margin-top:10px">Trading now on its public curve. <a href="#ca" style="color:#fff;text-decoration:underline;text-underline-offset:3px">Verify the official contract address →</a></p>
+                      <div class="ca-label"><span>$VECTOR · First launch</span><b style="color:var(--sky)">● SOON</b></div>
+                      <p style="color:var(--grey2);font-size:14.5px;line-height:1.6;margin-top:10px">A new token is being prepared. The curve opens when the launch goes live — watch the board for the start.</p>
                     </div>
                     <div class="lp-stats">
                       <div class="lp-stat"><div class="k">Presale</div><div class="v">None</div></div>
                       <div class="lp-stat"><div class="k">Team allocation</div><div class="v">0%</div></div>
                       <div class="lp-stat"><div class="k">Liquidity at graduation</div><div class="v">Locked</div></div>
                     </div>
-                    <p class="lp-foot">$VECTOR is live on pump.fun with a fixed supply and a public curve — always verify the contract address in the official CA section before you buy. Any other address calling itself $VECTOR is not ours.</p>
+                    <p class="lp-foot">$VECTOR is the first launch on Vector Pad — a new token with a fixed supply and a public curve, following exactly the same rules as every launch that comes after it. No presale, no team allocation.</p>
                   </div>
                   <div class="pv" data-pv="curve" hidden>
                     <p style="color:var(--grey2);line-height:1.7;font-size:16px">Every Vector Pad launch trades on a public bonding curve from the first second. Price is set by buys and sells on the curve — not by a presale round, not by a whitelist. When the curve completes, the token graduates to Raydium and trading continues there.</p>
@@ -807,7 +768,7 @@ $ <span class="caret"></span></div>
         </div>
         <div class="news">
           <div>
-            <h3>$VECTOR is live on pump.fun.</h3>
+            <h3>$VECTOR is coming soon.</h3>
             <p>Launch announcements and new board openings. No spam, no shilling other people's tokens.</p>
           </div>
           <form class="news-form" id="newsForm" novalidate>
@@ -1026,7 +987,7 @@ $ <span class="caret"></span></div>
         ["bolt","Instant Liquidity","02","Your token trades from the first second on its curve, and graduates straight to a Raydium pool the moment the curve completes. No waiting rooms, no manual pool setup."],
         ["shield","No Presale","03","There is no allocation to sell before launch, so there is nothing to dump on the people who arrive at launch. Supply is fixed at creation and visible to everyone."],
         ["lock","Locked Liquidity","04","When a launch graduates, its liquidity locks automatically. The pool the community built cannot be pulled by the creator — that rule is enforced by the platform, not by trust."],
-        ["people","Community First","05","Creators earn from curve fees, not from insider bags. The launches board is ordered by the market, and the first launch on it — $VECTOR — follows exactly the same rules as yours."]
+        ["people","Community First","05","Creators earn from curve fees, not from insider bags. The launches board is ordered by the market, and the first launch on it — $VECTOR — will follow exactly the same rules as yours."]
       ];
       document.getElementById("pgrid").innerHTML = principles.map(function(p, i){
         return '<article class="pcard rv rv-d' + (i+1) + '">' + icons[p[0]] + '<h3>' + p[1] + '</h3><div class="num">/ ' + p[2] + '</div><p>' + p[3] + '</p></article>';
@@ -1035,14 +996,14 @@ $ <span class="caret"></span></div>
 
       /* ---------- catalog ---------- */
       var cards = [
-        { tick:"$VECTOR", sub:"Live · pump.fun", pat:"p-dots", flag:"Live now", cats:"live community", title:"$VECTOR — live on pump.fun", body:"Vector Pad's own token, live now: fixed supply, open curve, no presale. Verify the contract address in the official CA section before you buy — any other address is not ours.", link:"See the official CA", href:"#ca", logo:true },
+        { tick:"$VECTOR", sub:"Coming soon", pat:"p-dots", flag:"Coming soon", flagGhost:true, cats:"upcoming community", title:"$VECTOR — coming soon", body:"Vector Pad's own token and the platform's first launch: fixed supply, open curve, no presale. A new token is being prepared — launch details land here when the curve is ready to open.", link:"How to launch", href:"#tiers", logo:true },
         { tick:"SLOT 01", sub:"Reserved · Upcoming", pat:"p-lines", flag:"Open slot", flagGhost:true, cats:"upcoming", title:"Your token here", body:"This board slot is empty on purpose. The first community launches take these places — created on Vector Pad, traded on the curve, graduated to Raydium.", link:"How to launch", href:"#tiers" },
         { tick:"SLOT 02", sub:"Reserved · Upcoming", pat:"p-grid", flag:"Open slot", flagGhost:true, cats:"upcoming", title:"Your token here", body:"Bring a name, a ticker and an image. Vector Pad handles the mint, the curve and the graduation — you handle the community.", link:"How to launch", href:"#tiers" },
-        { tick:"LIVE", sub:"$VECTOR · Live now", pat:"p-ring", flag:"Live", cats:"live", title:"$VECTOR is trading live", body:"The first live launch is $VECTOR itself — trading now on pump.fun. More live launches appear here as their curves open.", link:"See the official CA", href:"#ca" },
+        { tick:"SOON", sub:"$VECTOR · Upcoming", pat:"p-ring", flag:"Awaiting", flagGhost:true, cats:"upcoming", title:"$VECTOR opens first", body:"The first curve to open on Vector Pad will be $VECTOR itself — a new token now in preparation. More launches appear here as their curves open.", link:"How it works", href:"#why" },
         { tick:"GRAD", sub:"First graduate · TBD", pat:"p-lines", flag:"Awaiting", flagGhost:true, cats:"graduated", title:"The first graduate", body:"Graduation means the curve completed and the token moved to Raydium with liquidity locked. This slot belongs to whichever launch gets there first.", link:"How graduation works", href:"#why" },
-        { tick:"COMM", sub:"Community pick", pat:"p-grid", flag:"Reserved", flagGhost:true, cats:"community", title:"A launch the community picks", body:"One board slot is reserved for a community-chosen launch. $VECTOR is already live on pump.fun — details for the community pick land next.", link:"See the official CA", href:"#ca" },
+        { tick:"COMM", sub:"Community pick", pat:"p-grid", flag:"Reserved", flagGhost:true, cats:"community", title:"A launch the community picks", body:"One board slot is reserved for a community-chosen launch. $VECTOR — the platform's first launch — is coming soon; details for the community pick land next.", link:"Why Vector Pad", href:"#why" },
         { tick:"SLOT 03", sub:"Reserved · Upcoming", pat:"p-ring", flag:"Open slot", flagGhost:true, cats:"upcoming community", title:"Your token here", body:"Fair rules apply to every slot on this board: renounced authorities, fixed supply, locked liquidity at graduation. No slot can buy its way around them.", link:"Read the rules", href:"#why" },
-        { tick:"LIVE", sub:"Board is live", pat:"p-dots", flag:"Live", flagGhost:true, cats:"live", title:"Board is live — $VECTOR first", body:"The board is live with $VECTOR on pump.fun. The official contract address is listed in the CA section of this page — if a token uses a different address, it is not $VECTOR.", link:"Why Vector Pad", href:"#why" }
+        { tick:"SOON", sub:"Board · Opening soon", pat:"p-dots", flag:"Soon", flagGhost:true, cats:"upcoming", title:"Board opens with $VECTOR first", body:"The launches board opens with $VECTOR as its first listing. New launches appear here as they are created on Vector Pad.", link:"Why Vector Pad", href:"#why" }
       ];
       document.getElementById("cgrid").innerHTML = cards.map(function(c){
         var posterInner = (c.logo ? '<div><img src="assets/logo-sky.png" alt="" /><div class="tick">' + c.tick + '<small>' + c.sub + '</small></div></div>'
@@ -1078,9 +1039,9 @@ $ <span class="caret"></span></div>
       var faqs = [
         ["What is Vector Pad?","Vector Pad is a token launchpad on Solana. You create a token with a fixed supply, it trades immediately on a public bonding curve, and when the curve completes it graduates to Raydium with its liquidity locked. The whole flow — creation, curve, graduation — follows one fixed rule set that no launch can opt out of."],
         ["Why Solana?","Speed and cost. Solana settles in fractions of a second and a launch costs a fraction of a cent in network fees, which is what makes instant, open-to-everyone curves practical. Vector Pad uses standard Solana tooling — SPL / Token-2022 tokens, Raydium pools and Jupiter routing — so everything is verifiable with the explorers and tools you already know."],
-        ["What is the $VECTOR token, and what is its contract address?","$VECTOR is Vector Pad's own token and the platform's first launch — live now on pump.fun under the same rules as every other launch here: fixed supply, no presale, no team allocation. The official contract address is listed in the Official CA section of this page — always verify it there before you buy. Anything using a different address is not ours."],
+        ["What is the $VECTOR token?","$VECTOR is Vector Pad's own token and the platform's first launch — a new token now in preparation, coming soon under the same rules as every other launch here: fixed supply, no presale, no team allocation. Launch details will be published on this page when it opens."],
         ["How much does it cost to launch a token?","Launching on Vector Pad is free — the Standard tier carries no platform fee. You pay the Solana network fee for creation and the curve's trading fees as trades happen, and both are shown in your wallet before you sign anything. A Featured tier with front-page placement is planned; its price is still TBA and will be published before it opens."],
-        ["How do I launch my own token?","Pick a name, ticker and image in the Vector Pad app, set your supply and curve options, and confirm in your wallet. Your token is trading on its curve within minutes. The first launch — $VECTOR — is already live on pump.fun; verify its contract address in the official CA section before you buy."],
+        ["How do I launch my own token?","Pick a name, ticker and image in the Vector Pad app, set your supply and curve options, and confirm in your wallet. Your token is trading on its curve within minutes."],
         ["How does Vector Pad keep launches safe?","By removing the usual exit routes. Mint and freeze authority are renounced at creation, so supply cannot change and wallets cannot be frozen. There is no presale allocation to dump. And when a launch graduates to Raydium, its liquidity locks automatically — the creator cannot pull the pool. Every one of those facts is checkable on-chain for any launch on the board."]
       ];
       var faqList = document.getElementById("faqList");
@@ -1098,31 +1059,6 @@ $ <span class="caret"></span></div>
         });
       });
 
-      /* ---------- copy CA + X caption ---------- */
-      var officialCaEl = document.getElementById("officialCaAddr");
-      function copyText(txt, btn, doneLabel){
-        var old = btn ? btn.textContent : "";
-        function done(){
-          if (btn) { btn.textContent = doneLabel || "Copied ✓"; setTimeout(function(){ btn.textContent = old; }, 1800); }
-          var m = document.getElementById("copyMsg"); if (m) m.textContent = "Copied — ready to paste.";
-        }
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(txt).then(done).catch(function(){ fallback(); });
-        } else { fallback(); }
-        function fallback(){
-          var ta = document.createElement("textarea"); ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
-          document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); } catch(e) {}
-          document.body.removeChild(ta); done();
-        }
-      }
-      document.querySelectorAll("[data-copy-ca]").forEach(function(btn){
-        btn.addEventListener("click", function(){ if (officialCaEl) copyText(officialCaEl.textContent.trim(), btn, "CA copied ✓"); });
-      });
-      var capBtn = document.getElementById("copyCaptionBtn");
-      if (capBtn) capBtn.addEventListener("click", function(){
-        var cap = document.getElementById("xCaption"); copyText(cap ? cap.textContent.trim() : "", capBtn, "Caption copied ✓");
-      });
-
       /* ---------- newsletter (no fake signup) ---------- */
       document.getElementById("newsForm").addEventListener("submit", function(e){
         e.preventDefault();
@@ -1130,9 +1066,9 @@ $ <span class="caret"></span></div>
         var email = document.getElementById("newsEmail").value.trim();
         msg.classList.add("show");
         if (!email || email.indexOf("@") === -1) {
-          msg.textContent = "Enter a valid email address first — $VECTOR is live on pump.fun.";
+          msg.textContent = "Enter a valid email address first — $VECTOR is coming soon.";
         } else {
-          msg.textContent = "Noted on this device only — $VECTOR is live on pump.fun. Verify the contract address in the official CA section of this page before you buy.";
+          msg.textContent = "Noted on this device only — $VECTOR is coming soon. Launch announcements land here when it opens.";
         }
       });
 
