@@ -1811,44 +1811,58 @@
 #appView .foot-soon{font-size:13px;flex-wrap:wrap;gap:5px}
 #appView .foot-soon em{font-size:9.5px;padding:1px 6px}
 #appView .foot-mark{padding-top:20px}}
-/* ---------- Mobile tab bar — BOTTOM bar, last row of the shell
-         (27 Nov 2026, seventh model) ----------
-         The user asked for the tabs back at the bottom ("jangan di
-         atas, taro bawah"), so the bar returns to the shell's bottom
-         edge — but as a plain in-flow flex row, not a fixed overlay:
-         it is the shell's LAST row (its natural DOM position after
-         .app-scroll, no order trick), flex:none, and the content
-         scrolls in the flex:1 area above it, so the bar can never
-         cover content and content can never scroll under it. The
-         shell itself is pinned to the visible viewport by
-         fitAppShell() (visualViewport height/offsetTop), so this
-         bottom row sits on the visible bottom edge rather than on
-         the taller layout viewport that sank the earlier fixed and
-         dock models under the host app's chrome. Five equal cells,
-         the active cell filled with the soft accent tint, and Launch
-         as its own solid dark cell — icon over label. Bottom padding
-         includes the safe-area inset so the labels clear a home
-         indicator. Shown only where the top nav is hidden
-         (<=1200px); the buttons reuse .nav-btn + [data-nav], so
-         showView() syncs their active state with the other navs.
-         The toast rises from just above this bar instead of from
-         under it. */
+/* ---------- Mobile tab bar — floating capsule dock, expanding
+         active pill (27 Nov 2026, eighth model — "model terbaru") ----
+         The user asked for yet another model, the newest style: a
+         dark floating capsule dock in the current app idiom — the
+         ACTIVE tab expands into a mint pill carrying icon + label
+         side by side, the other tabs collapse to icon-only circles,
+         and Launch is a round teal-gradient button in the middle
+         whose label never shows (aria-label carries the name).
+         Placement keeps the seventh model's fix, because that part
+         finally worked: the dock is NOT fixed or absolute — it is
+         the shell's LAST in-flow row (its natural DOM position after
+         .app-scroll), flex:none, with the content scrolling in the
+         flex:1 area above it, on a shell pinned to the visible
+         viewport by fitAppShell() (visualViewport height/offsetTop).
+         The capsule look comes from margins + radius on that in-flow
+         row, not from floating positioning, so the host app's bottom
+         chrome has nothing to cover: the whole capsule, labels
+         included, always sits above the shell's bottom edge, with
+         its bottom margin (plus the safe-area inset) as clearance.
+         Shown only where the top nav is hidden (<=1200px); the
+         buttons reuse .nav-btn + [data-nav], so showView() syncs
+         their active state with the other navs. The toast rises
+         from just above the capsule instead of from under it. */
 #appView .tabbar{display:none}
-@media (max-width:1200px){#appView .tabbar{display:flex;flex:none;width:100%;gap:4px;background:var(--surface);border-top:1px solid var(--border);padding:6px 6px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -10px 28px -18px rgba(20,24,26,.35)}
-#appView .tabbar .tab-btn{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:0;border-radius:14px;color:var(--muted);font-size:11px;font-weight:600;line-height:1.15;padding:7px 2px 6px;min-height:0;-webkit-tap-highlight-color:transparent;transition:background .15s ease,color .15s ease}
-#appView .tabbar .tab-btn .tab-slot{display:inline-flex;align-items:center;justify-content:center;height:25px}
-#appView .tabbar .tab-btn:active{background:var(--surface-2)}
-#appView .tabbar .tab-btn.active{background:var(--accent-soft);color:var(--accent);font-weight:700}
-#appView .tabbar .tab-launch{background:var(--text);color:var(--bg)}
-#appView .tabbar .tab-launch:active{background:var(--text);opacity:.85}
-#appView .tabbar .tab-launch.active{background:var(--accent);color:#fff}
-#appView .toast{bottom:calc(84px + env(safe-area-inset-bottom));top:auto}
+@media (max-width:1200px){#appView .tabbar{display:flex;flex:none;align-items:center;justify-content:space-between;gap:4px;margin:0 14px calc(10px + env(safe-area-inset-bottom));padding:6px;height:62px;background:#0c1a17;border:1px solid rgba(164,223,211,.20);border-radius:999px;box-shadow:0 22px 44px -18px rgba(2,22,22,.55),inset 0 1px rgba(251,250,246,.10)}
+#appView .tabbar .tab-btn{flex:none;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:0;height:48px;min-width:46px;padding:0 11px;background:none;border:0;border-radius:999px;color:#a9c4b9;font-size:12.5px;font-weight:700;line-height:1;min-height:0;-webkit-tap-highlight-color:transparent;transition:background .25s ease,color .25s ease}
+#appView .tabbar .tab-btn .tab-slot{display:inline-flex;align-items:center;justify-content:center;flex:none}
+#appView .tabbar .tab-btn .tab-slot svg{width:22px;height:22px}
+#appView .tabbar .tab-btn>span:not(.tab-slot){display:inline-block;max-width:0;opacity:0;overflow:hidden;white-space:nowrap;transition:max-width .3s var(--ease),opacity .2s ease,margin .3s var(--ease)}
+#appView .tabbar .tab-btn:active{background:rgba(251,250,246,.10)}
+#appView .tabbar .tab-btn.active{background:#2fe0c0;color:#052e28}
+#appView .tabbar .tab-btn.active>span:not(.tab-slot){max-width:76px;opacity:1;margin-left:7px}
+#appView .tabbar .tab-launch{width:48px;min-width:48px;padding:0;border-radius:50%;background:linear-gradient(135deg,#2fe0c0,#0b6e63);color:#fff;box-shadow:0 10px 22px -8px rgba(11,110,99,.8)}
+#appView .tabbar .tab-launch .tab-slot svg{width:24px;height:24px}
+#appView .tabbar .tab-launch>span:not(.tab-slot){display:none}
+#appView .tabbar .tab-launch:active{opacity:.85}
+#appView .tabbar .tab-launch.active{background:linear-gradient(135deg,#2fe0c0,#0b6e63);color:#fff;box-shadow:0 0 0 2px #0c1a17,0 0 0 4.5px #2fe0c0}
+#appView .toast{bottom:calc(92px + env(safe-area-inset-bottom));top:auto}
 #appView footer.site{padding-bottom:32px}
 /* Anything scrolled into view inside .app-scroll (tab jumps, focus,
            error-card CTAs) must land clear of the covered bottom strip. */
 #appView .app-scroll{scroll-padding-bottom:24px}
 #appView *{scroll-margin-bottom:24px}
 #appView .empty .btn{scroll-margin-bottom:40px}}
+/* Narrow phones: shrink the capsule's cells so the expanded active
+   pill + three icon buttons + the Launch circle still fit inside it. */
+@media (max-width:380px){#appView .tabbar{margin:0 10px calc(10px + env(safe-area-inset-bottom));padding:5px;height:58px}
+#appView .tabbar .tab-btn{height:44px;min-width:42px;padding:0 9px;font-size:12px}
+#appView .tabbar .tab-btn .tab-slot svg{width:20px;height:20px}
+#appView .tabbar .tab-btn.active>span:not(.tab-slot){margin-left:6px}
+#appView .tabbar .tab-launch{width:44px;min-width:44px}
+#appView .tabbar .tab-launch .tab-slot svg{width:22px;height:22px}}
 /* Elysium build, phone widths: the header row (brand, menu, search,
          network toggle, wallet) must fit without clipping the Connect
          button, so the toggle and wallet button run tighter. */
@@ -3855,7 +3869,7 @@ $ <span class="caret"></span></div>
 
      </div><!-- /.app-scroll -->
 
-    <!-- Mobile tab bar (shown <=1200px; last in-flow row of the shell — a bottom bar) -->
+    <!-- Mobile tab bar (shown <=1200px; last in-flow row of the shell — a floating capsule dock at the bottom: active tab expands into an icon+label pill, Launch is the round gradient button) -->
     <nav class="tabbar" aria-label="Mobile">
       <button type="button" class="nav-btn tab-btn active" data-nav="explore">
         <span class="tab-slot"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M15.2 8.8l-1.9 4.5-4.5 1.9 1.9-4.5Z"/><circle cx="12" cy="12" r=".6" fill="currentColor" stroke="none"/></svg></span>
