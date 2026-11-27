@@ -227,6 +227,13 @@
       #landingView .lp-sub{color:var(--muted-c);font-size:13px;font-family:var(--mono);margin-top:2px}
       #landingView .badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:12.5px;font-family:var(--mono);color:var(--body-c);background:#fff}
       #landingView .badge i{width:7px;height:7px;border-radius:50%;background:var(--yellow);flex:none}
+      #landingView .ca-chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:5px 5px 5px 12px;font-family:var(--mono);font-size:12px;color:var(--body-c);background:#fff;max-width:100%}
+      #landingView .ca-chip .ca-dot{width:7px;height:7px;border-radius:50%;background:var(--teal-bright);flex:none}
+      #landingView .ca-chip .ca-tag{color:var(--muted-c);font-size:11px;letter-spacing:.08em;flex:none}
+      #landingView .ca-chip .ca-addr{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px;color:var(--ink)}
+      #landingView .ca-chip .ca-copy{flex:none;border:0;cursor:pointer;background:var(--ink);color:#fff;border-radius:999px;padding:5px 12px;font-family:var(--mono);font-size:11.5px;line-height:1.4}
+      #landingView .ca-chip .ca-copy:hover{background:var(--teal)}
+      @media (max-width:560px){#landingView .ca-chip .ca-addr{max-width:118px}}
       #landingView .curve{margin-top:28px}
       #landingView .curve-row{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:12.5px;color:var(--muted-c);margin-bottom:10px;flex-wrap:wrap}
       #landingView .curve-bar{height:10px;border-radius:99px;background:#e9f2ee;position:relative;overflow:hidden}
@@ -2108,20 +2115,11 @@
                     <div class="lp-name">$VECTOR</div>
                     <div class="lp-sub">VECTOR · ELYSIUM · LIVE</div>
                   </div>
-                  <span class="badge" style="margin-left:auto"><i></i>LIVE</span>
+                  <span class="ca-chip" style="margin-left:auto"><i class="ca-dot"></i><span class="ca-tag">CA</span><span class="ca-addr" title="0x09df14bf69916d21864d5f4af75c9625303fc6cd">0x09df14bf69916d21864d5f4af75c9625303fc6cd</span><button type="button" class="ca-copy" data-copy-ca>Copy</button></span>
                 </div>
                 <div class="curve">
                   <div class="curve-row"><span>STATUS</span><span>LIVE ON ELYSIUM</span></div>
                   <div class="curve-bar"><div class="curve-fill"></div></div>
-                </div>
-                <div class="ca-box">
-                  <div class="ca-label"><span>$VECTOR · Contract address · Elysium</span><b>● LIVE</b></div>
-                  <p style="font-family:var(--mono);font-size:13.5px;word-break:break-all">0x09df14bf69916d21864d5f4af75c9625303fc6cd</p>
-                  <div class="ca-actions">
-                    <button type="button" class="btn btn-ink btn-small" data-copy-ca>Copy CA</button>
-                    <a class="btn btn-ghost-dark btn-small" href="https://elysium.kinetiq.xyz/explorer/address/0x09df14bf69916d21864d5f4af75c9625303fc6cd" target="_blank" rel="noopener">Elysium explorer →</a>
-                  </div>
-                  <p>Verify this address here before you trade — impostor tokens use the same name.</p>
                 </div>
                 <div class="lp-stats">
                   <div class="lp-stat"><div class="k">Presale</div><div class="v">None</div></div>
@@ -2184,15 +2182,6 @@
                         <div class="curve">
                           <div class="curve-row"><span>STATUS</span><span>LIVE ON ELYSIUM</span></div>
                           <div class="curve-bar"><div class="curve-fill" style="width:12%"></div></div>
-                        </div>
-                        <div class="ca-box">
-                          <div class="ca-label"><span>$VECTOR · Contract address · Elysium</span><b>● LIVE</b></div>
-                          <p style="font-family:var(--mono);font-size:13.5px;word-break:break-all">0x09df14bf69916d21864d5f4af75c9625303fc6cd</p>
-                          <div class="ca-actions">
-                            <button type="button" class="btn btn-ink btn-small" data-copy-ca>Copy CA</button>
-                            <a class="btn btn-ghost-dark btn-small" href="https://elysium.kinetiq.xyz/explorer/address/0x09df14bf69916d21864d5f4af75c9625303fc6cd" target="_blank" rel="noopener">Elysium explorer →</a>
-                          </div>
-                          <p>Verify this address here before you trade — impostor tokens use the same name.</p>
                         </div>
                         <div class="lp-stats">
                           <div class="lp-stat"><div class="k">Presale</div><div class="v">None</div></div>
@@ -4325,10 +4314,10 @@ $ <span class="caret"></span></div>
 
       /* ---------- catalog ---------- */
       var cards = [
-        { tick:"$VECTOR", sub:"Live · Elysium", pat:"p-dots", flag:"Live", flagGhost:false, cats:"live community", title:"$VECTOR — live on Elysium", body:"Vector Pad's own token and the platform's first launch: fixed supply, no presale. Official CA: 0x09df14bf69916d21864d5f4af75c9625303fc6cd — verify it here before trading anywhere.", link:"See the launch", href:"#top", logo:true },
+        { tick:"$VECTOR", sub:"Live · Elysium", pat:"p-dots", flag:"Live", flagGhost:false, cats:"live community", title:"$VECTOR — live on Elysium", body:"Vector Pad's own token and the platform's first launch: fixed supply, no presale. Verify the official contract address in the launch preview before trading anywhere.", link:"See the launch", href:"#top", logo:true },
         { tick:"SLOT 01", sub:"Reserved · Upcoming", pat:"p-lines", flag:"Open slot", flagGhost:true, cats:"upcoming", title:"Your token here", body:"This board slot is empty on purpose. The first community launches take these places — created on Vector Pad, traded on the curve, graduated to Uniswap.", link:"How to launch", href:"#tiers" },
         { tick:"SLOT 02", sub:"Reserved · Upcoming", pat:"p-grid", flag:"Open slot", flagGhost:true, cats:"upcoming", title:"Your token here", body:"Bring a name, a ticker and an image. Vector Pad handles the mint, the curve and the graduation — you handle the community.", link:"How to launch", href:"#tiers" },
-        { tick:"$VECTOR", sub:"$VECTOR · Live", pat:"p-ring", flag:"Live", flagGhost:false, cats:"live", title:"$VECTOR is live", body:"The first launch on Vector Pad is live on Elysium — $VECTOR, CA 0x09df14bf69916d21864d5f4af75c9625303fc6cd. More launches appear here as their curves open.", link:"How it works", href:"#why" },
+        { tick:"$VECTOR", sub:"$VECTOR · Live", pat:"p-ring", flag:"Live", flagGhost:false, cats:"live", title:"$VECTOR is live", body:"The first launch on Vector Pad is live on Elysium. More launches appear here as their curves open.", link:"How it works", href:"#why" },
         { tick:"GRAD", sub:"First graduate · TBD", pat:"p-lines", flag:"Awaiting", flagGhost:true, cats:"graduated", title:"The first graduate", body:"Graduation means the curve completed and the token moved to Uniswap on Elysium with liquidity locked. This slot belongs to whichever launch gets there first.", link:"How graduation works", href:"#why" },
         { tick:"COMM", sub:"Community pick", pat:"p-grid", flag:"Reserved", flagGhost:true, cats:"community", title:"A launch the community picks", body:"One board slot is reserved for a community-chosen launch. $VECTOR — the platform's first launch — is live on Elysium; details for the community pick land next.", link:"Why Vector Pad", href:"#why" },
         { tick:"SLOT 03", sub:"Reserved · Upcoming", pat:"p-ring", flag:"Open slot", flagGhost:true, cats:"upcoming community", title:"Your token here", body:"Fair rules apply to every slot on this board: renounced authorities, fixed supply, locked liquidity at graduation. No slot can buy its way around them.", link:"Read the rules", href:"#why" },
@@ -4507,7 +4496,7 @@ $ <span class="caret"></span></div>
       var faqs = [
         ["What is Vector Pad?","Vector Pad is a token launchpad on Elysium, Kinetiq's Layer-2 for Hyperliquid. You create an ERC-20 token with a fixed supply, it trades immediately on a public bonding curve, and when the curve completes it graduates to Uniswap on Elysium with its liquidity locked. The whole flow — creation, curve, graduation — follows one fixed rule set that no launch can opt out of."],
         ["Why Elysium?","Speed with EVM reach. Elysium is Kinetiq's Arbitrum Orbit Layer-2 for Hyperliquid — it settles to HyperEVM, targets ~100ms blocks, and charges gas in HYPE, bridged 1:1 from HyperEVM. Vector Pad uses standard EVM tooling — ERC-20 tokens, Uniswap pools and wallets like MetaMask or OKX Wallet on chain ID 99901 — so everything is verifiable on the Elysium explorer with the tools you already know."],
-        ["What is the $VECTOR token?","$VECTOR is Vector Pad's own token and the platform's first launch — live on Elysium under the same rules as every other launch here: fixed supply, no presale, no team allocation. Its official contract address is 0x09df14bf69916d21864d5f4af75c9625303fc6cd — verify any $VECTOR address against this one; impostors use the same name."],
+        ["What is the $VECTOR token?","$VECTOR is Vector Pad's own token and the platform's first launch — live on Elysium under the same rules as every other launch here: fixed supply, no presale, no team allocation. Its official contract address is shown in the “The first launch” card at the top of this page — any $VECTOR trading at a different address is not the official one; verify against that card before you trade."],
         ["How much does it cost to launch a token?","Launching on Vector Pad is free — the Standard tier carries no platform fee. You pay the Elysium network fee for creation, in HYPE, and the curve's trading fees as trades happen, and both are shown in your wallet before you sign anything. A Featured tier with front-page placement is planned; its price is still TBA and will be published before it opens."],
         ["How do I launch my own token?","Pick a name, ticker and image in the Vector Pad app, set your supply and curve options, and confirm in your wallet. Your token is trading on its curve within minutes."],
         ["How does Vector Pad keep launches safe?","By removing the usual exit routes. Minting is renounced at creation and the token contract has no freeze or blacklist functions, so supply cannot change and wallets cannot be frozen. There is no presale allocation to dump. And when a launch graduates to Uniswap, its liquidity locks automatically — the creator cannot pull the pool. Every one of those facts is checkable on-chain for any launch on the board."]
