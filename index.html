@@ -1677,6 +1677,33 @@
 #appView #wormhole-connect{min-height:240px}
 @media (max-width:860px){#appView .bridge-hero{grid-template-columns:1fr}
 #appView .globes{display:none}}
+/* ---------- Stake v3 (Kinetiq kHYPE route) + Bridge v2 (official Orbit inbox) ----------
+   Stake follows the Ascend model: HYPE is staked through Kinetiq into
+   kHYPE on HyperEVM — there is no Vector staking contract, but staking
+   itself now runs IN this page against Kinetiq's StakingManager
+   (stake() / queueWithdrawal(), selectors + min stake + paused flags
+   verified on-chain 2026-11-27, every write simulated first). Only the
+   final confirm/claim after the unstake queue stays on Kinetiq's
+   official page. Bridge deposits and withdrawal starts run in-app
+   against Elysium's official Orbit contracts (Inbox depositEth /
+   ArbSys withdrawEth), verified on-chain at runtime before sending. */
+#appView .action-btn[disabled]{opacity:.5;pointer-events:none}
+#appView .stake-card .preset-row button{flex:1}
+#appView a.action-btn{display:flex;align-items:center;justify-content:center;text-decoration:none;text-align:center}
+#appView a.action-btn.disabled{opacity:.45;pointer-events:none}
+#appView .route-steps{margin:14px 0 0;padding:0;list-style:none;display:grid;gap:10px;text-align:left}
+#appView .route-steps li{display:flex;gap:11px;font-size:14px;line-height:1.55;color:var(--stage-muted)}
+#appView .route-steps li b{color:var(--stage-text)}
+#appView .route-steps .rs-n{flex:none;width:22px;height:22px;border-radius:50%;background:var(--stage-panel-2);border:1px solid var(--stage-border);color:var(--stage-text);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+#appView .addr-chip{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;word-break:break-all}
+#appView .bridge-card .stake-amtfield{margin-top:14px}
+#appView .bridge-card .preset-row button{flex:none;padding:0 18px}
+#appView .verify-line{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--stage-muted);margin-top:12px;line-height:1.5}
+#appView .verify-line .vdot{width:8px;height:8px;border-radius:50%;background:var(--stage-faint);flex:none}
+#appView .verify-line.ok .vdot{background:var(--green)}
+#appView .verify-line.bad .vdot{background:var(--red,#e5484d)}
+#appView .stake-rate{display:flex;align-items:center;gap:9px;justify-content:center;margin:10px auto 0;font-size:13px;color:var(--stage-muted);font-weight:600;flex-wrap:wrap;text-align:center}
+#appView .stake-rate b{color:var(--stage-text)}
 /* ---------- Portfolio page (Ascend /me layout) ---------- */
 #appView .page-title.md{font-size:clamp(40px,4.6vw,48px)}
 #appView .pf-rule{height:2px;border-radius:2px;background:linear-gradient(90deg,#2fe0c0,rgba(46,224,192,0));margin:24px 0 40px}
@@ -3081,21 +3108,24 @@ $ <span class="caret"></span></div>
             <div class="hype-coin" role="img" aria-label="HYPE logo">
               <svg viewBox="0 0 144 144" fill="currentColor" aria-hidden="true"><path d="M144 71.6991C144 119.306 114.866 134.582 99.5156 120.98C86.8804 109.889 83.1211 86.4521 64.116 84.0456C39.9942 81.0113 37.9057 113.133 22.0334 113.133C3.5504 113.133 0 86.2428 0 72.4315C0 58.3063 3.96809 39.0542 19.736 39.0542C38.1146 39.0542 39.1588 66.5722 62.132 65.1073C85.0007 63.5379 85.4184 34.8689 100.247 22.6271C113.195 12.0593 144 23.4641 144 71.6991Z"/></svg>
             </div>
-            <div class="eyebrow">HYPE staking</div>
+            <div class="eyebrow">HYPE staking · via Kinetiq</div>
             <h1 class="asc-title title-grad" style="margin-top:12px">Stake HYPE</h1>
-            <p class="asc-sub">Stake HYPE on Elysium. Rewards accrue to your position.</p>
+            <p class="asc-sub">Stake HYPE right here through Kinetiq and hold kHYPE — the route Ascend's House is built on. Rewards accrue in the kHYPE exchange rate.</p>
             <div class="stake2-pills">
-              <span class="pill-status"><span class="dot"></span>Elysium</span>
-              <span class="pill-status">Opens at contract deployment</span>
+              <span class="pill-status"><span class="dot"></span>Kinetiq · HyperEVM</span>
+              <span class="pill-status">kHYPE · liquid staking</span>
             </div>
             <div class="stake-live">
               <span class="live-dot"></span>
               <span><b id="liveEpoch">Block —</b> · <span id="liveEpochSub">Reading the latest block from Elysium…</span></span>
               <span class="lc-bar"><i id="liveEpochBar" style="width:0%"></i></span>
             </div>
+            <div class="stake-rate">
+              <span>Live rate · <b>1 kHYPE = <span id="khypeRate">…</span> HYPE</b> · read from Kinetiq's StakingAccountant on HyperEVM</span>
+            </div>
           </div>
 
-          <div class="stake-card">
+                    <div class="stake-card">
             <div class="stake-tabs" role="tablist" aria-label="Stake actions">
               <button type="button" data-stab="stake" class="active" role="tab">Stake</button>
               <button type="button" data-stab="unstake" role="tab">Unstake</button>
@@ -3103,92 +3133,121 @@ $ <span class="caret"></span></div>
             </div>
 
             <div data-spane="stake">
+              <p class="note-line" style="margin:0">Stake HYPE <b>right here</b> through <b>Kinetiq</b> — the same route Ascend's House was built on (Ascend's own vault has ended and takes no new deposits, so this page does not send you there). Your wallet signs a <b>stake()</b> call straight to Kinetiq's StakingManager on HyperEVM and you receive <b>kHYPE</b> in the same wallet. There is no Vector Pad staking contract and Vector never touches the funds — every stake is simulated first, with a summary before you sign.</p>
               <div id="stakeDisconnected">
-                <div class="stake-amtfield" aria-hidden="true">
-                  <div class="saf-top"><span>Amount to stake</span><span class="num">Connect to stake</span></div>
+                <button type="button" class="action-btn asc-cta connect" id="stakeConnectBtn" style="margin-top:14px">Connect wallet to stake</button>
+              </div>
+              <div id="stakeConnected" style="display:none">
+                <div class="fee-rows" style="margin-top:16px;border-top:1px solid var(--stage-border)">
+                  <div class="fr"><span>HYPE on HyperEVM</span><span class="num" id="stakeHevBal">…</span></div>
+                  <div class="fr"><span>kHYPE balance</span><span class="num" id="stakeKhypeBal">…</span></div>
+                  <div class="fr"><span>kHYPE value</span><span class="num" id="stakeKhypeVal">…</span></div>
+                  <div class="fr"><span>Exchange rate</span><span class="num" id="stakeRateRow">…</span></div>
+                </div>
+                <div class="stake-amtfield" style="margin-top:16px">
+                  <div class="saf-top"><label for="stakeAmt">Amount to stake</label><span class="num" id="stakeAmtBal">Balance: …</span></div>
                   <div class="stake-amtrow">
-                    <input type="text" value="0.0" disabled tabindex="-1" />
+                    <input type="text" inputmode="decimal" id="stakeAmt" placeholder="0.0" aria-label="Amount of HYPE to stake" />
                     <span class="hype-chip"><span class="hc-ic"><svg viewBox="0 0 144 144" fill="currentColor" aria-hidden="true"><path d="M144 71.6991C144 119.306 114.866 134.582 99.5156 120.98C86.8804 109.889 83.1211 86.4521 64.116 84.0456C39.9942 81.0113 37.9057 113.133 22.0334 113.133C3.5504 113.133 0 86.2428 0 72.4315C0 58.3063 3.96809 39.0542 19.736 39.0542C38.1146 39.0542 39.1588 66.5722 62.132 65.1073C85.0007 63.5379 85.4184 34.8689 100.247 22.6271C113.195 12.0593 144 23.4641 144 71.6991Z"/></svg></span>HYPE</span>
                   </div>
                 </div>
-                <button type="button" class="action-btn asc-cta connect" id="stakeConnectBtn" style="margin-top:14px">Connect wallet to stake</button>
-              </div>
-
-              <div id="stakeConnected" style="display:none">
-                <div class="devnet-banner" style="margin-bottom:16px"><b>Staking opens at deployment</b> — contracts aren't live on Elysium yet, so this form sends nothing.</div>
-                <div class="field" style="margin-bottom:0">
-                  <div class="stake-amtfield">
-                    <div class="saf-top"><label for="stakeAmt">Amount to stake</label><span class="num" id="stakeBalLine">Balance: —</span></div>
-                    <div class="stake-amtrow">
-                      <input type="text" inputmode="decimal" id="stakeAmt" placeholder="0.0" value="0.1" aria-label="Amount of HYPE to stake" disabled />
-                      <span class="hype-chip"><span class="hc-ic"><svg viewBox="0 0 144 144" fill="currentColor" aria-hidden="true"><path d="M144 71.6991C144 119.306 114.866 134.582 99.5156 120.98C86.8804 109.889 83.1211 86.4521 64.116 84.0456C39.9942 81.0113 37.9057 113.133 22.0334 113.133C3.5504 113.133 0 86.2428 0 72.4315C0 58.3063 3.96809 39.0542 19.736 39.0542C38.1146 39.0542 39.1588 66.5722 62.132 65.1073C85.0007 63.5379 85.4184 34.8689 100.247 22.6271C113.195 12.0593 144 23.4641 144 71.6991Z"/></svg></span>HYPE</span>
-                    </div>
-                  </div>
-                  <div class="preset-row" id="stakePresets">
-                    <button type="button" data-spreset="1" disabled>1</button>
-                    <button type="button" data-spreset="10" disabled>10</button>
-                    <button type="button" data-spreset="100" disabled>100</button>
-                    <button type="button" data-spreset="1000" disabled>1K</button>
-                  </div>
-                  <p class="hint">Keep a little HYPE unstaked for gas.</p>
+                <div class="preset-row">
+                  <button type="button" data-stake-preset="min">Min</button>
+                  <button type="button" data-stake-preset="25">25%</button>
+                  <button type="button" data-stake-preset="50">50%</button>
+                  <button type="button" data-stake-preset="max">Max</button>
                 </div>
-                <button type="button" class="action-btn asc-cta" id="stakeBtn" disabled>Staking opens at deployment</button>
+                <div class="fee-rows">
+                  <div class="fr"><span>You receive (est.)</span><span class="num" id="stakeRecv">— kHYPE</span></div>
+                  <div class="fr"><span>Minimum stake</span><span class="num" id="stakeMinRow">…</span></div>
+                  <div class="fr"><span>Staking contract</span><span class="addr-chip">StakingManager 0x393D…2109</span></div>
+                  <div class="fr"><span>Network</span><span>HyperEVM · chain 999 · gas HYPE</span></div>
+                </div>
+                <div class="verify-line" id="stakePauseLine"><span class="vdot"></span><span id="stakePauseTxt">Reading Kinetiq staking status…</span></div>
+                <button type="button" class="action-btn asc-cta" id="stakeBtn" style="margin-top:14px">Stake HYPE — receive kHYPE</button>
                 <div class="tx-status" id="stakeStatus"></div>
-                <p class="note-line" style="text-align:center">Simulated first. You sign in your wallet.</p>
+                <p class="note-line" style="text-align:center">Simulated first, summary before signing. Your wallet switches to HyperEVM to sign, then back to Elysium. Max leaves 0.05 HYPE behind for HyperEVM gas.</p>
               </div>
+              <ol class="route-steps">
+                <li><span class="rs-n">1</span><span><b>Get HYPE onto HyperEVM.</b> On HyperCore? Use “Transfer to EVM” in the Hyperliquid app. On Elysium? Withdraw it back through the Bridge page — that waits out the ~5.5-day challenge window.</span></li>
+                <li><span class="rs-n">2</span><span><b>Stake here.</b> Enter an amount (minimum read live from Kinetiq) and sign the stake() call — HYPE goes to Kinetiq's StakingManager, kHYPE lands in your wallet at the live exchange rate.</span></li>
+                <li><span class="rs-n">3</span><span><b>Hold kHYPE.</b> It stays in your wallet on HyperEVM — liquid, and usable across HyperEVM DeFi while it earns.</span></li>
+              </ol>
             </div>
 
             <div data-spane="unstake" style="display:none">
+              <p class="note-line" style="margin:0">Unstaking kHYPE through Kinetiq is a queue, not a swap — and the queue starts <b>right here</b>: approve exactly the kHYPE amount for Kinetiq's StakingManager, then sign <b>queueWithdrawal()</b>. The manager pulls the kHYPE and your withdrawal enters the queue. Simulated first, with a summary before you sign.</p>
               <div id="unstakeDisconnected">
-                <p class="note-line" style="margin:0;max-width:520px">Connect to see your stake.</p>
+                <button type="button" class="action-btn asc-cta connect" id="unstakeConnectBtn" style="margin-top:14px">Connect wallet to unstake</button>
               </div>
-              <div id="stakeAccountsWrap" style="display:none">
-                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-                  <h3 style="margin:0;font-size:16px;font-weight:800">Your stake positions</h3>
-                  <div style="flex:1"></div>
-                  <span class="num" id="stakeEpoch" style="font-size:12.5px;color:var(--stage-muted);font-weight:600"></span>
-                  <button type="button" class="btn btn-ghost" id="stakeRefreshBtn" style="height:36px;font-size:13.5px">Refresh</button>
+              <div id="unstakeConnected" style="display:none">
+                <div class="stake-amtfield" style="margin-top:16px">
+                  <div class="saf-top"><label for="unstakeAmt">Amount to unstake</label><span class="num" id="unstakeAmtBal">kHYPE balance: …</span></div>
+                  <div class="stake-amtrow">
+                    <input type="text" inputmode="decimal" id="unstakeAmt" placeholder="0.0" aria-label="Amount of kHYPE to unstake" />
+                    <span class="hype-chip"><span class="hc-ic"><svg viewBox="0 0 144 144" fill="currentColor" aria-hidden="true"><path d="M144 71.6991C144 119.306 114.866 134.582 99.5156 120.98C86.8804 109.889 83.1211 86.4521 64.116 84.0456C39.9942 81.0113 37.9057 113.133 22.0334 113.133C3.5504 113.133 0 86.2428 0 72.4315C0 58.3063 3.96809 39.0542 19.736 39.0542C38.1146 39.0542 39.1588 66.5722 62.132 65.1073C85.0007 63.5379 85.4184 34.8689 100.247 22.6271C113.195 12.0593 144 23.4641 144 71.6991Z"/></svg></span>kHYPE</span>
+                  </div>
                 </div>
-                <div id="stakeAccountsList"><p class="note-line" style="padding:14px 0;margin:0">No stake positions — staking opens when the contracts deploy on Elysium.</p></div>
-                <div class="tx-status" id="stakeAcctStatus"></div>
-                <p class="note-line">Unstaking terms are set by the staking contract at deployment.</p>
+                <div class="preset-row">
+                  <button type="button" data-unstake-preset="25">25%</button>
+                  <button type="button" data-unstake-preset="50">50%</button>
+                  <button type="button" data-unstake-preset="max">Max</button>
+                </div>
+                <div class="fee-rows">
+                  <div class="fr"><span>You queue</span><span class="num" id="unstakeQueueAmt">— kHYPE</span></div>
+                  <div class="fr"><span>Est. HYPE back</span><span class="num" id="unstakeRecv">— HYPE</span></div>
+                  <div class="fr"><span>Wait</span><span>7-day queue + lockup · ~8–9 days total</span></div>
+                  <div class="fr"><span>Approval</span><span>Exact kHYPE amount · StakingManager only</span></div>
+                  <div class="fr"><span>Network</span><span>HyperEVM · chain 999 · gas HYPE</span></div>
+                </div>
+                <div class="verify-line" id="unstakePauseLine"><span class="vdot"></span><span id="unstakePauseTxt">Reading Kinetiq withdrawal status…</span></div>
+                <button type="button" class="action-btn asc-cta" id="unstakeBtn" style="margin-top:14px">Queue unstake</button>
+                <div class="tx-status" id="unstakeStatus"></div>
               </div>
+              <ol class="route-steps">
+                <li><span class="rs-n">1</span><span><b>Queue the unstake here</b> — approve the exact kHYPE amount, sign queueWithdrawal(), and the StakingManager pulls the kHYPE into the queue.</span></li>
+                <li><span class="rs-n">2</span><span><b>Wait ~8–9 days</b> — the 1-day delegation lockup plus Hyperliquid's 7-day unstaking queue.</span></li>
+                <li><span class="rs-n">3</span><span><b>Confirm &amp; claim on Kinetiq.</b> After the delay, finish the withdrawal on Kinetiq's official page — your pending withdrawals and their IDs are shown there, and HYPE returns to your wallet on HyperEVM.</span></li>
+              </ol>
+              <a class="action-btn asc-cta" href="https://kinetiq.xyz/stake-hype" target="_blank" rel="noopener" style="margin-top:16px">Confirm / claim at Kinetiq ↗</a>
+              <p class="note-line" style="text-align:center">Need HYPE sooner? kHYPE trades on HyperEVM DEXes — a market swap is instant, at whatever price and slippage the pool gives you.</p>
             </div>
 
             <div data-spane="rewards" style="display:none">
-              <h3 style="margin:0 0 8px;font-size:16px;font-weight:800">Rewards</h3>
-              <p class="note-line" style="margin:0" id="rewEpochTxt">Rates are set at deployment — nothing is promised before then.</p>
+              <h3 style="margin:0 0 8px;font-size:16px;font-weight:800">How kHYPE rewards work</h3>
+              <p class="note-line" style="margin:0" id="rewEpochTxt">kHYPE does not rebase: your balance stays the same and the <b>exchange rate</b> grows as validator rewards land, so each kHYPE redeems for more HYPE over time. There is nothing to claim and no fixed APY — the rate in the header is read live from Kinetiq's StakingAccountant contract on HyperEVM.</p>
+              <p class="note-line">Kinetiq takes <b>10% of staking rewards</b> — per its docs, 70% of that fee buys KNTQ and 30% goes to its treasury. Vector Pad adds no fee and never custodies the position — stake and unstake calls go straight from your wallet to Kinetiq's StakingManager.</p>
             </div>
           </div>
 
-          <h2 class="sec-title-serif">How it works</h2>
+<h2 class="sec-title-serif">How it works</h2>
           <div class="how-grid">
-            <div class="how-card"><div class="n">01</div><h4>Deposit HYPE</h4><p>One transaction. HYPE stays yours.</p></div>
-            <div class="how-card"><div class="n">02</div><h4>Activation</h4><p>Starts earning under the contract's rules.</p></div>
-            <div class="how-card"><div class="n">03</div><h4>Rewards</h4><p>Accrue to your position.</p></div>
-            <div class="how-card"><div class="n">04</div><h4>Withdraw</h4><p>Unstake back to your wallet.</p></div>
+            <div class="how-card"><div class="n">01</div><h4>HYPE on HyperEVM</h4><p>Staking lives on HyperEVM (chain 999) — move HYPE there first if it sits on HyperCore or Elysium.</p></div>
+            <div class="how-card"><div class="n">02</div><h4>Stake in Vector</h4><p>Sign the stake here — it executes on Kinetiq's StakingManager and you receive kHYPE at the live exchange rate.</p></div>
+            <div class="how-card"><div class="n">03</div><h4>Rewards in the rate</h4><p>kHYPE's exchange rate grows as staking rewards land — no claiming, no rebasing.</p></div>
+            <div class="how-card"><div class="n">04</div><h4>Exit</h4><p>Queue an unstake here (~8–9 days, claim on Kinetiq), or swap kHYPE instantly on a HyperEVM DEX.</p></div>
           </div>
 
           <h2 class="sec-title-serif">Your position and rewards</h2>
           <div class="pos-grid stake-pos">
             <div class="how-card">
-              <h4 style="margin-top:0">Your stake</h4>
+              <h4 style="margin-top:0">Your kHYPE position</h4>
               <div id="posDisconnected">
-                <p>Connect to see your stake.</p>
+                <p>Connect to see your kHYPE position on HyperEVM.</p>
                 <button type="button" class="btn btn-grad" id="posConnectBtn" style="height:42px;padding:0 20px;margin-top:12px">Connect wallet</button>
               </div>
               <div id="posConnected" style="display:none">
-                <div class="sum-row"><span class="k">Total staked</span><span class="v num"><span id="stakeTotal">0</span> HYPE</span></div>
-                <div class="sum-row"><span class="k">Stake positions</span><span class="v" id="stakeCount">0</span></div>
-                <div class="sum-row"><span class="k">Wallet balance</span><span class="v num"><span id="stakeSol">—</span> HYPE</span></div>
+                <div class="sum-row"><span class="k">kHYPE balance</span><span class="v num"><span id="stakeTotal">0</span> kHYPE</span></div>
+                <div class="sum-row"><span class="k">Value in HYPE</span><span class="v num" id="stakeKhypeValue">—</span></div>
+                <div class="sum-row"><span class="k">HYPE on HyperEVM</span><span class="v num" id="stakeHevBal2">—</span></div>
                 <div class="sum-row"><span class="k">Wallet</span><span class="v num" id="stakeAddr">—</span></div>
-                <div class="sum-row"><span class="k">Network</span><span class="v" id="stakeNet">—</span></div>
-                <button type="button" class="btn btn-ghost" id="posManageBtn" style="height:40px;margin-top:14px">Manage in the form above</button>
+                <div class="sum-row"><span class="k">Staking chain</span><span class="v" id="stakeNet">HyperEVM · chain 999</span></div>
+                <button type="button" class="btn btn-ghost" id="posManageBtn" style="height:40px;margin-top:14px">Manage in the card above</button>
               </div>
             </div>
             <div class="how-card">
               <h4 style="margin-top:0">Rewards</h4>
-              <p id="rewSummary">Rewards start once staking opens.</p>
+              <p id="rewSummary">Rewards accrue in the kHYPE exchange rate — the live rate is read from Kinetiq's StakingAccountant on HyperEVM and shown in the header above.</p>
             </div>
           </div>
 
@@ -3250,29 +3309,80 @@ $ <span class="caret"></span></div>
             </div>
             <p class="note-line" id="bridgeDirNote" style="margin:13px 2px 0">HyperEVM → Elysium · 1:1 via Kinetiq's official bridge.</p>
             <div class="fee-rows" id="bridgeFeeRows">
-              <div class="fr"><span>Arrives in</span><span>Minutes · longer for withdrawals</span></div>
-              <div class="fr"><span>Bridge fee</span><span>Set by Kinetiq's bridge</span></div>
-              <div class="fr"><span>Network fee</span><span>Gas on the source chain</span></div>
+              <div class="fr"><span>Arrives in</span><span>About 1–3 minutes</span></div>
+              <div class="fr"><span>Bridge fee</span><span>None — Vector Pad adds nothing</span></div>
+              <div class="fr"><span>Network fee</span><span>Gas on HyperEVM</span></div>
             </div>
-            <div style="border-top:1px solid var(--stage-border);margin-top:16px;padding-top:6px">
-              <div id="bridgePanel" style="padding:30px 18px;text-align:center">
-                <h3 style="margin:0 0 6px;font-size:18px">Use the official Elysium bridge</h3>
-                <p class="note-line" style="margin:0 auto;max-width:460px">HYPE bridges 1:1 through Kinetiq's official bridge. Until the in-app bridge lands, use that — never a link sent to you in a chat.</p>
+                        <div style="border-top:1px solid var(--stage-border);margin-top:16px;padding-top:6px">
+              <div id="bridgePanel">
+                <div id="bridgeDisconnected" style="padding:22px 18px;text-align:center">
+                  <h3 style="margin:0 0 6px;font-size:18px">Connect to bridge</h3>
+                  <p class="note-line" style="margin:0 auto;max-width:460px">Deposits and withdrawal starts run in this page against Elysium's official bridge contracts — simulated first, with a summary before you sign.</p>
+                  <button type="button" class="action-btn asc-cta connect" id="bridgeConnectBtn" style="max-width:340px;margin-left:auto;margin-right:auto">Connect wallet</button>
+                </div>
+
+                <div id="bridgeDepPane" style="display:none">
+                  <div class="stake-amtfield">
+                    <div class="saf-top"><label for="bridgeAmt">Amount to deposit</label><span class="num" id="bridgeBalLine">HyperEVM balance: —</span></div>
+                    <div class="stake-amtrow">
+                      <input type="text" inputmode="decimal" id="bridgeAmt" placeholder="0.0" value="0.1" aria-label="Amount of HYPE to deposit to Elysium" />
+                      <span class="hype-chip"><span class="hc-ic"><svg viewBox="0 0 144 144" fill="currentColor" aria-hidden="true"><path d="M144 71.6991C144 119.306 114.866 134.582 99.5156 120.98C86.8804 109.889 83.1211 86.4521 64.116 84.0456C39.9942 81.0113 37.9057 113.133 22.0334 113.133C3.5504 113.133 0 86.2428 0 72.4315C0 58.3063 3.96809 39.0542 19.736 39.0542C38.1146 39.0542 39.1588 66.5722 62.132 65.1073C85.0007 63.5379 85.4184 34.8689 100.247 22.6271C113.195 12.0593 144 23.4641 144 71.6991Z"/></svg></span>HYPE</span>
+                    </div>
+                  </div>
+                  <div class="preset-row">
+                    <button type="button" id="bridgeMaxBtn">Max</button>
+                    <span class="note-line" style="align-self:center;margin:0">Leaves 0.05 HYPE behind for HyperEVM gas.</span>
+                  </div>
+                  <div class="fee-rows">
+                    <div class="fr"><span>You receive</span><span class="num" id="bridgeRecv">— HYPE on Elysium</span></div>
+                    <div class="fr"><span>Recipient</span><span>Same address on Elysium</span></div>
+                    <div class="fr"><span>Via</span><span class="addr-chip">Inbox 0xce59…2cff (HyperEVM)</span></div>
+                  </div>
+                  <div class="verify-line" id="bridgeVerify"><span class="vdot"></span><span id="bridgeVerifyTxt">Verifying the official route on-chain…</span></div>
+                  <button type="button" class="action-btn asc-cta" id="bridgeDepBtn">Deposit to Elysium</button>
+                  <div class="tx-status" id="bridgeStatus"></div>
+                  <p class="note-line" style="text-align:center">Simulated first, summary before signing. Your wallet switches to HyperEVM to sign, then back to Elysium. HYPE lands in about 1–3 minutes.</p>
+                </div>
+
+                <div id="bridgeWdPane" style="display:none">
+                  <div class="stake-amtfield">
+                    <div class="saf-top"><label for="bridgeWdAmt">Amount to withdraw</label><span class="num" id="bridgeWdBalLine">Elysium balance: —</span></div>
+                    <div class="stake-amtrow">
+                      <input type="text" inputmode="decimal" id="bridgeWdAmt" placeholder="0.0" value="0.1" aria-label="Amount of HYPE to withdraw to HyperEVM" />
+                      <span class="hype-chip"><span class="hc-ic"><svg viewBox="0 0 144 144" fill="currentColor" aria-hidden="true"><path d="M144 71.6991C144 119.306 114.866 134.582 99.5156 120.98C86.8804 109.889 83.1211 86.4521 64.116 84.0456C39.9942 81.0113 37.9057 113.133 22.0334 113.133C3.5504 113.133 0 86.2428 0 72.4315C0 58.3063 3.96809 39.0542 19.736 39.0542C38.1146 39.0542 39.1588 66.5722 62.132 65.1073C85.0007 63.5379 85.4184 34.8689 100.247 22.6271C113.195 12.0593 144 23.4641 144 71.6991Z"/></svg></span>HYPE</span>
+                    </div>
+                  </div>
+                  <div class="preset-row">
+                    <button type="button" id="bridgeWdMaxBtn">Max</button>
+                    <span class="note-line" style="align-self:center;margin:0">Leaves 0.05 HYPE behind for Elysium gas.</span>
+                  </div>
+                  <div class="fee-rows">
+                    <div class="fr"><span>Step 1 — here</span><span>Start the withdrawal on Elysium</span></div>
+                    <div class="fr"><span>Challenge window</span><span>~5.5 days</span></div>
+                    <div class="fr"><span>Claimable from</span><span class="num" id="bridgeClaimDate">—</span></div>
+                    <div class="fr"><span>Step 2 — claim</span><span>In the official bridge, on HyperEVM</span></div>
+                  </div>
+                  <button type="button" class="action-btn asc-cta" id="bridgeWdBtn">Start withdrawal</button>
+                  <div class="tx-status" id="bridgeWdStatus"></div>
+                  <p class="note-line" style="text-align:center">Starting is only step 1: after the window, claim the HYPE on HyperEVM in the <a href="https://elysium.kinetiq.xyz/bridge" target="_blank" rel="noopener">official Elysium bridge</a> with the same wallet.</p>
+                </div>
               </div>
             </div>
           </div>
 
-          <h2 class="sec-title-serif">How it works</h2>
+<h2 class="sec-title-serif">How it works</h2>
           <div class="how-grid c3">
-            <div class="how-card"><div class="n">01</div><h4>Send</h4><p>Deposit HYPE in the official bridge — assets go to the bridge, not Vector Pad.</p></div>
-            <div class="how-card"><div class="n">02</div><h4>Settle</h4><p>Deposits credit fast; withdrawals wait out the challenge window.</p></div>
-            <div class="how-card"><div class="n">03</div><h4>Receive</h4><p>HYPE lands at the same address on Elysium.</p></div>
+            <div class="how-card"><div class="n">01</div><h4>Deposit</h4><p>One call to Elysium's official Inbox on HyperEVM — HYPE goes to the bridge contract, never to Vector Pad.</p></div>
+            <div class="how-card"><div class="n">02</div><h4>Settle</h4><p>Deposits credit in about 1–3 minutes. Withdrawals wait out the ~5.5-day Orbit challenge window.</p></div>
+            <div class="how-card"><div class="n">03</div><h4>Receive / claim</h4><p>Deposits land at the same address on Elysium. Withdrawals are claimed on HyperEVM in the official bridge after the window.</p></div>
           </div>
 
           <h2 class="sec-title-serif">Before you bridge</h2>
           <div class="pos-grid">
-            <div class="gk-item"><h4>Same address, two chains</h4><p>One EVM address works on both — check the chain in your wallet.</p></div>
-            <div class="gk-item"><h4>Withdrawals take longer</h4><p>They wait out the Orbit challenge window before claiming.</p></div>
+            <div class="gk-item"><h4>HYPE on HyperCore?</h4><p>Move it to HyperEVM first — “Transfer to EVM” in the Hyperliquid app. The bridge only starts from HyperEVM.</p></div>
+            <div class="gk-item"><h4>Same address, two chains</h4><p>One EVM address works on both — check the chain in your wallet before you sign.</p></div>
+            <div class="gk-item"><h4>Withdrawals take ~5.5 days</h4><p>Starting a withdrawal is step 1. The HYPE becomes claimable on HyperEVM only after the challenge window, in the official bridge.</p></div>
+            <div class="gk-item"><h4>Other tokens (kHYPE, USDC…)</h4><p>This form moves native HYPE. ERC-20 tokens cross through the token gateway in the <a href="https://elysium.kinetiq.xyz/bridge" target="_blank" rel="noopener">official Elysium bridge</a>.</p></div>
           </div>
         </div>
       </section>
@@ -3333,10 +3443,10 @@ $ <span class="caret"></span></div>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
               </button>
             </div>
-            <p class="note-line" id="pfStakeText" style="margin:14px 0 22px">Staking opens when the contracts deploy on Elysium.</p>
+            <p class="note-line" id="pfStakeText" style="margin:14px 0 22px">HYPE staking runs through Kinetiq (kHYPE) on HyperEVM — connect to see your kHYPE position.</p>
             <div style="display:flex;gap:12px">
-              <button type="button" class="btn btn-black" data-goto-stake="stake" style="flex:1;height:44px">Deposit</button>
-              <button type="button" class="btn btn-ghost" data-goto-stake="unstake" style="flex:1;height:44px">Redeem</button>
+              <button type="button" class="btn btn-black" data-goto-stake="stake" style="flex:1;height:44px">Stake</button>
+              <button type="button" class="btn btn-ghost" data-goto-stake="unstake" style="flex:1;height:44px">Unstake</button>
             </div>
           </aside>
         </div>
@@ -3520,6 +3630,7 @@ $ <span class="caret"></span></div>
             </div>
 
             <div class="step-pane" data-step="4">
+            <div class="devnet-banner" id="bondingTypeNote" style="display:none"><b>Bonding:</b> the launchpad contract has no coin-type split — the full 0.30% creator fee goes to the creator wallet. This step applies to direct pools only and is <b>not</b> sent on-chain for a bonding launch.</div>
             <div class="field" style="margin-bottom:12px">
               <label>Coin type</label>
             </div>
@@ -3558,6 +3669,7 @@ $ <span class="caret"></span></div>
             </div>
 
             <div class="step-pane" data-step="5">
+            <div class="devnet-banner" id="bondingPayoutNote" style="display:none"><b>Bonding:</b> the contract pays creator fees to the single creator wallet that launched the token — payout splits are <b>not</b> wired on-chain for bonding launches. This step applies to direct pools only.</div>
             <div class="field" style="margin-bottom:12px">
               <label>Payout wallets</label>
               <div class="hint" style="margin:0" id="payoutHint">Fee payouts split between these wallets. Up to 10.</div>
@@ -3657,7 +3769,7 @@ $ <span class="caret"></span></div>
               <ul>
                 <li><button type="button" class="docs-jump" data-dsec="explore">Explore</button> — the launches board and token pages.</li>
                 <li><button type="button" class="docs-jump" data-dsec="swap">Swap</button> — trade HYPE, WHYPE and USDC through Uniswap V2 on Elysium.</li>
-                <li><button type="button" class="docs-jump" data-dsec="stake">Stake</button> — stake HYPE (opens at contract deployment).</li>
+                <li><button type="button" class="docs-jump" data-dsec="stake">Stake</button> — stake HYPE through Kinetiq and hold kHYPE on HyperEVM (the route Ascend's House was built on).</li>
                 <li><button type="button" class="docs-jump" data-dsec="bridge">Bridge</button> — move HYPE between HyperEVM and Elysium via the official bridge.</li>
                 <li><button type="button" class="docs-jump" data-dsec="create">Create token</button> — launch on the bonding curve (opens at contract deployment).</li>
                 <li><button type="button" class="docs-jump" data-dsec="portfolio">Portfolio</button> — your balances and launches, read live from the chain.</li>
@@ -3725,10 +3837,10 @@ $ <span class="caret"></span></div>
 
             <article class="docs-sec" id="dsec-stake">
               <h2>Stake</h2>
-              <p>Stake will let you stake <b>HYPE</b> from your wallet into the Vector Pad staking contract on Elysium: deposit in one transaction, rewards accrue to your position, unstake and withdraw back to the same wallet. Only your wallet can move your stake.</p>
-              <p><b>Status: staking opens when the contracts deploy.</b> The staking contract is part of the same Elysium deployment as the launchpad; until then the Stake page shows your wallet and HYPE balance, the form sends nothing, and no APY is promised — rates and cooldowns are set by the contract and published here at deployment.</p>
+              <p>Vector Pad has <b>no staking contract of its own</b> — staking runs <b>in the app</b> against <b>Kinetiq</b>, the liquid-staking protocol behind Elysium itself. The Stake tab signs a payable <code>stake()</code> call to Kinetiq's StakingManager (<code>0x393D0B87Ed38fc779FD9611144aE649BA6082109</code>) on <b>HyperEVM</b> (chain 999) and you receive <b>kHYPE</b> (<code>0xfD739d4e423301CE9385c1fb8850539D657C296D</code>), which stays in your wallet. The minimum stake and the paused flags are read live from the StakingManager (minimum was 5 HYPE at the last on-chain check), every stake is simulated before it is sent, and a summary is shown before you sign. This is the same underlying route Ascend's House was built on — Ascend's vault took kHYPE deposits, but that program has <b>ended</b> and takes no new deposits, so Vector Pad does not route you there. A Vector-native staking product would need its own staking contract and a real reward source; neither exists today.</p>
+              <p>Unstaking also starts in the app: approve exactly the kHYPE amount for the StakingManager, then <code>queueWithdrawal()</code> enters Kinetiq's queue — about <b>8–9 days</b> (1-day delegation lockup + 7-day queue). After the delay, the final confirm &amp; claim step runs on <a href="https://kinetiq.xyz/stake-hype" target="_blank" rel="noopener">Kinetiq's official staking page</a>, where your pending withdrawals and their IDs are shown. The Stake page reads your <b>kHYPE balance, your HyperEVM HYPE balance and the live kHYPE→HYPE exchange rate</b> straight from Kinetiq's contracts. Rewards accrue in the exchange rate — kHYPE does not rebase and there is <b>no fixed APY</b>. Swapping kHYPE on a DEX is instant at market price.</p>
               <h3>Costs</h3>
-              <p>There is no Vector Pad fee planned for staking. You pay Elysium gas in HYPE for the deposit and withdrawal transactions.</p>
+              <p>Vector Pad charges nothing for staking. Kinetiq takes <b>10% of staking rewards</b> (per its docs: 70% of that fee buys KNTQ, 30% goes to its treasury), and you pay HyperEVM gas in HYPE for the transactions there.</p>
             </article>
 
             <article class="docs-sec" id="dsec-bridge">
@@ -3736,10 +3848,10 @@ $ <span class="caret"></span></div>
               <p>Elysium settles to HyperEVM, and its gas token <b>HYPE is bridged 1:1 from HyperEVM</b> through Kinetiq's official bridge. The same wallet address works on both chains.</p>
               <h3>Directions</h3>
               <ul>
-                <li><b>Deposit</b> — HyperEVM → Elysium. Credits in minutes.</li>
-                <li><b>Withdraw</b> — Elysium → HyperEVM. Withdrawals wait out the Orbit challenge window before they can be claimed on HyperEVM.</li>
+                <li><b>Deposit</b> — HyperEVM → Elysium. Credits in about 1–3 minutes. HYPE sitting on HyperCore must move to HyperEVM first (“Transfer to EVM” in the Hyperliquid app).</li>
+                <li><b>Withdraw</b> — Elysium → HyperEVM. Start the withdrawal here; after the ~5.5-day Orbit challenge window, claim the HYPE on HyperEVM in the official bridge.</li>
               </ul>
-              <p>The Bridge page currently points you to the <b>official Kinetiq bridge</b> rather than embedding a widget — use only the official bridge, never a bridge link sent to you in a chat or DM. Fees are set by the bridge and shown there before you confirm; Vector Pad adds nothing on top.</p>
+              <p>The Bridge page runs <b>in-app against Elysium's official bridge contracts</b> — the same contracts Kinetiq's own bridge UI uses: a deposit is one <code>depositEth</code> call to the official Inbox on HyperEVM (<code>0xce59f8B65ad41C9DAE4c07A0571a39824bD92cff</code>), and the page re-verifies that route on-chain (Inbox → Bridge → Rollup chain ID 99901) before a deposit can be sent. A withdrawal starts in-app through the ArbSys precompile on Elysium; the <b>claim</b> after the challenge window happens in the <a href="https://elysium.kinetiq.xyz/bridge" target="_blank" rel="noopener">official Kinetiq bridge</a>. ERC-20 tokens (kHYPE, USDC…) cross through the token gateway in that official bridge. Vector Pad adds no fee on top — you pay gas on the chain each step starts on. Never use a bridge link sent to you in a chat or DM.</p>
               <div class="docs-callout">
                 <div class="dc-title">Before you bridge</div>
                 <p>Check which chain your wallet is on before you sign — an address looks identical on HyperEVM and Elysium, but a balance only exists on one of them. Bridge transfers <b>cannot be reversed</b>. Start with a small amount the first time.</p>
@@ -3777,7 +3889,7 @@ $ <span class="caret"></span></div>
               <h3>Look up any wallet</h3>
               <p>Paste <b>any Elysium wallet address</b> (0x…) into the lookup to see its HYPE, WHYPE and USDC balances, read the same way from RPC. Lookups are read-only: looking at a wallet gives you no control over it, and the owner is never notified — addresses and balances are public on Elysium by design.</p>
               <h3>Your stake panel</h3>
-              <p>The <b>Your stake</b> panel links to the Stake page. Staking positions appear there once staking opens at contract deployment. See <button type="button" class="docs-jump" data-dsec="stake">Stake</button>.</p>
+              <p>The <b>Your stake</b> panel links to the Stake page and shows your <b>kHYPE position on HyperEVM</b> (via Kinetiq), read live when your wallet is connected. See <button type="button" class="docs-jump" data-dsec="stake">Stake</button>.</p>
             </article>
 
             <article class="docs-sec" id="dsec-fees">
@@ -3791,8 +3903,8 @@ $ <span class="caret"></span></div>
                   <tr><td>Swap pool fee</td><td class="cost">0.30% per trade</td><td>Uniswap V2's standard pool fee, charged inside the pool on every swap and kept by the pool's liquidity providers. Wrapping HYPE ↔ WHYPE is 1:1 and pays no pool fee.</td></tr>
                   <tr><td>Swap platform fee</td><td class="cost">None</td><td>The Router02 quote is the rate the transaction targets, subject to your slippage. Vector Pad adds nothing on top.</td></tr>
                   <tr><td>Network fee (gas)</td><td class="cost">Paid in HYPE</td><td>Every Elysium transaction pays gas in HYPE — the Orbit sequencer and HyperEVM settlement costs are charged through it. The exact amount is shown by your wallet before you sign.</td></tr>
-                  <tr><td>Bridge</td><td class="cost">Set by the bridge</td><td>Kinetiq's official bridge sets its own fee, shown before you confirm. Vector Pad adds nothing.</td></tr>
-                  <tr><td>Stake</td><td class="cost">At deployment</td><td>Staking opens with the contract deployment; its costs (gas only, unless the contract says otherwise) are published here then.</td></tr>
+                  <tr><td>Bridge</td><td class="cost">Gas only</td><td>Deposits call Elysium's official Inbox on HyperEVM and withdrawals start through ArbSys on Elysium; the withdrawal claim runs in the official bridge. You pay each chain's gas in HYPE. Vector Pad adds nothing.</td></tr>
+                  <tr><td>Stake</td><td class="cost">Via Kinetiq</td><td>Staking runs through Kinetiq on HyperEVM: Kinetiq takes 10% of staking rewards (per its docs), gas is paid in HYPE on HyperEVM, and Vector Pad adds nothing.</td></tr>
                 </tbody>
               </table>
               <h3>$VECTOR</h3>
@@ -3953,6 +4065,21 @@ $ <span class="caret"></span></div>
         <p style="margin-bottom:6px">Live from Hyperliquid.</p>
         <div id="tradesBody"><p class="skel" style="padding:12px 0"><span class="spin"></span> Loading live markets…</p></div>
         <button type="button" class="btn btn-ghost" id="tradesClose" style="width:100%;margin-top:16px;height:42px">Close</button>
+      </div>
+    </div>
+
+    <!-- Confirmation summary — every launchpad write stops here first:
+         chain, from, to, action, amount and spender (for approvals) are
+         shown before simulation and before the wallet is ever asked. -->
+    <div class="modal-back" id="vpConfirmModal" role="dialog" aria-modal="true" aria-labelledby="vpConfirmTitle">
+      <div class="modal doc-modal">
+        <h3 id="vpConfirmTitle">Confirm transaction</h3>
+        <div id="vpConfirmBody" style="margin-top:10px"></div>
+        <p class="note-line" style="margin-top:12px">Next: the transaction is simulated. If simulation passes, your wallet asks you to sign — that screen is the final word. Nothing is sent if you cancel.</p>
+        <div style="display:flex;gap:8px;margin-top:16px">
+          <button type="button" class="btn btn-ghost" id="vpConfirmCancel" style="flex:1;height:44px">Cancel</button>
+          <button type="button" class="btn btn-grad" id="vpConfirmOk" style="flex:1;height:44px">Simulate &amp; continue</button>
+        </div>
       </div>
     </div>
 
@@ -4491,7 +4618,59 @@ $ <span class="caret"></span></div>
     var USDC  = "0xb47c4C8F73F009CC0C0d3f92B388d13E293F0B65";
     var UNI_V2_FACTORY = "0xBbBcC62853a5fA27b93d6Bab3E6F7ce841E25Df2";
     var UNI_V2_ROUTER  = "0xE783DE89a7F0408687f051e3E6D0BEb62719EbAd";
+    /* ===== Launchpad config — THE one place to paste the deployed address =====
+       Contract package: ~/workspace/vector-pad-elysium/ (README + abi/).
+       Deployment is Hasan's manual wallet step (constructor args in that
+       README). When VectorPadLaunchpad is deployed on Elysium mainnet,
+       paste its address as LAUNCHPAD_ADDRESS below (or per-network in
+       LAUNCHPAD_ADDRESSES). Nothing else needs to change: Create,
+       Explore, the token-page curve buy/sell, fee collect, the
+       graduation fallback and post-graduation Uniswap routing all read
+       this config and light up automatically. While it stays null the
+       app is honestly gated — those flows send nothing.
+       Verified against the package ABI on 2026-11-27: createToken /
+       buy / sell / quoteBuy / quoteSell / getCurve / tokenCount /
+       allTokens / metadataURIOf / price / marketCapHype /
+       graduationProgressBps / collectFees / collectCreatorFees /
+       collectProtocolFees / graduate. Curve: 1B supply, 79.31% curve /
+       20.69% pool, virtual 30 HYPE, graduation 85 HYPE net, fee 1%
+       (0.70% protocol / 0.30% creator). */
     var LAUNCHPAD_ADDRESS = null; /* VectorPadLaunchpad — not deployed yet */
+    var LAUNCHPAD_ADDRESSES = { mainnet: null, testnet: null };
+    /* Staking has NO Vector Pad contract by design: HYPE staking runs
+       through Kinetiq (kHYPE) on HyperEVM — the route Ascend's House
+       was built on. Ascend's vault (0x59e8…988e) has ended and takes
+       no new deposits. Kinetiq's StakingManager deposit path was
+       verified on-chain on 2026-11-27 (stake() selector 0x3a4b66f1
+       simulated OK with a 5 HYPE value, minStakeAmount() = 5 HYPE,
+       stakingPaused()/withdrawalPaused() both false, queueWithdrawal
+       gated by an exact kHYPE allowance), so the Stake page now stakes
+       and queues unstakes IN-APP against the StakingManager below —
+       simulated first, summary before signing. Only the confirm/claim
+       after the unstake queue stays on Kinetiq's official page: the
+       confirmWithdrawal selector is not verified, and no guessed
+       instant-unstake selector is used. A Vector-native staking
+       product would still need its own contract plus a reward source.
+       Do not point this at the launchpad or at Ascend's vault. */
+    var STAKING_ADDRESS = "0x393D0B87Ed38fc779FD9611144aE649BA6082109"; /* Kinetiq StakingManager, HyperEVM */
+    function launchpadAddr(){
+      var a = null;
+      try { a = LAUNCHPAD_ADDRESSES[state.network] || LAUNCHPAD_ADDRESS; } catch(e){ a = LAUNCHPAD_ADDRESS; }
+      return (a && /^0x[0-9a-fA-F]{40}$/.test(a) && a !== "0x0000000000000000000000000000000000000000") ? a : null;
+    }
+    function launchpadLive(){ return !!launchpadAddr(); }
+    /* Function selectors — computed from the package ABIs (ethers id()). */
+    var SEL = {
+      tokenCount:"0x9f181b5e", allTokens:"0x634282af", getCurve:"0x61f029fb",
+      metadataURIOf:"0x9eac0ca2", quoteBuy:"0x0d7a94f6", quoteSell:"0xd98b2f5c",
+      price:"0xaea91078", marketCapHype:"0xf4813a18", gradProgress:"0x3b3a8069",
+      createToken:"0xefbe8fd1", buy:"0xcce7ec13", sell:"0x6a272462",
+      collectFees:"0xa480ca79", collectCreatorFees:"0x7d31dcc0", collectProtocolFees:"0x2a54db01",
+      graduate:"0xff6d8d05", ercName:"0x06fdde03", ercSymbol:"0x95d89b41",
+      ercDecimals:"0x313ce567", ercTotalSupply:"0x18160ddd",
+      getPair:"0xe6a43905", getReserves:"0x0902f1ac", token0:"0x0dfe1681"
+    };
+    var CURVE_CONST = { totalSupply: 1000000000n * (10n ** 18n), curveAlloc: 793100000n * (10n ** 18n), graduationHype: 85n * (10n ** 18n) };
     var TOKENS = [
       { sym:"HYPE",  name:"Hyperliquid (native)", addr:null,  decimals:18, native:true },
       { sym:"WHYPE", name:"Wrapped HYPE",         addr:WHYPE, decimals:18 },
@@ -4509,7 +4688,8 @@ $ <span class="caret"></span></div>
       tab: "all", viewMode: "table",
       swapIn: "HYPE", swapOut: "USDC", slippage: 50, quote: null, quoteSeq: 0, swapping: false,
       pairSel: "HYPE", feePct: 2, step: 1, coinType: "vanilla", launchMode: "bonding",
-      imgUrl: "", imgFile: null
+      imgUrl: "", imgFile: null,
+      launches: [], launchesLoaded: false, currentToken: null, tpSide: "buy", tpQuote: null, tpBusy: false
     };
     var VIEWS = ["explore","token","swap","stake","bridge","portfolio","create","docs"];
 
@@ -4632,6 +4812,64 @@ $ <span class="caret"></span></div>
       try { return BigInt(whole) * (10n ** BigInt(decimals)) + BigInt(frac || "0"); }
       catch(e){ return null; }
     }
+    /* ---- ABI helpers for the launchpad (dynamic strings, tuple decode) ---- */
+    function hexWords(res){
+      if(!res || res === "0x") return [];
+      var hex = res.replace(/^0x/, "");
+      var out = [];
+      for(var i = 0; i + 64 <= hex.length; i += 64) out.push(hex.slice(i, i + 64));
+      return out;
+    }
+    function wordUint(w){ return BigInt("0x" + w); }
+    function wordAddr(w){ return "0x" + w.slice(24); }
+    function wordBool(w){ return BigInt("0x" + w) !== 0n; }
+    function decodeAbiString(res){
+      try {
+        var words = hexWords(res);
+        if(words.length < 2) return "";
+        var off = Number(wordUint(words[0])) * 2;
+        var hex = res.replace(/^0x/, "");
+        var len = Number(BigInt("0x" + hex.slice(off, off + 64)));
+        var bytes = [];
+        for(var i = 0; i < len; i++) bytes.push(parseInt(hex.slice(off + 64 + i * 2, off + 66 + i * 2), 16));
+        return new TextDecoder("utf-8").decode(new Uint8Array(bytes));
+      } catch(e){ return ""; }
+    }
+    function encAbiString(s){
+      var bytes = new TextEncoder().encode(String(s || ""));
+      var hex = "";
+      bytes.forEach(function(b){ hex += b.toString(16).padStart(2, "0"); });
+      while(hex.length % 64) hex += "0";
+      return encUint(bytes.length) + hex;
+    }
+    function encCreateToken(name, symbol, uri, minOut){
+      var s1 = encAbiString(name), s2 = encAbiString(symbol), s3 = encAbiString(uri);
+      var headBytes = 4 * 32;
+      var o1 = headBytes, o2 = o1 + s1.length / 2, o3 = o2 + s2.length / 2;
+      return SEL.createToken + encUint(o1) + encUint(o2) + encUint(o3) + encUint(minOut) + s1 + s2 + s3;
+    }
+    function decodeCurve(res){
+      var w = hexWords(res);
+      if(w.length < 9) return null;
+      return { token: wordAddr(w[0]), creator: wordAddr(w[1]), realHype: wordUint(w[2]), tokensSold: wordUint(w[3]),
+        protocolFees: wordUint(w[4]), creatorFees: wordUint(w[5]), graduated: wordBool(w[6]), pair: wordAddr(w[7]), createdAt: Number(wordUint(w[8])) };
+    }
+    function lpCall(data, from, valueHex){ var lp = launchpadAddr(); if(!lp) return Promise.reject(new Error("Launchpad not deployed")); return ethCall(lp, data, from, valueHex); }
+    function lpUint(sel, token){ return lpCall(sel + encAddr(token)).then(function(r){ var w = hexWords(r); return w.length ? wordUint(w[0]) : 0n; }); }
+    function ageStr(ts){
+      if(!ts) return "—";
+      var s = Math.max(0, Math.floor(Date.now() / 1000) - ts);
+      if(s < 3600) return Math.max(1, Math.floor(s / 60)) + "m";
+      if(s < 86400) return Math.floor(s / 3600) + "h";
+      return Math.floor(s / 86400) + "d";
+    }
+    function resolveMetaUri(uri){
+      if(!uri) return Promise.resolve(null);
+      var url = uri;
+      if(url.indexOf("ipfs://") === 0) url = "https://gateway.pinata.cloud/ipfs/" + url.slice(7);
+      if(url.indexOf("http") !== 0) return Promise.resolve(null);
+      return fetchJSON(url).catch(function(){ return null; });
+    }
 
     /* ================= Theme ================= */
     function applyTheme(dark){
@@ -4675,8 +4913,11 @@ $ <span class="caret"></span></div>
       window.scrollTo(0, 0);
       closeMenus();
       if(name === "swap") refreshSwapUI();
-      if(name === "portfolio") renderPortfolio();
+      if(name === "portfolio"){ renderPortfolio(); renderPortfolioLaunches(); }
       if(name === "stake") renderStake();
+      if(name === "bridge") renderBridge();
+      if(name === "explore") renderExploreLive();
+      if(name === "create") syncLaunchpadGate();
     }
     document.addEventListener("click", function(e){
       var navBtn = e.target.closest ? e.target.closest("[data-nav]") : null;
@@ -4713,7 +4954,15 @@ $ <span class="caret"></span></div>
       if(!e.target.closest("header.site")) closeMenus();
     });
     $("searchInput").addEventListener("change", function(){
-      if(this.value.trim()) toast("No tokens listed on Elysium yet — the board fills at contract deployment.");
+      var q = this.value.trim().toLowerCase();
+      if(!q) return;
+      if(!launchpadLive()){ toast("No tokens listed on Elysium yet — the board fills at contract deployment."); return; }
+      var hit = state.launches.filter(function(c){
+        return c.token.toLowerCase() === q || c.symbol.toLowerCase() === q || c.name.toLowerCase().indexOf(q) !== -1;
+      })[0];
+      if(hit) openToken(hit.token);
+      else if(isAddr(q)) openToken(q);
+      else toast("No launch matches that search yet.");
     });
 
     /* ================= Wallet (EIP-1193 / EIP-6963) ================= */
@@ -4899,7 +5148,8 @@ $ <span class="caret"></span></div>
       }
       var sb = $("stakeConnectBtn"), pb = $("pfConnectBtn"), posb = $("posConnectBtn");
       if(sb) sb.textContent = state.wallet ? "Connected" : "Connect wallet";
-      renderStake(); renderPortfolio(); refreshSwapUI();
+      renderStake(); renderPortfolio(); renderBridge(); refreshSwapUI(); syncLaunchpadGate();
+      if(state.currentToken) refreshTpBalance();
     }
     $("walletBtn").addEventListener("click", function(e){
       e.stopPropagation();
@@ -4910,7 +5160,7 @@ $ <span class="caret"></span></div>
     });
     $("walletCopyBtn").addEventListener("click", function(){ if(state.wallet) copyText(state.wallet.address, "Address copied"); });
     $("walletDisconnectBtn").addEventListener("click", function(){ $("walletPop").style.display = "none"; disconnectWallet(); });
-    ["stakeConnectBtn","pfConnectBtn","posConnectBtn"].forEach(function(id){
+    ["stakeConnectBtn","unstakeConnectBtn","pfConnectBtn","posConnectBtn"].forEach(function(id){
       var b = $(id);
       if(b) b.addEventListener("click", function(){ if(!state.wallet) openWalletModal(); });
     });
@@ -4948,7 +5198,9 @@ $ <span class="caret"></span></div>
       $("statChainVal").textContent = NETWORKS[key].chainId;
       $("sumNetwork").textContent = "Elysium " + key;
       state.hypeBal = null; state.balances = {}; state.block = null;
+      state.launches = []; state.launchesLoaded = false; state.currentToken = null;
       paintChainStats(); refreshBalances(); refreshSwapUI();
+      syncLaunchpadGate(); renderExploreLive();
       if(state.wallet){
         ensureChain(state.wallet.provider).then(function(ok){
           state.walletChainOk = ok;
@@ -5089,7 +5341,20 @@ $ <span class="caret"></span></div>
       state.tab = tab.getAttribute("data-tab");
       this.querySelectorAll(".tab").forEach(function(t){ t.classList.toggle("active", t === tab); });
     });
-    $("sortSel").addEventListener("change", function(){ /* no launches to sort yet */ });
+    $("sortSel").addEventListener("change", function(){
+      if(!state.launches.length) return;
+      var v = this.value;
+      if(v === "mcap") state.launches.sort(function(a, b){ return a.mcapWei < b.mcapWei ? 1 : (a.mcapWei > b.mcapWei ? -1 : 0); });
+      else state.launches.sort(function(a, b){ return (b.createdAt || 0) - (a.createdAt || 0); });
+      renderExploreLiveSorted(state.launches);
+    });
+    function renderExploreLiveSorted(list){
+      /* Sorting reuses the live renderer by temporarily serving the cache. */
+      var orig = fetchAllLaunches;
+      fetchAllLaunches = function(){ return Promise.resolve(list); };
+      renderExploreLive();
+      fetchAllLaunches = orig;
+    }
     function setViewMode(m){
       state.viewMode = m;
       $("viewTableBtn").classList.toggle("active", m === "table");
@@ -5104,17 +5369,141 @@ $ <span class="caret"></span></div>
 
     /* ================= Token page (pre-deployment state) ================= */
     function notDeployedToast(){ toast("The Vector Pad launchpad is not deployed on Elysium yet — nothing to load."); }
-    $("bcLoadBtn").addEventListener("click", notDeployedToast);
-    $("bcClaimBtn").addEventListener("click", notDeployedToast);
-    $("bcRefreshBtn").addEventListener("click", notDeployedToast);
+    $("bcLoadBtn").addEventListener("click", function(){
+      if(!launchpadLive()){ notDeployedToast(); return; }
+      var a = $("bcMintInput").value.trim();
+      if(!isAddr(a)){ toast("Paste a valid token address (0x…)."); return; }
+      openToken(a);
+    });
+    $("bcRefreshBtn").addEventListener("click", function(){
+      if(!launchpadLive()){ notDeployedToast(); return; }
+      if(state.currentToken) openToken(state.currentToken.token); else toast("Load a token first.");
+    });
+    $("bcClaimBtn").addEventListener("click", function(){
+      if(!launchpadLive()){ notDeployedToast(); return; }
+      var c = state.currentToken;
+      if(!c){ toast("Load a token first."); return; }
+      if(!state.wallet){ openWalletModal(); return; }
+      if(!state.walletChainOk){ toast("Switch your wallet to Elysium first."); return; }
+      var isCreator = state.wallet.address.toLowerCase() === c.creator.toLowerCase();
+      var isProtocol = false; /* protocol recipient is read on demand below */
+      lpCall("0x64df049e").then(function(r){
+        var w = hexWords(r); var rec = w.length ? wordAddr(w[0]) : "";
+        isProtocol = rec && state.wallet.address.toLowerCase() === rec.toLowerCase();
+        var sel, amt, who;
+        if(isCreator && c.creatorFees > 0n){ sel = SEL.collectCreatorFees; amt = c.creatorFees; who = "creator fees"; }
+        else if(isProtocol && c.protocolFees > 0n){ sel = SEL.collectProtocolFees; amt = c.protocolFees; who = "protocol fees"; }
+        else if(c.creatorFees > 0n || c.protocolFees > 0n){
+          /* collectFees pays each pot to its own recipient — anyone may call it. */
+          sel = SEL.collectFees; amt = c.creatorFees + c.protocolFees; who = "all accrued fees (each pot to its recipient)";
+        } else { toast("No fees accrued on this token yet."); return; }
+        showConfirm("Collect fees", baseConfirmRows("collectFees · " + who, launchpadAddr(), [
+          ["Token", c.name + " (" + c.symbol + ") · " + c.token],
+          ["Amount", fmtUnits(amt, 18, 6) + " HYPE"]
+        ])).then(function(ok){
+          if(!ok){ setTxStatus("tpStatus", "Stopped", ["Cancelled — nothing was sent."]); return; }
+          var tx = { from: state.wallet.address, to: launchpadAddr(), data: sel + encAddr(c.token), value: "0x0" };
+          runConfirmedTx(tx, function(t, l){ setTxStatus("tpStatus", t, l); }, "Fees collected").then(function(){ if(state.currentToken) openToken(state.currentToken.token); }).catch(txFail(function(t, l){ setTxStatus("tpStatus", t, l); }));
+        });
+      }).catch(function(){ toast("Couldn't read the launchpad — try again."); });
+    });
+    $("bcGraduateBtn").addEventListener("click", function(){
+      if(!launchpadLive()){ notDeployedToast(); return; }
+      var c = state.currentToken; if(!c) return;
+      if(!state.wallet){ openWalletModal(); return; }
+      if(!state.walletChainOk){ toast("Switch your wallet to Elysium first."); return; }
+      showConfirm("Graduate to Uniswap V2", baseConfirmRows("graduate(token)", launchpadAddr(), [
+        ["Token", c.name + " (" + c.symbol + ") · " + c.token],
+        ["Pool", "Remaining tokens + " + fmtUnits(c.realHype, 18, 4) + " HYPE → Uniswap V2 pair · LP burned to DEAD"]
+      ])).then(function(ok){
+        if(!ok){ setTxStatus("tpStatus", "Stopped", ["Cancelled — nothing was sent."]); return; }
+        var tx = { from: state.wallet.address, to: launchpadAddr(), data: SEL.graduate + encAddr(c.token), value: "0x0" };
+        runConfirmedTx(tx, function(t, l){ setTxStatus("tpStatus", t, l); }, "Graduated").then(function(){ if(state.currentToken) openToken(state.currentToken.token); }).catch(txFail(function(t, l){ setTxStatus("tpStatus", t, l); }));
+      });
+    });
     $("detailWatchBtn").addEventListener("click", function(){ toast("Watchlist starts with the first launch."); });
     $("detailCopyBtn").addEventListener("click", function(){
       var ca = $("detailCA").textContent.trim();
       if(isAddr(ca)) copyText(ca, "Contract address copied");
       else toast("No token loaded — addresses appear here after the first launch.");
     });
-    $("tpTabBuy").addEventListener("click", function(){ this.classList.add("active"); $("tpTabSell").classList.remove("active"); $("tpAmtUnit").textContent = "HYPE"; $("tpAmtLbl").textContent = "You pay"; });
-    $("tpTabSell").addEventListener("click", function(){ this.classList.add("active"); $("tpTabBuy").classList.remove("active"); $("tpAmtLbl").textContent = "You sell"; });
+    $("tpTabBuy").addEventListener("click", function(){ this.classList.add("active"); $("tpTabSell").classList.remove("active"); state.tpSide = "buy"; $("tpAmtUnit").textContent = "HYPE"; $("tpAmtLbl").textContent = "You pay"; if(state.currentToken){ $("tpAmtUnit").textContent = state.currentToken.graduated ? "HYPE" : "HYPE"; paintTokenPage(); refreshTpQuote(); refreshTpBalance(); } });
+    $("tpTabSell").addEventListener("click", function(){ this.classList.add("active"); $("tpTabBuy").classList.remove("active"); state.tpSide = "sell"; $("tpAmtLbl").textContent = "You sell"; if(state.currentToken){ $("tpAmtUnit").textContent = state.currentToken.symbol; paintTokenPage(); refreshTpQuote(); refreshTpBalance(); } });
+    $("tpTradeBtn").addEventListener("click", function(){
+      var c = state.currentToken;
+      if(!launchpadLive() || !c){ toast("Trading opens when the Vector Pad contracts deploy on Elysium."); return; }
+      if(!state.wallet){ openWalletModal(); return; }
+      if(!state.walletChainOk){ ensureChain(state.wallet.provider).then(function(ok){ state.walletChainOk = ok; syncWalletUI(); }); return; }
+      var q = state.tpQuote;
+      if(!q){ toast("Enter an amount and wait for a quote."); return; }
+      if(state.tpBusy) return;
+      var addr = state.wallet.address, lp = launchpadAddr();
+      var status = function(t, l){ setTxStatus("tpStatus", t, l); };
+      if(q.kind === "curve-buy"){
+        showConfirm("Buy on the bonding curve", baseConfirmRows("buy(token, minTokensOut) · payable", lp, [
+          ["Token", c.name + " (" + c.symbol + ") · " + c.token],
+          ["You pay", fmtUnits(q.amountIn, 18, 6) + " HYPE"],
+          ["You receive (est.)", fmtUnits(q.amountOut, 18, 4) + " " + c.symbol],
+          ["Minimum received", fmtUnits(q.minOut, 18, 4) + " " + c.symbol + " · slippage " + (tpSlipBps() / 100) + "%"],
+          ["Curve fee", fmtUnits(q.fee, 18, 6) + " HYPE · 1% (0.70% protocol / 0.30% creator)"]
+        ])).then(function(ok){
+          if(!ok){ status("Stopped", ["Cancelled — nothing was sent."]); return; }
+          state.tpBusy = true;
+          var tx = { from: addr, to: lp, data: SEL.buy + encAddr(c.token) + encUint(q.minOut), value: "0x" + q.amountIn.toString(16) };
+          runConfirmedTx(tx, status, "Buy confirmed").then(function(){ state.tpBusy = false; openToken(c.token); }).catch(function(e){ state.tpBusy = false; txFail(status)(e); });
+        });
+        return;
+      }
+      if(q.kind === "curve-sell"){
+        showConfirm("Sell on the bonding curve", baseConfirmRows("sell(token, amount, minHypeOut)", lp, [
+          ["Token", c.name + " (" + c.symbol + ") · " + c.token],
+          ["You sell", fmtUnits(q.amountIn, 18, 4) + " " + c.symbol],
+          ["You receive (est.)", fmtUnits(q.amountOut, 18, 6) + " HYPE"],
+          ["Minimum received", fmtUnits(q.minOut, 18, 6) + " HYPE · slippage " + (tpSlipBps() / 100) + "%"],
+          ["Approval", "Exact approval first: " + fmtUnits(q.amountIn, 18, 4) + " " + c.symbol + " to the launchpad (" + lp + ") — never unlimited"]
+        ])).then(function(ok){
+          if(!ok){ status("Stopped", ["Cancelled — nothing was sent."]); return; }
+          state.tpBusy = true;
+          erc20Allowance(c.token, addr, lp).then(function(al){
+            var sellTx = { from: addr, to: lp, data: SEL.sell + encAddr(c.token) + encUint(q.amountIn) + encUint(q.minOut), value: "0x0" };
+            if(al >= q.amountIn){ return runConfirmedTx(sellTx, status, "Sell confirmed"); }
+            status("Approval needed", ["Approving exactly <b>" + fmtUnits(q.amountIn, 18, 4) + " " + esc(c.symbol) + "</b> for the launchpad — sign it in your wallet. The sell is simulated and sent right after."]);
+            var apTx = { from: addr, to: c.token, data: "0x095ea7b3" + encAddr(lp) + encUint(q.amountIn), value: "0x0" };
+            return simulateTx(apTx).then(function(){ return sendTx(apTx); }).then(function(h){ return waitReceipt(h); }).then(function(r){
+              if(r && r.status === "0x1") return runConfirmedTx(sellTx, status, "Sell confirmed");
+              throw new Error("The approval did not confirm — the sell was not sent.");
+            });
+          }).then(function(){ state.tpBusy = false; openToken(c.token); }).catch(function(e){ state.tpBusy = false; txFail(status)(e); });
+        });
+        return;
+      }
+      /* Graduated: route through Uniswap V2 Router02, same safety pattern as Swap. */
+      var isBuy = q.kind === "uni-buy";
+      var deadline = Math.floor(Date.now() / 1000) + 1200;
+      showConfirm(isBuy ? "Buy on Uniswap V2" : "Sell on Uniswap V2", baseConfirmRows(isBuy ? "swapExactETHForTokens" : "swapExactTokensForETH", UNI_V2_ROUTER, [
+        ["Token", c.name + " (" + c.symbol + ") · " + c.token],
+        ["You pay", fmtUnits(q.amountIn, 18, 6) + " " + (isBuy ? "HYPE" : c.symbol)],
+        ["Minimum received", fmtUnits(q.minOut, 18, 6) + " " + (isBuy ? c.symbol : "HYPE")],
+        ["Route", q.path.map(function(a){ return a === WHYPE ? "WHYPE" : c.symbol; }).join(" → ")],
+        ["Approval", isBuy ? "None (native HYPE)" : "Exact approval first: " + fmtUnits(q.amountIn, 18, 4) + " " + c.symbol + " to the Router02 — never unlimited"]
+      ])).then(function(ok){
+        if(!ok){ status("Stopped", ["Cancelled — nothing was sent."]); return; }
+        state.tpBusy = true;
+        var sel = isBuy ? "7ff36ab5" : "18cbafe5";
+        var data = encSwapCall(sel, q.minOut, q.path, addr, deadline, q.amountIn);
+        var tx = { from: addr, to: UNI_V2_ROUTER, data: data, value: isBuy ? "0x" + q.amountIn.toString(16) : "0x0" };
+        var start = isBuy ? runConfirmedTx(tx, status, "Swap confirmed")
+          : erc20Allowance(c.token, addr, UNI_V2_ROUTER).then(function(al){
+              if(al >= q.amountIn) return runConfirmedTx(tx, status, "Swap confirmed");
+              var apTx = { from: addr, to: c.token, data: "0x095ea7b3" + encAddr(UNI_V2_ROUTER) + encUint(q.amountIn), value: "0x0" };
+              return simulateTx(apTx).then(function(){ return sendTx(apTx); }).then(function(h){ return waitReceipt(h); }).then(function(r){
+                if(r && r.status === "0x1") return runConfirmedTx(tx, status, "Swap confirmed");
+                throw new Error("The approval did not confirm — the swap was not sent.");
+              });
+            });
+        start.then(function(){ state.tpBusy = false; openToken(c.token); }).catch(function(e){ state.tpBusy = false; txFail(status)(e); });
+      });
+    });
     var tpSlips = [50, 100, 200, 500], tpSlipIdx = 1;
     $("tpSlipBtn").addEventListener("click", function(){
       tpSlipIdx = (tpSlipIdx + 1) % tpSlips.length;
@@ -5129,6 +5518,259 @@ $ <span class="caret"></span></div>
       $("chartTypeLbl").textContent = $("chartTypeLbl").textContent === "Candles" ? "Line" : "Candles";
     });
     $("chartReloadBtn").addEventListener("click", function(){ toast("No chart yet — charts start with the first launch."); });
+
+    /* ================= Confirmation summary (all launchpad writes) ================= */
+    var vpConfirmResolve = null;
+    function showConfirm(title, rows){
+      return new Promise(function(resolve){
+        vpConfirmResolve = resolve;
+        $("vpConfirmTitle").textContent = title;
+        $("vpConfirmBody").innerHTML = rows.map(function(r){
+          return '<div class="sum-row"><span class="k">' + esc(r[0]) + '</span><span class="v" style="word-break:break-all">' + esc(r[1]) + '</span></div>';
+        }).join("");
+        $("vpConfirmModal").classList.add("open");
+      });
+    }
+    function closeConfirm(ok){
+      $("vpConfirmModal").classList.remove("open");
+      if(vpConfirmResolve){ var r = vpConfirmResolve; vpConfirmResolve = null; r(ok); }
+    }
+    $("vpConfirmOk").addEventListener("click", function(){ closeConfirm(true); });
+    $("vpConfirmCancel").addEventListener("click", function(){ closeConfirm(false); });
+    $("vpConfirmModal").addEventListener("click", function(e){ if(e.target === this) closeConfirm(false); });
+    function baseConfirmRows(action, toAddr, extra){
+      var rows = [
+        ["Action", action],
+        ["Chain", "Elysium " + NETWORKS[state.network].label + " · " + NETWORKS[state.network].chainId + " · gas HYPE"],
+        ["From", state.wallet ? state.wallet.address : "—"],
+        ["To (contract)", toAddr]
+      ];
+      return extra ? rows.concat(extra) : rows;
+    }
+    /* Simulate (eth_call) first, then send. A failed simulation sends nothing. */
+    function runConfirmedTx(tx, statusFn, doneLabel){
+      return simulateTx(tx).then(function(){
+        if(statusFn) statusFn("Confirm in your wallet", ["Simulation passed. Sign in your wallet — the confirmation there is the final word."]);
+        return sendTx(tx);
+      }).then(function(hash){
+        if(statusFn) statusFn("Sent", ["Transaction " + truncAddr(hash) + " — waiting for confirmation…"]);
+        return waitReceipt(hash).then(function(r){ return { hash: hash, receipt: r }; });
+      }).then(function(res){
+        if(res.receipt && res.receipt.status === "0x1"){
+          if(statusFn) statusFn("Confirmed", [(doneLabel || "Done") + " on Elysium. Tx " + res.hash]);
+        } else if(res.receipt){
+          if(statusFn) statusFn("Reverted", ["The transaction reverted on-chain. Tx " + res.hash]);
+        } else if(statusFn) statusFn("Sent", ["Still unconfirmed after a minute — check the tx in your wallet. Tx " + res.hash]);
+        refreshBalances();
+        return res;
+      });
+    }
+    function txFail(statusFn){
+      return function(err){
+        if(err && err.code === 4001) statusFn("Stopped", ["Rejected in the wallet — nothing was sent."]);
+        else statusFn("Stopped", ["Simulation or send failed: " + (err && err.message ? err.message : "unknown error") + " Nothing further was sent."]);
+      };
+    }
+    function setTxStatus(boxId, title, lines){
+      var box = $(boxId); if(!box) return;
+      if(!title){ box.className = "tx-status"; box.innerHTML = ""; return; }
+      box.className = "tx-status show";
+      box.innerHTML = '<div class="st-title">' + esc(title) + '</div>' + lines.map(function(l){ return '<div class="st-line">' + l + '</div>'; }).join("");
+    }
+
+    /* ================= Launchpad reads ================= */
+    function erc20Text(token, sel){
+      return ethCall(token, sel).then(decodeAbiString).catch(function(){ return ""; });
+    }
+    function fetchLaunch(tokenAddr){
+      return lpCall(SEL.getCurve + encAddr(tokenAddr)).then(function(r){
+        var curve = decodeCurve(r);
+        if(!curve || !isAddr(curve.token) || curve.token === "0x0000000000000000000000000000000000000000") return null;
+        return Promise.all([
+          erc20Text(tokenAddr, SEL.ercName), erc20Text(tokenAddr, SEL.ercSymbol),
+          lpUint(SEL.price, tokenAddr).catch(function(){ return 0n; }),
+          lpUint(SEL.marketCapHype, tokenAddr).catch(function(){ return 0n; }),
+          lpUint(SEL.gradProgress, tokenAddr).catch(function(){ return 0n; }),
+          lpCall(SEL.metadataURIOf + encAddr(tokenAddr)).then(decodeAbiString).catch(function(){ return ""; })
+        ]).then(function(v){
+          curve.name = v[0] || "Token"; curve.symbol = v[1] || "—"; curve.priceWei = v[2]; curve.mcapWei = v[3];
+          curve.progressBps = Number(v[4]); curve.metadataURI = v[5];
+          return resolveMetaUri(curve.metadataURI).then(function(meta){
+            curve.meta = meta;
+            if(meta){
+              if(meta.name) curve.name = meta.name;
+              if(meta.symbol) curve.symbol = meta.symbol;
+              curve.image = meta.image || ""; curve.description = meta.description || "";
+            }
+            return curve;
+          });
+        });
+      }).catch(function(){ return null; });
+    }
+    function fetchAllLaunches(){
+      if(!launchpadLive()) return Promise.resolve([]);
+      return lpCall(SEL.tokenCount).then(function(r){
+        var w = hexWords(r); var n = w.length ? Number(wordUint(w[0])) : 0;
+        var jobs = [];
+        for(var i = 0; i < n; i++){
+          (function(idx){
+            jobs.push(lpCall(SEL.allTokens + encUint(idx)).then(function(rr){
+              var ww = hexWords(rr); return ww.length ? wordAddr(ww[0]) : null;
+            }).catch(function(){ return null; }));
+          })(i);
+        }
+        return Promise.all(jobs).then(function(addrs){
+          return Promise.all(addrs.filter(Boolean).map(fetchLaunch)).then(function(list){
+            return list.filter(Boolean).reverse(); /* newest first */
+          });
+        });
+      }).catch(function(){ return []; });
+    }
+
+    /* ================= Explore (live when launchpad is set) ================= */
+    function renderExploreLive(){
+      if(!launchpadLive()){ renderExplore(); return; }
+      $("emptyTitle").textContent = "Loading launches…";
+      $("emptyText").textContent = "Reading Vector Pad launches from Elysium.";
+      fetchAllLaunches().then(function(list){
+        state.launches = list; state.launchesLoaded = true;
+        var statEl = $("statListedVal"); if(statEl) statEl.textContent = String(list.length);
+        if(!list.length){
+          renderExplore();
+          $("emptyTitle").textContent = "No launches on Elysium yet";
+          $("emptyText").textContent = "The launchpad is live, but no token has launched yet. Be the first.";
+          return;
+        }
+        $("exploreEmpty").style.display = "none";
+        $("trendingBlock").classList.remove("is-empty");
+        $("trendCap").textContent = list.length + (list.length === 1 ? " launch" : " launches");
+        $("trendCircles").innerHTML = list.slice(0, 6).map(function(c){
+          return '<span class="tc"><span style="font-weight:800;font-size:13px">' + esc((c.symbol || "?").slice(0, 4)) + '</span></span>';
+        }).join("");
+        $("tokenRows").innerHTML = list.map(function(c, i){
+          var mcapUsd = state.hypeUsd != null ? Number(c.mcapWei) / 1e18 * state.hypeUsd : null;
+          return '<tr data-token="' + esc(c.token) + '" style="cursor:pointer"><td>' + (i + 1) + '</td>' +
+            '<td><b>' + esc(c.name) + '</b> <span style="color:var(--muted)">' + esc(c.symbol) + '</span></td>' +
+            '<td>' + ageStr(c.createdAt) + '</td><td>' + (mcapUsd != null ? fmtUSD(mcapUsd) : fmtUnits(c.mcapWei, 18, 2) + " HYPE") + '</td>' +
+            '<td>—</td><td>—</td><td>—</td><td>1%</td><td>Creator</td><td>—</td><td>—</td><td>—</td>' +
+            '<td>' + (c.graduated ? "Graduated" : (c.progressBps / 100).toFixed(1) + "% to graduation") + '</td><td></td></tr>';
+        }).join("");
+        $("tokenGrid").innerHTML = list.map(function(c){
+          var mcapUsd2 = state.hypeUsd != null ? Number(c.mcapWei) / 1e18 * state.hypeUsd : null;
+          return '<button type="button" class="gcard" data-token="' + esc(c.token) + '" style="text-align:left;cursor:pointer;padding:18px">' +
+            '<div style="font-weight:800;font-size:17px">' + esc(c.name) + ' <span style="color:var(--muted)">' + esc(c.symbol) + '</span></div>' +
+            '<div style="color:var(--muted);font-size:13.5px;margin-top:6px">Market cap ' + (mcapUsd2 != null ? fmtUSD(mcapUsd2) : fmtUnits(c.mcapWei, 18, 2) + " HYPE") + ' · ' + (c.graduated ? "Graduated · Uniswap V2" : (c.progressBps / 100).toFixed(1) + "% to graduation") + '</div>' +
+            '<div style="color:var(--muted);font-size:12.5px;margin-top:4px;font-family:ui-monospace,Menlo,monospace">' + truncAddr(c.token) + '</div></button>';
+        }).join("");
+        setViewMode(state.viewMode);
+        document.querySelectorAll("[data-token]").forEach(function(elx){
+          elx.addEventListener("click", function(){ openToken(elx.getAttribute("data-token")); });
+        });
+        renderPortfolioLaunches();
+      });
+    }
+
+    /* ================= Token page (curve + graduated routing) ================= */
+    function openToken(addr){
+      if(!isAddr(addr || "")){ toast("That is not a token address."); return; }
+      showView("token");
+      $("detailCA").textContent = addr;
+      $("detailName").textContent = "Loading…"; $("detailSym").textContent = "";
+      if(!launchpadLive()){ toast("The Vector Pad launchpad is not deployed on Elysium yet — nothing to load."); return; }
+      fetchLaunch(addr).then(function(c){
+        if(!c){ toast("That address is not a Vector Pad launch."); $("detailName").textContent = "Token"; return; }
+        state.currentToken = c;
+        paintTokenPage();
+        refreshTpQuote();
+        if(state.wallet) refreshTpBalance();
+      });
+    }
+    function paintTokenPage(){
+      var c = state.currentToken; if(!c) return;
+      $("detailName").textContent = c.name; $("detailSym").textContent = c.symbol;
+      $("detailCA").textContent = c.token;
+      if(c.image){ $("detailImg").src = c.image.indexOf("ipfs://") === 0 ? "https://gateway.pinata.cloud/ipfs/" + c.image.slice(7) : c.image; }
+      var mcapUsd = state.hypeUsd != null ? Number(c.mcapWei) / 1e18 * state.hypeUsd : null;
+      $("chartMcap").textContent = mcapUsd != null ? fmtUSD(mcapUsd) : fmtUnits(c.mcapWei, 18, 2) + " HYPE";
+      $("chartMsg").textContent = c.graduated ? "Graduated — this token now trades on Uniswap V2. Use the trade panel; it routes to the pool." : "Bonding curve · " + (c.progressBps / 100).toFixed(1) + "% to graduation.";
+      $("bcBody").style.display = "";
+      $("bcNotLive").style.display = "none";
+      $("bcProgTxt").textContent = (c.progressBps / 100).toFixed(1) + "%";
+      $("bcProgBar").style.width = Math.min(100, c.progressBps / 100) + "%";
+      $("bcStateLine").textContent = c.graduated ? "Graduated to Uniswap V2." : fmtUnits(c.realHype, 18, 4) + " HYPE in the curve · graduates at 85 HYPE net.";
+      $("bcRealSol").textContent = fmtUnits(c.realHype, 18, 4) + " HYPE";
+      $("bcTokensLeft").textContent = fmtUnits(CURVE_CONST.curveAlloc - c.tokensSold, 18, 0);
+      $("bcCurvePda").textContent = truncAddr(launchpadAddr());
+      $("bcCreator").textContent = truncAddr(c.creator);
+      $("bcCreatorFees").textContent = fmtUnits(c.creatorFees, 18, 6) + " HYPE";
+      $("bcProtoFees").textContent = fmtUnits(c.protocolFees, 18, 6) + " HYPE";
+      var canGrad = !c.graduated && (c.realHype >= CURVE_CONST.graduationHype || c.tokensSold >= CURVE_CONST.curveAlloc);
+      $("bcGraduateBtn").style.display = canGrad ? "" : "none";
+      $("bcMigratedNote").style.display = c.graduated ? "" : "none";
+      if(c.graduated) $("bcPoolId").textContent = c.pair;
+      $("detailStatusText").textContent = c.graduated
+        ? "Graduated. Liquidity is in the Uniswap V2 pool " + c.pair + " with LP burned. Trades route through the verified Router02."
+        : "Live on the bonding curve. Price, fees and progress above are read from the launchpad contract.";
+      $("tdMint").textContent = c.token; $("tdStatus").textContent = c.graduated ? "Graduated" : "On curve";
+      $("tdVenue").textContent = c.graduated ? "Uniswap V2" : "Vector Pad curve"; $("tdSupply").textContent = "1,000,000,000";
+      /* Trade panel */
+      $("tpNote").textContent = c.graduated ? "Graduated — trades route through Uniswap V2 (Router02), simulated first." : "Curve trading · fee 1% (0.70% protocol · 0.30% creator) · simulated first.";
+      var btn = $("tpTradeBtn"); btn.disabled = false; btn.classList.remove("connect");
+      btn.textContent = state.tpSide === "sell" ? "Sell on the curve" : (c.graduated ? "Buy on Uniswap V2" : "Buy on the curve");
+      /* Graduated tokens also join the Swap list so the Swap page routes them via Uniswap. */
+      if(c.graduated && !TOKENS.some(function(t){ return t.addr && t.addr.toLowerCase() === c.token.toLowerCase(); })){
+        TOKENS.push({ sym: c.symbol, name: c.name, addr: c.token, decimals: 18 });
+        fillSwapSelects();
+      }
+    }
+    function refreshTpBalance(){
+      var c = state.currentToken; if(!c || !state.wallet) return;
+      if(state.tpSide === "buy"){ $("tpBalVal").textContent = state.hypeBal != null ? fmtUnits(state.hypeBal, 18, 4) + " HYPE" : "—"; }
+      else erc20Balance(c.token, state.wallet.address).then(function(b){ $("tpBalVal").textContent = fmtUnits(b, 18, 4) + " " + c.symbol; });
+    }
+    function tpSlipBps(){ return tpSlips[tpSlipIdx]; }
+    function refreshTpQuote(){
+      var c = state.currentToken; if(!c) return;
+      var amtStr = $("tpAmt").value;
+      if(c.graduated){ refreshTpQuoteUni(); return; }
+      if(state.tpSide === "buy"){
+        var hypeIn = parseUnits(amtStr, 18);
+        if(hypeIn == null || hypeIn <= 0n){ $("tpQuote").textContent = "Fee 1%."; state.tpQuote = null; return; }
+        lpCall(SEL.quoteBuy + encAddr(c.token) + encUint(hypeIn)).then(function(r){
+          var w = hexWords(r); if(w.length < 4) return;
+          var out = wordUint(w[0]), fee = wordUint(w[1]);
+          var minOut = out * BigInt(10000 - tpSlipBps()) / 10000n;
+          state.tpQuote = { kind: "curve-buy", amountIn: hypeIn, amountOut: out, minOut: minOut, fee: fee, refund: wordUint(w[3]) };
+          $("tpQuote").textContent = "≈ " + fmtUnits(out, 18, 4) + " " + c.symbol + " · fee " + fmtUnits(fee, 18, 6) + " HYPE" + (state.tpQuote.refund > 0n ? " · excess refunded" : "");
+        }).catch(function(){ $("tpQuote").textContent = "Quote failed — curve unavailable."; state.tpQuote = null; });
+      } else {
+        var tokIn = parseUnits(amtStr, 18);
+        if(tokIn == null || tokIn <= 0n){ $("tpQuote").textContent = "Fee 1%."; state.tpQuote = null; return; }
+        lpCall(SEL.quoteSell + encAddr(c.token) + encUint(tokIn)).then(function(r){
+          var w = hexWords(r); if(w.length < 3) return;
+          var gross = wordUint(w[0]), fee = wordUint(w[1]), out = wordUint(w[2]);
+          var minOut = out * BigInt(10000 - tpSlipBps()) / 10000n;
+          state.tpQuote = { kind: "curve-sell", amountIn: tokIn, amountOut: out, minOut: minOut, fee: fee, gross: gross };
+          $("tpQuote").textContent = "≈ " + fmtUnits(out, 18, 6) + " HYPE · fee " + fmtUnits(fee, 18, 6) + " HYPE";
+        }).catch(function(){ $("tpQuote").textContent = "Quote failed — amount may exceed the curve."; state.tpQuote = null; });
+      }
+    }
+    function refreshTpQuoteUni(){
+      var c = state.currentToken; if(!c) return;
+      var isBuy = state.tpSide === "buy";
+      var amt = parseUnits($("tpAmt").value, 18);
+      if(amt == null || amt <= 0n){ $("tpQuote").textContent = "Uniswap V2 · fee 0.30% (pool)."; state.tpQuote = null; return; }
+      var path = isBuy ? [WHYPE, c.token] : [c.token, WHYPE];
+      callGetAmountsOut(amt, path).then(function(amounts){
+        if(!amounts || amounts.length < 2){ $("tpQuote").textContent = "No liquidity in the Uniswap pool yet."; state.tpQuote = null; return; }
+        var out = amounts[amounts.length - 1];
+        var minOut = out * BigInt(10000 - tpSlipBps()) / 10000n;
+        state.tpQuote = { kind: isBuy ? "uni-buy" : "uni-sell", amountIn: amt, amountOut: out, minOut: minOut, path: path };
+        $("tpQuote").textContent = "≈ " + fmtUnits(out, 18, 4) + " " + (isBuy ? c.symbol : "HYPE") + " · Uniswap V2";
+      }).catch(function(){ $("tpQuote").textContent = "Quote failed — pool unavailable."; state.tpQuote = null; });
+    }
+    var tpQuoteTimer = null;
+    $("tpAmt").addEventListener("input", function(){ clearTimeout(tpQuoteTimer); tpQuoteTimer = setTimeout(function(){ refreshTpQuote(); refreshTpBalance(); }, 300); });
 
     /* ================= Swap (Uniswap V2 on Elysium) ================= */
     function el(html){ var d = document.createElement("div"); d.innerHTML = html; return d.firstElementChild; }
@@ -5368,12 +6010,12 @@ $ <span class="caret"></span></div>
           if(al >= q.amountIn){ runSwapTx(tx, "swap"); return; }
           setSwapStatus("Approval needed", ["Approving exactly <b>" + fmtUnits(q.amountIn, inT.decimals, 6) + " " + inT.sym + "</b> for the Uniswap V2 router — sign it in your wallet. The swap itself is simulated and sent right after."]);
           var apTx = { from: addr, to: inAddr, data: "0x095ea7b3" + encAddr(UNI_V2_ROUTER) + encUint(q.amountIn), value: "0x0" };
-          sendTx(apTx).then(function(h){ return waitReceipt(h); }).then(function(r){
+          simulateTx(apTx).then(function(){ return sendTx(apTx); }).then(function(h){ return waitReceipt(h); }).then(function(r){
             if(r && r.status === "0x1") runSwapTx(tx, "swap");
             else fail("The approval did not confirm — the swap was not sent.");
           }).catch(function(err){
             if(err && err.code === 4001) fail("Approval rejected — nothing was sent.");
-            else fail("Approval failed: " + (err && err.message ? err.message : "unknown error"));
+            else fail("Approval simulation or send failed: " + (err && err.message ? err.message : "unknown error") + " The swap was not sent.");
           });
         }).catch(function(){ fail("Couldn't read the token allowance — the swap was not sent."); });
         return;
@@ -5381,7 +6023,94 @@ $ <span class="caret"></span></div>
       runSwapTx(tx, "swap");
     });
 
-    /* ================= Stake ================= */
+    /* ================= HyperEVM + official bridge / Kinetiq config =================
+       Verified 2026-11-27 against Kinetiq's published contract list and
+       read back on-chain before shipping:
+       - HyperEVM chainId 999 (0x3e7) via https://rpc.hyperliquid.xyz/evm
+       - Inbox.bridge() == 0x503D…16B6 (the published Elysium Bridge)
+       - Rollup.chainId() == 99901 (Elysium)
+       - Inbox.depositEth() simulated OK (returns the ticket id)
+       - StakingAccountant.kHYPEToHYPE(1e18) read live (≈1.0289 HYPE)
+       Selectors computed with a local Keccak-256 and cross-checked
+       against the known ERC-20 selectors used above. */
+    var HYPEREVM = { chainId: 999, chainIdHex: "0x3e7", chainName: "HyperEVM",
+      rpc: "https://rpc.hyperliquid.xyz/evm", explorer: "https://hyperevmscan.io" };
+    var ELYSIUM_INBOX  = "0xce59f8B65ad41C9DAE4c07A0571a39824bD92cff";
+    var ELYSIUM_BRIDGE = "0x503D572157113fAaaD4DbeD2647Bb10b949216B6";
+    var ELYSIUM_ROLLUP = "0x508C173dFe5F737B3493195Bf785d71fA76fD217";
+    var ARBSYS = "0x0000000000000000000000000000000000000064";
+    var KHYPE_TOKEN = "0xfD739d4e423301CE9385c1fb8850539D657C296D";
+    var KINETIQ_ACCOUNTANT = "0x9209648Ec9D448EF57116B73A2f081835643dc7A";
+    var OFFICIAL_BRIDGE_URL = "https://elysium.kinetiq.xyz/bridge";
+    var SEL_BRIDGE = { depositEth: "0x439370b1", withdrawEth: "0x25e16063",
+      inboxBridge: "0xe78cea92", rollupChainId: "0x9a8a0592", khypeToHype: "0x759bc2fc" };
+    /* Kinetiq StakingManager (HyperEVM) — verified on-chain 2026-11-27:
+       minStakeAmount() = 5 HYPE, stakingPaused() = false,
+       withdrawalPaused() = false; stake() (payable, no args) simulated
+       OK via eth_call with a 5 HYPE value + balance override;
+       queueWithdrawal(uint256) reverts ERC20InsufficientAllowance
+       without an exact kHYPE allowance to the manager, so unstake
+       approves first. confirmWithdrawal is NOT verified — the claim
+       step after the queue stays on Kinetiq's official page, and no
+       guessed instant-unstake selector is used anywhere. */
+    var KINETIQ_STAKING_MANAGER = STAKING_ADDRESS;
+    var KINETIQ_STAKE_URL = "https://kinetiq.xyz/stake-hype";
+    var SEL_KINETIQ = { stake: "0x3a4b66f1", queueWithdrawal: "0x6b174f35",
+      minStake: "0xf1887684", stakingPaused: "0xbbb781cc", withdrawalPaused: "0xb5db7d41",
+      allowance: "0xdd62ed3e", approve: "0x095ea7b3" };
+    state.khypeRate = null; state.khypeBal = null; state.hevHypeBal = null;
+    state.khypeMinStake = null; state.khypeStakingPaused = null; state.khypeWithdrawalPaused = null;
+    state.bridgeVerified = null; state.bridgeVerifiedAt = 0;
+
+    function hevRpc(method, params){ return rpcOnce(HYPEREVM.rpc, method, params); }
+    function hevCall(to, data, from, valueHex){
+      var call = { to: to, data: data };
+      if(from) call.from = from;
+      if(valueHex) call.value = valueHex;
+      return hevRpc("eth_call", [call, "latest"]);
+    }
+    function hevErc20Balance(token, owner){
+      return hevCall(token, "0x70a08231" + encAddr(owner)).then(function(res){
+        return res && res !== "0x" ? BigInt(res) : 0n;
+      });
+    }
+    /* Live kHYPE rate + the connected wallet's HyperEVM reads (read-only). */
+    var khypeFetchAt = 0, khypeFetching = false;
+    function fetchKhype(force){
+      var now = Date.now();
+      if(khypeFetching || (!force && now - khypeFetchAt < 30000)) return;
+      khypeFetching = true;
+      var jobs = [ hevCall(KINETIQ_ACCOUNTANT, SEL_BRIDGE.khypeToHype + encUint(10n ** 18n)).then(function(res){
+        if(res && res !== "0x") state.khypeRate = BigInt(res);
+      }).catch(function(){}),
+      hevCall(KINETIQ_STAKING_MANAGER, SEL_KINETIQ.minStake).then(function(res){
+        if(res && res !== "0x") state.khypeMinStake = BigInt(res);
+      }).catch(function(){}),
+      hevCall(KINETIQ_STAKING_MANAGER, SEL_KINETIQ.stakingPaused).then(function(res){
+        if(res && res !== "0x") state.khypeStakingPaused = BigInt(res) !== 0n;
+      }).catch(function(){}),
+      hevCall(KINETIQ_STAKING_MANAGER, SEL_KINETIQ.withdrawalPaused).then(function(res){
+        if(res && res !== "0x") state.khypeWithdrawalPaused = BigInt(res) !== 0n;
+      }).catch(function(){}) ];
+      if(state.wallet){
+        var addr = state.wallet.address;
+        jobs.push(hevRpc("eth_getBalance", [addr, "latest"]).then(function(res){ state.hevHypeBal = res ? BigInt(res) : 0n; }).catch(function(){}));
+        jobs.push(hevErc20Balance(KHYPE_TOKEN, addr).then(function(b){ state.khypeBal = b; }).catch(function(){}));
+      }
+      Promise.all(jobs).then(function(){
+        khypeFetching = false; khypeFetchAt = Date.now();
+        renderStake(); renderPortfolio(); renderBridge();
+      });
+    }
+
+    /* ================= Stake (Kinetiq kHYPE route — in-app) =================
+       Stake: wallet switches to HyperEVM (999), stake() is simulated via
+       eth_call, a summary is shown, then the payable stake() is signed —
+       kHYPE lands in the same wallet. Unstake: exact kHYPE approve to
+       the StakingManager (simulated), then queueWithdrawal() (simulated)
+       enters the ~7-day queue + lockup; the confirm/claim after the
+       delay runs on Kinetiq's official page because confirmWithdrawal
+       is not verified. Any failed simulation sends nothing. */
     function setStakeTab(name){
       document.querySelectorAll("[data-stab]").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-stab") === name); });
       document.querySelectorAll("[data-spane]").forEach(function(p){ p.style.display = p.getAttribute("data-spane") === name ? "" : "none"; });
@@ -5389,35 +6118,448 @@ $ <span class="caret"></span></div>
     document.querySelectorAll("[data-stab]").forEach(function(b){
       b.addEventListener("click", function(){ setStakeTab(b.getAttribute("data-stab")); });
     });
+    function paintStakeRecv(){
+      var el = $("stakeRecv"); if(!el) return;
+      var amt = parseUnits($("stakeAmt").value, 18);
+      el.textContent = (amt != null && amt > 0n && state.khypeRate != null && state.khypeRate > 0n)
+        ? fmtUnits(amt * (10n ** 18n) / state.khypeRate, 18, 6) + " kHYPE" : "— kHYPE";
+    }
+    function paintUnstakeRecv(){
+      var q = $("unstakeQueueAmt"), r = $("unstakeRecv"); if(!q || !r) return;
+      var amt = parseUnits($("unstakeAmt").value, 18);
+      q.textContent = (amt != null && amt > 0n) ? fmtUnits(amt, 18, 6) + " kHYPE" : "— kHYPE";
+      r.textContent = (amt != null && amt > 0n && state.khypeRate != null)
+        ? fmtUnits(amt * state.khypeRate / (10n ** 18n), 18, 6) + " HYPE" : "— HYPE";
+    }
+    function paintPauseLine(lineId, txtId, paused, liveTxt, pausedTxt){
+      var line = $(lineId), txt = $(txtId); if(!line || !txt) return;
+      line.classList.remove("ok", "bad");
+      if(paused === true){ line.classList.add("bad"); txt.textContent = pausedTxt; }
+      else if(paused === false){ line.classList.add("ok"); txt.textContent = liveTxt; }
+    }
     function renderStake(){
       var connected = !!state.wallet;
-      $("stakeDisconnected").style.display = connected ? "none" : "";
+      var sd = $("stakeDisconnected"); if(!sd) return;
+      sd.style.display = connected ? "none" : "";
       $("stakeConnected").style.display = connected ? "" : "none";
-      $("unstakeDisconnected").style.display = connected ? "none" : "";
-      $("stakeAccountsWrap").style.display = connected ? "" : "none";
+      var ud = $("unstakeDisconnected"), uc = $("unstakeConnected");
+      if(ud) ud.style.display = connected ? "none" : "";
+      if(uc) uc.style.display = connected ? "" : "none";
       $("posDisconnected").style.display = connected ? "none" : "";
       $("posConnected").style.display = connected ? "" : "none";
-      if(connected){
-        $("stakeBalLine").textContent = "Balance: " + (state.hypeBal != null ? fmtUnits(state.hypeBal, 18, 4) + " HYPE" : "…");
-        $("stakeSol").textContent = state.hypeBal != null ? fmtUnits(state.hypeBal, 18, 4) : "—";
-        $("stakeAddr").textContent = truncAddr(state.wallet.address);
-        $("stakeNet").textContent = "Elysium " + state.network + " · chain " + NETWORKS[state.network].chainId;
-        $("stakeEpoch").textContent = state.block != null ? "Block #" + state.block.toLocaleString("en-US") : "";
-      }
+      var rateEl = $("khypeRate");
+      if(rateEl) rateEl.textContent = state.khypeRate != null ? fmtUnits(state.khypeRate, 18, 4) : "…";
+      paintPauseLine("stakePauseLine", "stakePauseTxt", state.khypeStakingPaused,
+        "Kinetiq staking is live — stakingPaused() reads false on the StakingManager.",
+        "Kinetiq staking is PAUSED on-chain (stakingPaused) — staking is blocked until it reopens.");
+      paintPauseLine("unstakePauseLine", "unstakePauseTxt", state.khypeWithdrawalPaused,
+        "Kinetiq withdrawals are open — withdrawalPaused() reads false on the StakingManager.",
+        "Kinetiq withdrawals are PAUSED on-chain (withdrawalPaused) — queueing is blocked until they reopen.");
+      var sb = $("stakeBtn"); if(sb) sb.disabled = state.khypeStakingPaused === true;
+      var ub = $("unstakeBtn"); if(ub) ub.disabled = state.khypeWithdrawalPaused === true;
+      var mr = $("stakeMinRow");
+      if(mr) mr.textContent = state.khypeMinStake != null ? fmtUnits(state.khypeMinStake, 18, 4) + " HYPE · read live" : "…";
+      fetchKhype(false);
+      paintStakeRecv(); paintUnstakeRecv();
+      if(!connected) return;
+      var hev = state.hevHypeBal, kb = state.khypeBal, rate = state.khypeRate;
+      var valTxt = (kb != null && rate != null) ? fmtUnits(kb * rate / (10n ** 18n), 18, 4) + " HYPE" : "…";
+      $("stakeHevBal").textContent = hev != null ? fmtUnits(hev, 18, 4) + " HYPE" : "…";
+      $("stakeKhypeBal").textContent = kb != null ? fmtUnits(kb, 18, 4) + " kHYPE" : "…";
+      $("stakeKhypeVal").textContent = valTxt;
+      $("stakeRateRow").textContent = rate != null ? "1 kHYPE = " + fmtUnits(rate, 18, 4) + " HYPE" : "…";
+      $("stakeTotal").textContent = kb != null ? fmtUnits(kb, 18, 4) : "—";
+      $("stakeKhypeValue").textContent = valTxt;
+      $("stakeHevBal2").textContent = hev != null ? fmtUnits(hev, 18, 4) + " HYPE" : "—";
+      $("stakeAddr").textContent = truncAddr(state.wallet.address);
+      var ab = $("stakeAmtBal"); if(ab) ab.textContent = "Balance: " + (hev != null ? fmtUnits(hev, 18, 4) + " HYPE" : "…");
+      var ubal = $("unstakeAmtBal"); if(ubal) ubal.textContent = "kHYPE balance: " + (kb != null ? fmtUnits(kb, 18, 4) + " kHYPE" : "…");
+      $("rewSummary").textContent = rate != null
+        ? "Rewards accrue in the exchange rate: 1 kHYPE currently redeems for " + fmtUnits(rate, 18, 4) + " HYPE, read live from Kinetiq's StakingAccountant on HyperEVM. No fixed APY is promised."
+        : "Rewards accrue in the kHYPE exchange rate — the live rate is read from Kinetiq's StakingAccountant on HyperEVM.";
     }
     $("posManageBtn").addEventListener("click", function(){
       setStakeTab("stake");
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
-
-    /* ================= Bridge ================= */
-    $("bTabDeposit").addEventListener("click", function(){
-      this.classList.add("active"); $("bTabWithdraw").classList.remove("active");
-      $("bridgeDirNote").innerHTML = "HyperEVM → Elysium. HYPE moves 1:1 through Kinetiq's official bridge.";
+    $("stakeAmt").addEventListener("input", paintStakeRecv);
+    $("unstakeAmt").addEventListener("input", paintUnstakeRecv);
+    document.querySelectorAll("[data-stake-preset]").forEach(function(b){
+      b.addEventListener("click", function(){
+        var kind = b.getAttribute("data-stake-preset"), v = null;
+        if(kind === "min"){ if(state.khypeMinStake != null) v = state.khypeMinStake; }
+        else if(state.hevHypeBal != null){
+          if(kind === "max"){ v = state.hevHypeBal - (5n * 10n ** 16n); if(v < 0n) v = 0n; }
+          else v = state.hevHypeBal * BigInt(kind) / 100n;
+        }
+        if(v != null){ $("stakeAmt").value = fmtUnits(v, 18, 18); paintStakeRecv(); }
+      });
     });
-    $("bTabWithdraw").addEventListener("click", function(){
-      this.classList.add("active"); $("bTabDeposit").classList.remove("active");
-      $("bridgeDirNote").innerHTML = "Elysium → HyperEVM. Withdrawals wait out the Orbit challenge window before they can be claimed.";
+    document.querySelectorAll("[data-unstake-preset]").forEach(function(b){
+      b.addEventListener("click", function(){
+        if(state.khypeBal == null) return;
+        var kind = b.getAttribute("data-unstake-preset");
+        var v = kind === "max" ? state.khypeBal : state.khypeBal * BigInt(kind) / 100n;
+        $("unstakeAmt").value = fmtUnits(v, 18, 18); paintUnstakeRecv();
+      });
+    });
+    function hevAllowance(token, owner, spender){
+      return hevCall(token, SEL_KINETIQ.allowance + encAddr(owner) + encAddr(spender)).then(function(res){
+        return res && res !== "0x" ? BigInt(res) : 0n;
+      });
+    }
+    function backToElysium(){
+      if(!state.wallet) return;
+      ensureChain(state.wallet.provider).then(function(ok){
+        state.walletChainOk = ok; syncWalletUI(); refreshBalances();
+      }).catch(function(){});
+    }
+    var stakeBusy = false;
+    $("stakeBtn").addEventListener("click", function(){
+      if(stakeBusy) return;
+      if(!state.wallet){ openWalletModal(); return; }
+      var addr = state.wallet.address;
+      function S(t, l){ setTxStatus("stakeStatus", t, l); }
+      var amt = parseUnits($("stakeAmt").value, 18);
+      if(amt == null || amt <= 0n){ S("Check the amount", ["Enter how much HYPE to stake."]); return; }
+      if(state.khypeStakingPaused === true){ S("Staking is paused", ["Kinetiq's StakingManager reports stakingPaused — nothing was sent."]); return; }
+      if(state.khypeMinStake != null && amt < state.khypeMinStake){ S("Below the minimum", ["Kinetiq's minimum stake is " + fmtUnits(state.khypeMinStake, 18, 4) + " HYPE, read live from the StakingManager."]); return; }
+      if(state.hevHypeBal != null && amt > state.hevHypeBal){ S("Not enough HYPE", ["Your HyperEVM balance is " + fmtUnits(state.hevHypeBal, 18, 4) + " HYPE — and HyperEVM gas comes out of the same balance."]); return; }
+      var estKhype = (state.khypeRate != null && state.khypeRate > 0n) ? amt * (10n ** 18n) / state.khypeRate : null;
+      stakeBusy = true;
+      showConfirm("Stake HYPE — via Kinetiq", [
+        ["Action", "Stake HYPE → kHYPE (Kinetiq liquid staking)"],
+        ["Chain", "HyperEVM · 999 · gas HYPE"],
+        ["From", addr],
+        ["To (contract)", "Kinetiq StakingManager " + KINETIQ_STAKING_MANAGER],
+        ["You stake", fmtUnits(amt, 18, 6) + " HYPE"],
+        ["You receive (est.)", estKhype != null ? fmtUnits(estKhype, 18, 6) + " kHYPE" : "kHYPE at the live exchange rate"],
+        ["Rate", state.khypeRate != null ? "1 kHYPE = " + fmtUnits(state.khypeRate, 18, 4) + " HYPE" : "Read live on HyperEVM"],
+        ["Minimum stake", state.khypeMinStake != null ? fmtUnits(state.khypeMinStake, 18, 4) + " HYPE" : "5 HYPE"],
+        ["Exit", "Queue an unstake here (~8–9 days) or swap kHYPE on a HyperEVM DEX"]
+      ]).then(function(confirmed){
+        if(!confirmed){ stakeBusy = false; S("Stopped", ["Cancelled — nothing was sent."]); return; }
+        S("Switching chain", ["Your wallet needs to be on HyperEVM (chain 999) for the stake…"]);
+        return ensureHevChain(state.wallet.provider).then(function(onHev){
+          if(!onHev){ stakeBusy = false; S("Stopped", ["The wallet stayed off HyperEVM — nothing was sent."]); return; }
+          var tx = { from: addr, to: KINETIQ_STAKING_MANAGER, data: SEL_KINETIQ.stake, value: "0x" + amt.toString(16) };
+          S("Simulating", ["Simulating stake() against HyperEVM first…"]);
+          return hevCall(KINETIQ_STAKING_MANAGER, SEL_KINETIQ.stake, addr, tx.value).then(function(){
+            S("Confirm in your wallet", ["Simulation passed. Sign in your wallet — the confirmation there is the final word."]);
+            return sendTx(tx);
+          }).then(function(hash){
+            S("Sent", ["Stake transaction " + truncAddr(hash) + " — waiting for HyperEVM confirmation…"]);
+            return waitHevReceipt(hash).then(function(r){ return { hash: hash, receipt: r }; });
+          }).then(function(res){
+            stakeBusy = false;
+            if(res.receipt && res.receipt.status === "0x1"){
+              S("Staked", ["Done — kHYPE is in your wallet on HyperEVM. Tx " + res.hash, "Your position above refreshes automatically."]);
+            } else if(res.receipt){
+              S("Reverted", ["The stake reverted on HyperEVM. Tx " + res.hash]);
+            } else {
+              S("Sent", ["Still unconfirmed after a minute — check the tx in your wallet. Tx " + res.hash]);
+            }
+            state.hevHypeBal = null; state.khypeBal = null; fetchKhype(true);
+            backToElysium();
+          }).catch(function(err){
+            stakeBusy = false;
+            if(err && err.code === 4001) S("Stopped", ["Rejected in the wallet — nothing was sent."]);
+            else S("Stopped", ["Simulation or send failed: " + (err && err.message ? err.message : "unknown error") + " Nothing further was sent."]);
+            backToElysium();
+          });
+        });
+      });
+    });
+    $("unstakeBtn").addEventListener("click", function(){
+      if(stakeBusy) return;
+      if(!state.wallet){ openWalletModal(); return; }
+      var addr = state.wallet.address;
+      function S(t, l){ setTxStatus("unstakeStatus", t, l); }
+      var amt = parseUnits($("unstakeAmt").value, 18);
+      if(amt == null || amt <= 0n){ S("Check the amount", ["Enter how much kHYPE to unstake."]); return; }
+      if(state.khypeWithdrawalPaused === true){ S("Withdrawals are paused", ["Kinetiq's StakingManager reports withdrawalPaused — nothing was sent."]); return; }
+      if(state.khypeBal != null && amt > state.khypeBal){ S("Not enough kHYPE", ["Your kHYPE balance is " + fmtUnits(state.khypeBal, 18, 4) + " kHYPE."]); return; }
+      var estHype = state.khypeRate != null ? amt * state.khypeRate / (10n ** 18n) : null;
+      stakeBusy = true;
+      showConfirm("Queue unstake — kHYPE via Kinetiq", [
+        ["Action", "Queue unstake — kHYPE → HYPE (Kinetiq)"],
+        ["Chain", "HyperEVM · 999 · gas HYPE"],
+        ["From", addr],
+        ["To (contract)", "Kinetiq StakingManager " + KINETIQ_STAKING_MANAGER],
+        ["You queue", fmtUnits(amt, 18, 6) + " kHYPE"],
+        ["Approval first", "Approve exactly " + fmtUnits(amt, 18, 6) + " kHYPE to the StakingManager"],
+        ["Est. HYPE back", estHype != null ? fmtUnits(estHype, 18, 6) + " HYPE at the live rate" : "HYPE at the live rate"],
+        ["Wait", "7-day queue + delegation lockup (~8–9 days total)"],
+        ["Then", "Confirm & claim on Kinetiq's official staking page"]
+      ]).then(function(confirmed){
+        if(!confirmed){ stakeBusy = false; S("Stopped", ["Cancelled — nothing was sent."]); return; }
+        S("Switching chain", ["Your wallet needs to be on HyperEVM (chain 999) for the unstake…"]);
+        return ensureHevChain(state.wallet.provider).then(function(onHev){
+          if(!onHev){ stakeBusy = false; S("Stopped", ["The wallet stayed off HyperEVM — nothing was sent."]); return; }
+          function doQueue(){
+            var data = SEL_KINETIQ.queueWithdrawal + encUint(amt);
+            var tx = { from: addr, to: KINETIQ_STAKING_MANAGER, data: data, value: "0x0" };
+            S("Simulating", ["Simulating queueWithdrawal() against HyperEVM first…"]);
+            return hevCall(KINETIQ_STAKING_MANAGER, data, addr).then(function(){
+              S("Confirm in your wallet", ["Simulation passed. Sign the queueWithdrawal in your wallet — the confirmation there is the final word."]);
+              return sendTx(tx);
+            }).then(function(hash){
+              S("Sent", ["queueWithdrawal transaction " + truncAddr(hash) + " — waiting for HyperEVM confirmation…"]);
+              return waitHevReceipt(hash).then(function(r){ return { hash: hash, receipt: r }; });
+            }).then(function(res){
+              stakeBusy = false;
+              if(res.receipt && res.receipt.status === "0x1"){
+                S("Unstake queued", [
+                  "Your unstake is in Kinetiq's queue — the kHYPE has been pulled by the StakingManager. Tx " + res.hash,
+                  "Wait out the 7-day queue plus the delegation lockup (~8–9 days total).",
+                  "After the delay, confirm &amp; claim the HYPE on <a href=\"" + KINETIQ_STAKE_URL + "\" target=\"_blank\" rel=\"noopener\">Kinetiq's official staking page</a> with this same wallet — pending withdrawals and their IDs are shown there."
+                ]);
+              } else if(res.receipt){
+                S("Reverted", ["The queueWithdrawal reverted on HyperEVM. Tx " + res.hash]);
+              } else {
+                S("Sent", ["Still unconfirmed after a minute — check the tx in your wallet. Tx " + res.hash]);
+              }
+              state.khypeBal = null; fetchKhype(true);
+              backToElysium();
+            });
+          }
+          return hevAllowance(KHYPE_TOKEN, addr, KINETIQ_STAKING_MANAGER).then(function(al){
+            if(al >= amt) return doQueue();
+            S("Approval needed", ["Approving exactly " + fmtUnits(amt, 18, 6) + " kHYPE for the StakingManager — sign it in your wallet. The queueWithdrawal is simulated and sent right after."]);
+            var apData = SEL_KINETIQ.approve + encAddr(KINETIQ_STAKING_MANAGER) + encUint(amt);
+            var apTx = { from: addr, to: KHYPE_TOKEN, data: apData, value: "0x0" };
+            return hevCall(KHYPE_TOKEN, apData, addr).then(function(){
+              return sendTx(apTx);
+            }).then(function(h){
+              S("Approval sent", ["Approval transaction " + truncAddr(h) + " — waiting for HyperEVM confirmation…"]);
+              return waitHevReceipt(h);
+            }).then(function(r){
+              if(r && r.status === "0x1") return doQueue();
+              stakeBusy = false;
+              S("Stopped", ["The approval did not confirm — the unstake was not queued."]);
+              backToElysium();
+            });
+          }).catch(function(err){
+            stakeBusy = false;
+            if(err && err.code === 4001) S("Stopped", ["Rejected in the wallet — nothing was sent."]);
+            else S("Stopped", ["Simulation or send failed: " + (err && err.message ? err.message : "unknown error") + " Nothing further was sent."]);
+            backToElysium();
+          });
+        });
+      });
+    });
+
+    /* ================= Bridge (official Orbit contracts) ================= */
+    var bridgeDir = "deposit";
+    function setBridgeDir(dir){
+      bridgeDir = dir;
+      $("bTabDeposit").classList.toggle("active", dir === "deposit");
+      $("bTabWithdraw").classList.toggle("active", dir === "withdraw");
+      $("bridgeDirNote").innerHTML = dir === "deposit"
+        ? "HyperEVM → Elysium · 1:1 through Elysium's official Inbox on HyperEVM."
+        : "Elysium → HyperEVM · Start here, claim on HyperEVM after the ~5.5-day challenge window.";
+      $("bridgeFeeRows").innerHTML = dir === "deposit"
+        ? '<div class="fr"><span>Arrives in</span><span>About 1–3 minutes</span></div><div class="fr"><span>Bridge fee</span><span>None — Vector Pad adds nothing</span></div><div class="fr"><span>Network fee</span><span>Gas on HyperEVM</span></div>'
+        : '<div class="fr"><span>Arrives in</span><span>After the ~5.5-day challenge window + claim</span></div><div class="fr"><span>Bridge fee</span><span>None — Vector Pad adds nothing</span></div><div class="fr"><span>Network fee</span><span>Gas on Elysium, then gas on HyperEVM to claim</span></div>';
+      renderBridge();
+    }
+    $("bTabDeposit").addEventListener("click", function(){ setBridgeDir("deposit"); });
+    $("bTabWithdraw").addEventListener("click", function(){ setBridgeDir("withdraw"); });
+    $("bridgeConnectBtn").addEventListener("click", function(){ if(!state.wallet) openWalletModal(); });
+
+    /* Re-verify the official route on-chain before any deposit:
+       Inbox.bridge() must be the published Bridge and the Rollup's
+       chainId() must be 99901 (Elysium). A failed check pauses deposits. */
+    function verifyBridgeRoute(){
+      if(state.bridgeVerified === true) return Promise.resolve(true);
+      if(state.bridgeVerified === false && Date.now() - state.bridgeVerifiedAt < 30000) return Promise.resolve(false);
+      return Promise.all([
+        hevCall(ELYSIUM_INBOX, SEL_BRIDGE.inboxBridge).catch(function(){ return null; }),
+        hevCall(ELYSIUM_ROLLUP, SEL_BRIDGE.rollupChainId).catch(function(){ return null; })
+      ]).then(function(r){
+        var ok = false;
+        try {
+          ok = !!(r[0] && r[0].toLowerCase().indexOf(ELYSIUM_BRIDGE.slice(2).toLowerCase()) >= 0
+            && r[1] && BigInt(r[1]) === 99901n);
+        } catch(e){ ok = false; }
+        state.bridgeVerified = ok; state.bridgeVerifiedAt = Date.now();
+        paintBridgeVerify();
+        return ok;
+      });
+    }
+    function paintBridgeVerify(){
+      var line = $("bridgeVerify"), txt = $("bridgeVerifyTxt");
+      if(!line || !txt) return;
+      line.classList.remove("ok", "bad");
+      if(state.bridgeVerified === true){ line.classList.add("ok"); txt.textContent = "Route verified on-chain: Inbox → Bridge → Rollup chain 99901 (Elysium)."; }
+      else if(state.bridgeVerified === false){ line.classList.add("bad"); txt.textContent = "Route check failed — deposits are paused. Use the official bridge instead."; }
+      else txt.textContent = "Verifying the official route on-chain…";
+    }
+    function renderBridge(){
+      var disc = $("bridgeDisconnected"); if(!disc) return;
+      var connected = !!state.wallet;
+      disc.style.display = connected ? "none" : "";
+      $("bridgeDepPane").style.display = connected && bridgeDir === "deposit" ? "" : "none";
+      $("bridgeWdPane").style.display = connected && bridgeDir === "withdraw" ? "" : "none";
+      if(!connected) return;
+      fetchKhype(false);
+      verifyBridgeRoute();
+      paintBridgeVerify();
+      $("bridgeBalLine").textContent = "HyperEVM balance: " + (state.hevHypeBal != null ? fmtUnits(state.hevHypeBal, 18, 4) + " HYPE" : "…");
+      $("bridgeWdBalLine").textContent = "Elysium balance: " + (state.hypeBal != null ? fmtUnits(state.hypeBal, 18, 4) + " HYPE" : "…");
+      var d = new Date(Date.now() + 5.5 * 24 * 3600 * 1000);
+      $("bridgeClaimDate").textContent = d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) + " (estimate)";
+      paintBridgeRecv();
+    }
+    function paintBridgeRecv(){
+      var el = $("bridgeAmt"); if(!el) return;
+      var amt = parseUnits(el.value, 18);
+      $("bridgeRecv").textContent = amt != null && amt > 0n ? fmtUnits(amt, 18, 6) + " HYPE on Elysium" : "— HYPE on Elysium";
+    }
+    $("bridgeAmt").addEventListener("input", paintBridgeRecv);
+    $("bridgeMaxBtn").addEventListener("click", function(){
+      if(state.hevHypeBal == null) return;
+      var m = state.hevHypeBal - (5n * 10n ** 16n); if(m < 0n) m = 0n;
+      $("bridgeAmt").value = fmtUnits(m, 18, 18); paintBridgeRecv();
+    });
+    $("bridgeWdMaxBtn").addEventListener("click", function(){
+      if(state.hypeBal == null) return;
+      var m = state.hypeBal - (5n * 10n ** 16n); if(m < 0n) m = 0n;
+      $("bridgeWdAmt").value = fmtUnits(m, 18, 18);
+    });
+
+    function ensureHevChain(provider){
+      return provider.request({ method: "eth_chainId" }).then(function(cid){
+        if(parseInt(cid, 16) === HYPEREVM.chainId) return true;
+        return provider.request({ method: "wallet_switchEthereumChain", params: [{ chainId: HYPEREVM.chainIdHex }] })
+          .then(function(){ return true; })
+          .catch(function(err){
+            if(err && err.code === 4902){
+              return provider.request({ method: "wallet_addEthereumChain", params: [{
+                chainId: HYPEREVM.chainIdHex, chainName: HYPEREVM.chainName,
+                nativeCurrency: { name: "HYPE", symbol: "HYPE", decimals: 18 },
+                rpcUrls: [HYPEREVM.rpc], blockExplorerUrls: [HYPEREVM.explorer]
+              }] }).then(function(){ return true; }).catch(function(){ return false; });
+            }
+            return false;
+          });
+      }).catch(function(){ return false; });
+    }
+    function waitHevReceipt(hash){
+      return new Promise(function(resolve){
+        var tries = 0;
+        (function poll(){
+          hevRpc("eth_getTransactionReceipt", [hash]).then(function(r){
+            if(r) resolve(r);
+            else if(++tries < 40) setTimeout(poll, 2500);
+            else resolve(null);
+          }).catch(function(){ if(++tries < 40) setTimeout(poll, 2500); else resolve(null); });
+        })();
+      });
+    }
+    var bridgeBusy = false;
+    $("bridgeDepBtn").addEventListener("click", function(){
+      if(bridgeBusy) return;
+      if(!state.wallet){ openWalletModal(); return; }
+      var addr = state.wallet.address;
+      var amt = parseUnits($("bridgeAmt").value, 18);
+      if(amt == null || amt <= 0n){ setTxStatus("bridgeStatus", "Check the amount", ["Enter how much HYPE to deposit."]); return; }
+      if(state.hevHypeBal != null && amt > state.hevHypeBal){ setTxStatus("bridgeStatus", "Not enough HYPE", ["Your HyperEVM balance is " + fmtUnits(state.hevHypeBal, 18, 4) + " HYPE — and gas comes out of the same balance."]); return; }
+      bridgeBusy = true;
+      verifyBridgeRoute().then(function(ok){
+        if(!ok){
+          bridgeBusy = false;
+          setTxStatus("bridgeStatus", "Stopped", ["The on-chain route check failed, so nothing was sent. Use the <a href=\"" + OFFICIAL_BRIDGE_URL + "\" target=\"_blank\" rel=\"noopener\">official Elysium bridge</a> instead."]);
+          return;
+        }
+        return showConfirm("Bridge deposit — HYPE to Elysium", [
+          ["Action", "Deposit HYPE — HyperEVM → Elysium (1:1)"],
+          ["Chain", "HyperEVM · 999 · gas HYPE"],
+          ["From", addr],
+          ["To (contract)", "Elysium Inbox " + ELYSIUM_INBOX],
+          ["Amount", fmtUnits(amt, 18, 6) + " HYPE"],
+          ["You receive", fmtUnits(amt, 18, 6) + " HYPE on Elysium"],
+          ["Recipient", "Same address on Elysium"],
+          ["Arrives", "About 1–3 minutes after the HyperEVM transaction confirms"]
+        ]).then(function(confirmed){
+          if(!confirmed){ bridgeBusy = false; setTxStatus("bridgeStatus", "Stopped", ["Cancelled — nothing was sent."]); return; }
+          setTxStatus("bridgeStatus", "Switching chain", ["Your wallet needs to be on HyperEVM (chain 999) for the deposit…"]);
+          return ensureHevChain(state.wallet.provider).then(function(onHev){
+            if(!onHev){ bridgeBusy = false; setTxStatus("bridgeStatus", "Stopped", ["The wallet stayed off HyperEVM — nothing was sent."]); return; }
+            var tx = { from: addr, to: ELYSIUM_INBOX, data: SEL_BRIDGE.depositEth, value: "0x" + amt.toString(16) };
+            setTxStatus("bridgeStatus", "Simulating", ["Simulating the deposit against HyperEVM first…"]);
+            return hevCall(ELYSIUM_INBOX, SEL_BRIDGE.depositEth, addr, tx.value).then(function(){
+              setTxStatus("bridgeStatus", "Confirm in your wallet", ["Simulation passed. Sign in your wallet — the confirmation there is the final word."]);
+              return sendTx(tx);
+            }).then(function(hash){
+              setTxStatus("bridgeStatus", "Sent", ["Deposit transaction " + truncAddr(hash) + " — waiting for HyperEVM confirmation…"]);
+              return waitHevReceipt(hash).then(function(r){ return { hash: hash, receipt: r }; });
+            }).then(function(res){
+              bridgeBusy = false;
+              if(res.receipt && res.receipt.status === "0x1"){
+                setTxStatus("bridgeStatus", "Deposited", ["HYPE is on its way to Elysium — it lands at this same address in about 1–3 minutes. Tx " + res.hash]);
+              } else if(res.receipt){
+                setTxStatus("bridgeStatus", "Reverted", ["The deposit reverted on HyperEVM. Tx " + res.hash]);
+              } else {
+                setTxStatus("bridgeStatus", "Sent", ["Still unconfirmed after a minute — check the tx in your wallet. Tx " + res.hash]);
+              }
+              state.hevHypeBal = null; fetchKhype(true);
+              return ensureChain(state.wallet.provider).then(function(back){
+                state.walletChainOk = back; syncWalletUI(); refreshBalances();
+              });
+            }).catch(function(err){
+              bridgeBusy = false;
+              if(err && err.code === 4001) setTxStatus("bridgeStatus", "Stopped", ["Rejected in the wallet — nothing was sent."]);
+              else setTxStatus("bridgeStatus", "Stopped", ["Simulation or send failed: " + (err && err.message ? err.message : "unknown error") + " Nothing further was sent."]);
+              ensureChain(state.wallet.provider).then(function(back){ state.walletChainOk = back; syncWalletUI(); });
+            });
+          });
+        });
+      });
+    });
+    $("bridgeWdBtn").addEventListener("click", function(){
+      if(bridgeBusy) return;
+      if(!state.wallet){ openWalletModal(); return; }
+      if(!state.walletChainOk){
+        ensureChain(state.wallet.provider).then(function(ok2){
+          state.walletChainOk = ok2; syncWalletUI();
+          if(ok2) toast("Wallet is on Elysium — tap Start withdrawal again.");
+        });
+        return;
+      }
+      var addr = state.wallet.address;
+      var amt = parseUnits($("bridgeWdAmt").value, 18);
+      if(amt == null || amt <= 0n){ setTxStatus("bridgeWdStatus", "Check the amount", ["Enter how much HYPE to withdraw."]); return; }
+      if(state.hypeBal != null && amt > state.hypeBal){ setTxStatus("bridgeWdStatus", "Not enough HYPE", ["Your Elysium balance is " + fmtUnits(state.hypeBal, 18, 4) + " HYPE — and gas comes out of the same balance."]); return; }
+      var claimDate = new Date(Date.now() + 5.5 * 24 * 3600 * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      bridgeBusy = true;
+      showConfirm("Start bridge withdrawal — step 1 of 2", [
+        ["Action", "Start withdrawal — Elysium → HyperEVM"],
+        ["Chain", "Elysium " + NETWORKS[state.network].label + " · " + NETWORKS[state.network].chainId + " · gas HYPE"],
+        ["From", addr],
+        ["To (contract)", "ArbSys precompile " + ARBSYS],
+        ["Amount", fmtUnits(amt, 18, 6) + " HYPE"],
+        ["Destination", "Same address on HyperEVM"],
+        ["Claimable", "After the ~5.5-day challenge window (around " + claimDate + ")"],
+        ["Step 2", "Claim the HYPE in the official Elysium bridge on HyperEVM"]
+      ]).then(function(confirmed){
+        if(!confirmed){ bridgeBusy = false; setTxStatus("bridgeWdStatus", "Stopped", ["Cancelled — nothing was sent."]); return; }
+        setTxStatus("bridgeWdStatus", "Simulating", ["Simulating the withdrawal against Elysium first…"]);
+        var tx = { from: addr, to: ARBSYS, data: SEL_BRIDGE.withdrawEth + encAddr(addr), value: "0x" + amt.toString(16) };
+        var statusFn = function(t, l){ setTxStatus("bridgeWdStatus", t, l); };
+        return runConfirmedTx(tx, statusFn, "Withdrawal started").then(function(res){
+          bridgeBusy = false;
+          if(res && res.receipt && res.receipt.status === "0x1"){
+            setTxStatus("bridgeWdStatus", "Withdrawal started", [
+              "Step 1 is done — the HYPE has left Elysium. Tx " + res.hash,
+              "Claim it on HyperEVM after the challenge window (around " + claimDate + ") in the <a href=\"" + OFFICIAL_BRIDGE_URL + "\" target=\"_blank\" rel=\"noopener\">official Elysium bridge</a>, with this same wallet."
+            ]);
+          }
+        }).catch(function(err){
+          bridgeBusy = false;
+          txFail(statusFn)(err);
+        });
+      });
     });
 
     /* ================= Portfolio ================= */
@@ -5447,7 +6589,7 @@ $ <span class="caret"></span></div>
       $("pfDisconnected").style.display = connected ? "none" : "";
       $("pfConnected").style.display = connected ? "" : "none";
       if(!connected){
-        $("pfStakeText").textContent = "Staking opens when the contracts deploy on Elysium.";
+        $("pfStakeText").textContent = "HYPE staking runs through Kinetiq (kHYPE) on HyperEVM — connect to see your kHYPE position.";
         return;
       }
       $("pfAddr").textContent = truncAddr(state.wallet.address);
@@ -5455,7 +6597,10 @@ $ <span class="caret"></span></div>
       $("pfCount").textContent = NETWORKS[state.network].chainId;
       $("pfHype").textContent = state.hypeBal != null ? fmtUnits(state.hypeBal, 18, 4) : "…";
       $("pfHoldings").innerHTML = holdingsHTML(state.wallet.address, state.hypeBal, state.balances);
-      $("pfStakeText").textContent = "Connected — staking opens when the contracts deploy on Elysium.";
+      fetchKhype(false);
+      $("pfStakeText").textContent = state.khypeBal != null
+        ? "kHYPE position (Kinetiq, HyperEVM): " + fmtUnits(state.khypeBal, 18, 4) + " kHYPE" + (state.khypeRate != null ? " ≈ " + fmtUnits(state.khypeBal * state.khypeRate / (10n ** 18n), 18, 4) + " HYPE at the live rate." : ".")
+        : "Reading your kHYPE position on HyperEVM…";
     }
     $("pfCopyAddr").addEventListener("click", function(e){
       e.preventDefault();
@@ -5513,6 +6658,8 @@ $ <span class="caret"></span></div>
       $("bondingStep2").style.display = mode === "bonding" ? "" : "none";
       $("raydiumStep2").style.display = mode === "direct" ? "" : "none";
       $("bondingFeeNote").style.display = mode === "bonding" ? "" : "none";
+      $("bondingTypeNote").style.display = mode === "bonding" ? "" : "none";
+      $("bondingPayoutNote").style.display = mode === "bonding" ? "" : "none";
       $("bondingDeployNote").style.display = mode === "bonding" ? "" : "none";
       $("deployNote").style.display = mode === "direct" ? "" : "none";
       renderPairGrid(); syncSummary();
@@ -5762,15 +6909,141 @@ $ <span class="caret"></span></div>
         ["Launch mode", state.launchMode === "bonding" ? "Bonding curve" : "Direct Uniswap V2 pool"],
         ["Pair asset", state.launchMode === "bonding" ? "HYPE" : state.pairSel],
         ["Trading fee", state.launchMode === "bonding" ? "1% (0.70% protocol · 0.30% creator)" : state.feePct + "%"],
-        ["Coin type", typeLabel()],
-        ["Payouts", payoutsSummary()],
+        ["Coin type", state.launchMode === "bonding" ? "Not applied on-chain (bonding: creator fee goes to the creator wallet)" : typeLabel()],
+        ["Payouts", state.launchMode === "bonding" ? "Creator wallet only (contract)" : payoutsSummary()],
         ["Image", state.imgUrl ? "Uploaded" : (state.imgFile ? "Selected — not pinned to IPFS (the Vector Pad mark is used)" : "None (the Vector Pad mark is used)")],
-        ["Launchpad", LAUNCHPAD_ADDRESS ? LAUNCHPAD_ADDRESS : "Not deployed on Elysium yet"]
+        ["Launchpad", launchpadAddr() ? launchpadAddr() : "Not deployed on Elysium yet"]
       ];
       $("reviewBox").innerHTML = rows.map(function(r){
         return '<div class="sum-row"><span class="k">' + esc(r[0]) + '</span><span class="v">' + esc(r[1]) + '</span></div>';
       }).join("");
     }
+
+    /* ================= Launchpad gate + Portfolio launches ================= */
+    function syncLaunchpadGate(){
+      var live = launchpadLive(), addr = launchpadAddr();
+      var bp = $("bondingProgramState");
+      if(bp) bp.textContent = live ? ("Live · " + addr + " — createToken is ready.") : "Not deployed on Elysium yet — this wizard sends nothing until it is.";
+      var bc = $("bcNotLiveTxt");
+      if(bc) bc.textContent = live ? ("Live · " + addr) : "Not deployed on Elysium yet — this panel goes live at deployment.";
+      var db = $("deployBtn");
+      if(db){
+        if(state.launchMode !== "bonding"){
+          db.disabled = true; db.textContent = "Direct pools open after the launchpad";
+        } else if(!live){
+          db.disabled = true; db.textContent = "Deployment opens at contract launch";
+        } else if(!state.wallet){
+          db.disabled = false; db.textContent = "Connect wallet to launch";
+        } else {
+          db.disabled = false; db.textContent = "Launch token on Elysium";
+        }
+      }
+      var note = $("bondingDeployNote");
+      if(note) note.innerHTML = live
+        ? "One transaction: <b>createToken</b> + your initial buy. Gas only for the create itself, simulated first, with a confirmation summary before signing."
+        : "One transaction: <b>createToken</b> + your initial buy. Gas only, simulated first. <b>The launchpad isn't deployed yet</b>, so this stays off until then.";
+      var st = $("statListedVal");
+      if(st && !live) st.textContent = "0";
+    }
+    function renderPortfolioLaunches(){
+      var box = $("pfLaunched"); if(!box) return;
+      if(!launchpadLive()){ box.innerHTML = '<p class="note-line" style="margin:0">Nothing launched yet — launches open when the contracts deploy on Elysium.</p>'; return; }
+      if(!state.wallet){ box.innerHTML = '<p class="note-line" style="margin:0">Connect a wallet to see its launches.</p>'; return; }
+      var mine = state.launches.filter(function(c){ return c.creator.toLowerCase() === state.wallet.address.toLowerCase(); });
+      if(!state.launchesLoaded){
+        box.innerHTML = '<p class="note-line" style="margin:0">Loading launches from chain…</p>';
+        fetchAllLaunches().then(function(list){ state.launches = list; state.launchesLoaded = true; renderPortfolioLaunches(); });
+        return;
+      }
+      if(!mine.length){ box.innerHTML = '<p class="note-line" style="margin:0">This wallet has not launched a token yet.</p>'; return; }
+      box.innerHTML = mine.map(function(c){
+        return '<div class="hold-row"><div class="h-info"><div class="h-sym">' + esc(c.symbol) + '</div><div class="h-mint">' + esc(c.name) + ' · ' + truncAddr(c.token) + '</div></div>' +
+          '<div class="h-amt">' + (c.graduated ? "Graduated" : (c.progressBps / 100).toFixed(1) + "%") + '<small>' + fmtUnits(c.realHype, 18, 4) + ' HYPE in curve</small></div></div>';
+      }).join("");
+    }
+
+    /* ================= Create — metadata + createToken ================= */
+    function buildMetadata(imageUrl){
+      var meta = {
+        name: $("inName").value.trim(),
+        symbol: $("inTicker").value.trim().toUpperCase(),
+        description: $("inDesc").value.trim(),
+        image: imageUrl || ""
+      };
+      var web = $("inWebsite").value.trim(), x = $("inX").value.trim(), tg = $("inTelegram").value.trim();
+      if(web) meta.website = web;
+      if(x) meta.twitter = x;
+      if(tg) meta.telegram = tg;
+      return meta;
+    }
+    function uploadMetadata(){
+      /* Image first (existing Pinata flow), then pin the JSON the same way.
+         Without a Pinata JWT there is no honest permanent host in this
+         static page, so metadataURI is "" and the token still launches —
+         name/symbol live on-chain regardless. */
+      return uploadImage().then(function(imgUrl){
+        var jwt = $("inPinataJwt").value.trim();
+        if(!jwt) return "";
+        var meta = buildMetadata(imgUrl || state.imgUrl || "");
+        return fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", {
+          method: "POST",
+          headers: { Authorization: "Bearer " + jwt, "Content-Type": "application/json" },
+          body: JSON.stringify({ pinataContent: meta, pinataMetadata: { name: meta.symbol + "-metadata.json" } })
+        }).then(function(r){ if(!r.ok) throw new Error("Pinata HTTP " + r.status); return r.json(); })
+          .then(function(j){ return "ipfs://" + j.IpfsHash; })
+          .catch(function(){ return ""; });
+      });
+    }
+    $("deployBtn").addEventListener("click", function(){
+      if(state.launchMode !== "bonding"){ toast("Direct Uniswap pools open after the launchpad — switch to Bonding curve to launch now."); return; }
+      if(!launchpadLive()){ toast("The launchpad is not deployed on Elysium yet — this sends nothing."); return; }
+      if(!validateStep(1) || !validateStep(2)){ toast("Fix the highlighted fields first (name, ticker, initial buy)."); showStep(1); return; }
+      if(!state.wallet){ openWalletModal(); return; }
+      if(!state.walletChainOk){ ensureChain(state.wallet.provider).then(function(ok){ state.walletChainOk = ok; syncWalletUI(); syncLaunchpadGate(); }); return; }
+      if(state.network === "testnet" && !LAUNCHPAD_ADDRESSES.testnet && !LAUNCHPAD_ADDRESS){ toast("No testnet launchpad configured."); return; }
+      var btn = this; btn.disabled = true; btn.textContent = "Preparing metadata…";
+      var status = function(t, l){ setTxStatus("deployStatus", t, l); };
+      uploadMetadata().then(function(metadataURI){
+        var name = $("inName").value.trim();
+        var symbol = $("inTicker").value.trim().toUpperCase();
+        var initBuy = parseUnits($("initBuyAmt").value || "0", 18) || 0n;
+        var minOut = 0n;
+        var lp = launchpadAddr();
+        var finish = function(minTokensOut){
+          showConfirm("Launch token", baseConfirmRows("createToken(name, symbol, metadataURI, minTokensOut) · payable", lp, [
+            ["Token", name + " (" + symbol + ") · fixed supply 1,000,000,000 · 18 decimals"],
+            ["Metadata URI", metadataURI || "(none — no Pinata JWT; name/symbol are on-chain)"],
+            ["Initial buy", initBuy > 0n ? fmtUnits(initBuy, 18, 6) + " HYPE (same transaction)" : "None"],
+            ["Minimum tokens out", minTokensOut > 0n ? fmtUnits(minTokensOut, 18, 2) + " " + symbol : "0"],
+            ["Curve", "79.31% for sale · graduates at ~85 HYPE net · fee 1% (0.70% protocol / 0.30% creator) · LP burned at graduation"]
+          ])).then(function(ok){
+            btn.disabled = false; btn.textContent = "Launch token on Elysium";
+            if(!ok){ status("Stopped", ["Cancelled — nothing was sent."]); return; }
+            var tx = { from: state.wallet.address, to: lp, data: encCreateToken(name, symbol, metadataURI, minTokensOut), value: "0x" + initBuy.toString(16) };
+            runConfirmedTx(tx, status, "Token launched").then(function(res){
+              status("Confirmed", ["Token launched on Elysium. Tx " + res.hash, "It appears in Explore once the board refreshes — open Explore to load it."]);
+              state.launchesLoaded = false;
+              renderExploreLive();
+            }).catch(txFail(status));
+          });
+        };
+        if(initBuy > 0n){
+          /* Quote the not-yet-created curve from the curve math the
+             contract uses at zero sales: quoteBuy needs an existing
+             token, so derive minOut from the initial price with the
+             wizard slippage (1%) applied conservatively off the spot
+             price — the contract enforces minTokensOut on-chain. */
+          var net = initBuy * 99n / 100n;
+          var x = 30n * (10n ** 18n), y = 1073017647n * (10n ** 18n);
+          var outWei = y - (x * y + (x + net) - 1n) / (x + net);
+          minOut = outWei * 99n / 100n;
+          finish(minOut);
+        } else finish(0n);
+      }).catch(function(){
+        btn.disabled = false; btn.textContent = "Launch token on Elysium";
+        status("Stopped", ["Metadata preparation failed — nothing was sent."]);
+      });
+    });
 
     /* ================= Docs ================= */
     function openDocs(sec){
@@ -5783,7 +7056,7 @@ $ <span class="caret"></span></div>
       b.addEventListener("click", function(){ openDocs(b.getAttribute("data-dsec")); });
     });
     var DOC_TEXTS = {
-      terms: { title:"Terms", body:'<p>Vector Pad is a non-custodial front-end for open protocols on Elysium (chain ID 99901). It holds no funds and executes nothing on your behalf: every transaction is built in your browser, simulated, and signed by you in your own wallet.</p><p>Swaps route through Uniswap V2 on Elysium. Launches, staking and curve trading activate only when the Vector Pad contracts are deployed on Elysium; until then those flows send nothing. Prices and quotes are read live from the chain and third-party sources and are never guaranteed.</p><p>By using this app you accept that on-chain transactions are final and irreversible, that newly launched tokens are highly risky, and that nothing here is financial advice.</p>' },
+      terms: { title:"Terms", body:'<p>Vector Pad is a non-custodial front-end for open protocols on Elysium (chain ID 99901). It holds no funds and executes nothing on your behalf: every transaction is built in your browser, simulated, and signed by you in your own wallet.</p><p>Swaps route through Uniswap V2 on Elysium. Launches and curve trading activate only when the Vector Pad launchpad contract is deployed on Elysium; until then those flows send nothing. Staking runs through the Kinetiq contracts on HyperEVM and bridging through the official Elysium bridge contracts — Vector Pad never takes custody in either. Prices and quotes are read live from the chain and third-party sources and are never guaranteed.</p><p>By using this app you accept that on-chain transactions are final and irreversible, that newly launched tokens are highly risky, and that nothing here is financial advice.</p>' },
       privacy: { title:"Privacy", body:'<p>Vector Pad has no accounts, no sign-up and no analytics. It does not collect your name, email or identity.</p><p>When you connect a wallet, the app reads your public address and balances from the Elysium RPC — the same data anyone can read on-chain. Your theme preference is stored only in your own browser. If you paste a Pinata JWT into the Create wizard, it stays in the tab\'s memory and is sent only to Pinata, only when you upload an image.</p><p>Wallet addresses and transactions are public on Elysium by design.</p>' },
       risk: { title:"Risk notice", body:'<p><b>Memecoin risk.</b> Most newly launched tokens lose most or all of their value, quickly and permanently. Never spend funds you cannot afford to lose entirely.</p><p><b>Smart-contract risk.</b> Vector Pad routes through third-party contracts — Uniswap V2, the official bridge, and (once deployed) the Vector Pad launchpad. Bugs, exploits or outages in those contracts can cause loss.</p><p><b>Address risk.</b> Tickers repeat; the contract address is the only identity. Verify the full address before trading, and make sure your wallet is on Elysium chain 99901 (HYPE gas) — not the unrelated chain of the same name (chain 1339).</p><p><b>Finality.</b> Confirmed transactions cannot be reversed, edited or refunded by anyone.</p>' }
     };
@@ -5801,13 +7074,15 @@ $ <span class="caret"></span></div>
         closeWalletModal();
         $("docModal").classList.remove("open");
         $("tradesModal").classList.remove("open");
+        if($("vpConfirmModal").classList.contains("open")) closeConfirm(false);
         closeMenus();
       }
     });
 
     /* ================= Init ================= */
     initTheme();
-    renderExplore();
+    syncLaunchpadGate();
+    renderExploreLive();
     fillSwapSelects();
     renderPairGrid();
     addPayoutRow("", "");
