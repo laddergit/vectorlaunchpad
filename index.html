@@ -1855,6 +1855,21 @@
 #appView .tabbar .tab-launch>span:not(.tab-slot){display:none}
 #appView .tabbar .tab-launch:active{opacity:.85}
 #appView .tabbar .tab-launch.active{background:#0a1f1b;color:#fff;box-shadow:0 0 0 2px #fbfaf6,0 0 0 4.5px #006d64}
+/* Dark theme: the rules above hardcode the light capsule (cream dock,
+   soft-mint pill, ink Launch), so in dark mode the dock stayed a bright
+   cream slab on the charcoal app (user screenshot, 27 Nov). These
+   overrides re-read the app's dark tokens instead: charcoal dock lifted
+   one step above the page, muted icons, the active pill as the dark
+   accent tint (deep mint wash + pale mint label, the same pairing the
+   dark badges/nav use — not the bright mint slab), and Launch inverted
+   to the off-white disc with a dark plus that every other primary
+   button in the dark theme uses (.btn-black, .exp-launch). */
+#appView[data-theme="dark"] .tabbar{background:var(--surface-2);border-color:var(--border-strong);box-shadow:0 22px 44px -18px rgba(0,0,0,.65),inset 0 1px rgba(255,255,255,.06)}
+#appView[data-theme="dark"] .tabbar .tab-btn{color:var(--muted)}
+#appView[data-theme="dark"] .tabbar .tab-btn:active{background:rgba(255,255,255,.08)}
+#appView[data-theme="dark"] .tabbar .tab-btn.active{background:var(--accent-soft);color:var(--accent-deep)}
+#appView[data-theme="dark"] .tabbar .tab-launch{background:#f2f2ed;color:#14181a;box-shadow:0 10px 22px -8px rgba(0,0,0,.6)}
+#appView[data-theme="dark"] .tabbar .tab-launch.active{background:#f2f2ed;color:#14181a;box-shadow:0 0 0 2px var(--surface-2),0 0 0 4.5px var(--accent)}
 #appView .toast{bottom:calc(92px + env(safe-area-inset-bottom));top:auto}
 #appView footer.site{padding-bottom:32px}
 /* Anything scrolled into view inside .app-scroll (tab jumps, focus,
