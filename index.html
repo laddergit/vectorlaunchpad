@@ -616,6 +616,9 @@
       #landingView .news{margin-top:72px;border-top:1px solid rgba(164,223,211,.14);padding-top:42px;display:grid;grid-template-columns:1fr 1.2fr;gap:30px;align-items:end}
       #landingView .news h3{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.25;color:#fff}
       #landingView .news p{color:var(--on-dark-mut);font-size:15px;margin-top:8px;line-height:1.6}
+      #landingView .news-x{display:inline-flex;align-items:center;gap:9px;margin-top:16px;min-height:44px;padding:9px 16px;border:1px solid rgba(164,223,211,.3);border-radius:999px;color:#fff;font-size:14.5px;font-weight:700;transition:background .25s,border-color .25s}
+      #landingView .news-x svg{width:15px;height:15px;fill:currentColor;flex:none}
+      #landingView .news-x:hover{background:rgba(164,223,211,.12);border-color:#2fe0c0}
       #landingView .news-form{display:flex;align-items:flex-end;gap:18px}
       #landingView .news-form input{flex:1;background:transparent;border:none;border-bottom:1px solid rgba(164,223,211,.35);color:#fff;font-family:var(--font);font-size:17px;padding:12px 2px;border-radius:0;min-height:48px;min-width:0}
       #landingView .news-form input::placeholder{color:#5f7a71}
@@ -2569,6 +2572,7 @@ $ <span class="caret"></span></div>
           <div>
             <h3>$VECTOR is live.</h3>
             <p>Launch announcements and new board openings. No spam, no shilling other people's tokens.</p>
+            <a class="news-x" href="https://x.com/vectorpad" target="_blank" rel="noopener" aria-label="Vector Pad on X (@vectorpad)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>@vectorpad</a>
           </div>
           <form class="news-form" id="newsForm" novalidate>
             <input type="email" id="newsEmail" placeholder="your@email.com" aria-label="Email address" autocomplete="email" />
