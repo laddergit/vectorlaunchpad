@@ -42,14 +42,6 @@
       #progress{position:fixed;top:0;right:0;width:4px;height:100vh;z-index:200;background:rgba(10,31,27,.06)}
       #progressFill{width:100%;height:0%;background:linear-gradient(180deg,#2fe0c0,var(--yellow))}
 
-      /* ---------- custom cursor ---------- */
-      #cursor{position:fixed;top:0;left:0;width:84px;height:84px;border-radius:50%;background:rgba(3,33,29,.30);border:1px solid rgba(164,223,211,.5);backdrop-filter:blur(2px);pointer-events:none;z-index:300;transform:translate(-50%,-50%);transition:width .35s var(--ease),height .35s var(--ease),background .35s,border-color .35s;will-change:transform}
-      #cursor.grow{width:118px;height:118px;background:rgba(46,224,192,.14);border-color:rgba(46,224,192,.7)}
-      /* The landing's cursor ring never floats over the app — parked at a
-         corner it read as a stray circle overlapping the app navbar. */
-      body.app-open #cursor{display:none!important}
-      @media (hover:none),(pointer:coarse){#cursor{display:none}}
-
       /* ---------- app view shell ---------- */
       /* The app shell itself never scrolls: the page content scrolls inside
          .app-scroll and the mobile tab bar is a plain in-flow flex child
@@ -85,11 +77,6 @@
       #appView{position:fixed;inset:0;z-index:260;overflow:hidden}
       #appView .app-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;display:flex;flex-direction:column;scroll-behavior:smooth}
       #appView[hidden]{display:none!important}
-      #appView .app-backbar{position:relative;z-index:70;display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface);color:var(--text);padding:10px clamp(16px,3vw,32px);font-family:'Manrope',system-ui,sans-serif;border-bottom:1px solid var(--border)}
-      #appView .app-backbar button{display:inline-flex;align-items:center;gap:9px;min-height:40px;padding:0 18px;border-radius:999px;background:var(--text);color:var(--bg);font-weight:700;font-size:14.5px;border:none;cursor:pointer}
-      #appView .app-backbar button:hover{opacity:.88}
-      #appView .app-backbar span{font-size:13.5px;color:var(--muted);font-weight:600;letter-spacing:.02em}
-      @media(max-width:640px){#appView .app-backbar span{display:none}}
     </style>
     <style>
       /* ================= LANDING (plumeform design) ================= */
@@ -2054,7 +2041,6 @@
   </head>
   <body>
     <div id="progress" aria-hidden="true"><div id="progressFill"></div></div>
-    <div id="cursor" aria-hidden="true"></div>
 
     <div id="landingView">
     <header id="siteHeader">
@@ -2602,15 +2588,10 @@ $ <span class="caret"></span></div>
     <!-- ================= APP VIEW (merged Vector Pad app) ================= -->
     <div id="appView" data-theme="light" hidden role="dialog" aria-modal="true" aria-label="Vector Pad app" data-lenis-prevent>
      <div class="app-scroll" data-lenis-prevent>
-      <div class="app-backbar">
-        <button id="appClose" type="button" aria-label="Back to the Vector Pad site">← Back to site</button>
-        <span>Vector Pad app · Elysium mainnet</span>
-      </div>
-
     <!-- ================= HEADER ================= -->
     <header class="site">
       <div class="wrap header-in">
-        <a class="brand" href="#" data-nav="explore" aria-label="Vector Pad home">
+        <a class="brand" href="#" id="appBrand" aria-label="Back to the Vector Pad site" title="Back to site">
           <img class="logo-light" src="assets/app/logo-black.png" alt="Vector Pad logo" />
           <img class="logo-dark" src="assets/app/logo-white.png" alt="" aria-hidden="true" />
           <span class="brand-txt">Vector <span class="brand-pad">Pad</span></span>
@@ -4167,7 +4148,10 @@ $ <span class="caret"></span></div>
           openApp(el.getAttribute("data-open-app"));
         });
       });
-      document.getElementById("appClose").addEventListener("click", closeApp);
+      document.getElementById("appBrand").addEventListener("click", function(e){
+        e.preventDefault();
+        closeApp();
+      });
       document.addEventListener("keydown", function(e){
         if (e.key === "Escape" && !appView.hidden) closeApp();
       });
@@ -4216,22 +4200,6 @@ $ <span class="caret"></span></div>
       LV.querySelectorAll(".mobile-menu a").forEach(function(a){
         a.addEventListener("click", function(){ closeMenu(); });
       });
-
-      /* ---------- custom cursor ---------- */
-      var cursor = document.getElementById("cursor");
-      if (window.matchMedia("(hover:hover) and (pointer:fine)").matches && !reduced) {
-        var mx = innerWidth/2, my = innerHeight/2, cx = mx, cy = my;
-        document.addEventListener("mousemove", function(e){ mx = e.clientX; my = e.clientY; });
-        (function loop(){
-          cx += (mx - cx) * 0.16; cy += (my - cy) * 0.16;
-          cursor.style.transform = "translate(" + (cx) + "px," + (cy) + "px) translate(-50%,-50%)";
-          requestAnimationFrame(loop);
-        })();
-        document.querySelectorAll("#landingView a, #landingView button, #landingView input, #appView button, #appView a, #appView input").forEach(function(el){
-          el.addEventListener("mouseenter", function(){ cursor.classList.add("grow"); });
-          el.addEventListener("mouseleave", function(){ cursor.classList.remove("grow"); });
-        });
-      } else { cursor.style.display = "none"; }
 
       /* ---------- reveal on scroll ---------- */
       var io = new IntersectionObserver(function(entries){
