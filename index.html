@@ -1814,11 +1814,18 @@
 /* ---------- Mobile tab bar — floating capsule dock, expanding
          active pill (27 Nov 2026, eighth model — "model terbaru") ----
          The user asked for yet another model, the newest style: a
-         dark floating capsule dock in the current app idiom — the
-         ACTIVE tab expands into a mint pill carrying icon + label
-         side by side, the other tabs collapse to icon-only circles,
-         and Launch is a round teal-gradient button in the middle
-         whose label never shows (aria-label carries the name).
+         floating capsule dock — the ACTIVE tab expands into a pill
+         carrying icon + label side by side, the other tabs collapse
+         to icon-only circles, and Launch is a round button in the
+         middle whose label never shows (aria-label carries the
+         name). Same evening he asked for the OLD button colors on
+         this new shape ("warnanya ke warna button lama, tampilannya
+         button baru — terlalu ngejreng"): the capsule goes back to
+         the first models' cream bar, inactive tabs to the old muted
+         gray-green, the active pill to the old soft mint tint with
+         deep-teal text (not the bright #2fe0c0), and Launch to the
+         old solid ink-black circle with a white plus (not the teal
+         gradient). Layout, sizing and placement are unchanged.
          Placement keeps the seventh model's fix, because that part
          finally worked: the dock is NOT fixed or absolute — it is
          the shell's LAST in-flow row (its natural DOM position after
@@ -1835,19 +1842,19 @@
          their active state with the other navs. The toast rises
          from just above the capsule instead of from under it. */
 #appView .tabbar{display:none}
-@media (max-width:1200px){#appView .tabbar{display:flex;flex:none;align-items:center;justify-content:space-between;gap:4px;margin:0 14px calc(10px + env(safe-area-inset-bottom));padding:6px;height:62px;background:#0c1a17;border:1px solid rgba(164,223,211,.20);border-radius:999px;box-shadow:0 22px 44px -18px rgba(2,22,22,.55),inset 0 1px rgba(251,250,246,.10)}
-#appView .tabbar .tab-btn{flex:none;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:0;height:48px;min-width:46px;padding:0 11px;background:none;border:0;border-radius:999px;color:#a9c4b9;font-size:12.5px;font-weight:700;line-height:1;min-height:0;-webkit-tap-highlight-color:transparent;transition:background .25s ease,color .25s ease}
+@media (max-width:1200px){#appView .tabbar{display:flex;flex:none;align-items:center;justify-content:space-between;gap:4px;margin:0 14px calc(10px + env(safe-area-inset-bottom));padding:6px;height:62px;background:#fbfaf6;border:1px solid #ddd8c9;border-radius:999px;box-shadow:0 22px 44px -18px rgba(10,31,27,.30),inset 0 1px #fff}
+#appView .tabbar .tab-btn{flex:none;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:0;height:48px;min-width:46px;padding:0 11px;background:none;border:0;border-radius:999px;color:#6d847c;font-size:12.5px;font-weight:700;line-height:1;min-height:0;-webkit-tap-highlight-color:transparent;transition:background .25s ease,color .25s ease}
 #appView .tabbar .tab-btn .tab-slot{display:inline-flex;align-items:center;justify-content:center;flex:none}
 #appView .tabbar .tab-btn .tab-slot svg{width:22px;height:22px}
 #appView .tabbar .tab-btn>span:not(.tab-slot){display:inline-block;max-width:0;opacity:0;overflow:hidden;white-space:nowrap;transition:max-width .3s var(--ease),opacity .2s ease,margin .3s var(--ease)}
-#appView .tabbar .tab-btn:active{background:rgba(251,250,246,.10)}
-#appView .tabbar .tab-btn.active{background:#2fe0c0;color:#052e28}
+#appView .tabbar .tab-btn:active{background:rgba(10,31,27,.06)}
+#appView .tabbar .tab-btn.active{background:#e3f7f2;color:#006d64}
 #appView .tabbar .tab-btn.active>span:not(.tab-slot){max-width:76px;opacity:1;margin-left:7px}
-#appView .tabbar .tab-launch{width:48px;min-width:48px;padding:0;border-radius:50%;background:linear-gradient(135deg,#2fe0c0,#0b6e63);color:#fff;box-shadow:0 10px 22px -8px rgba(11,110,99,.8)}
+#appView .tabbar .tab-launch{width:48px;min-width:48px;padding:0;border-radius:50%;background:#0a1f1b;color:#fff;box-shadow:0 10px 22px -8px rgba(10,31,27,.55)}
 #appView .tabbar .tab-launch .tab-slot svg{width:24px;height:24px}
 #appView .tabbar .tab-launch>span:not(.tab-slot){display:none}
 #appView .tabbar .tab-launch:active{opacity:.85}
-#appView .tabbar .tab-launch.active{background:linear-gradient(135deg,#2fe0c0,#0b6e63);color:#fff;box-shadow:0 0 0 2px #0c1a17,0 0 0 4.5px #2fe0c0}
+#appView .tabbar .tab-launch.active{background:#0a1f1b;color:#fff;box-shadow:0 0 0 2px #fbfaf6,0 0 0 4.5px #006d64}
 #appView .toast{bottom:calc(92px + env(safe-area-inset-bottom));top:auto}
 #appView footer.site{padding-bottom:32px}
 /* Anything scrolled into view inside .app-scroll (tab jumps, focus,
@@ -3869,7 +3876,7 @@ $ <span class="caret"></span></div>
 
      </div><!-- /.app-scroll -->
 
-    <!-- Mobile tab bar (shown <=1200px; last in-flow row of the shell — a floating capsule dock at the bottom: active tab expands into an icon+label pill, Launch is the round gradient button) -->
+    <!-- Mobile tab bar (shown <=1200px; last in-flow row of the shell — a floating capsule dock at the bottom in the old cream/ink colors: active tab expands into a soft-mint icon+label pill, Launch is the round solid-ink button) -->
     <nav class="tabbar" aria-label="Mobile">
       <button type="button" class="nav-btn tab-btn active" data-nav="explore">
         <span class="tab-slot"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M15.2 8.8l-1.9 4.5-4.5 1.9 1.9-4.5Z"/><circle cx="12" cy="12" r=".6" fill="currentColor" stroke="none"/></svg></span>
