@@ -51,7 +51,39 @@
       @media (hover:none),(pointer:coarse){#cursor{display:none}}
 
       /* ---------- app view shell ---------- */
-      #appView{position:fixed;inset:0;z-index:260;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+      /* The app shell itself never scrolls: the page content scrolls inside
+         .app-scroll and the mobile tab bar is a plain in-flow flex child
+         of the shell — its LAST row, at the bottom (see the tab bar
+         rules below). Four earlier tab-bar models failed on the user's
+         phone for one shared reason: the shell was sized from the
+         LAYOUT viewport (position:fixed inset:0, plus a min-height:100dvh
+         that could only stretch it further), and in the in-app browser he
+         opens the page in, the layout viewport runs taller than the part
+         of the screen actually shown — the host app's own bottom chrome
+         covers the rest. Every bottom-anchored model therefore landed
+         under that chrome: the raised dock sliced in half, the flush
+         fixed bar invisible, the in-flow bar showing only a sliver of
+         its top edge (his 27 Nov screenshot). Desktop-class browsers,
+         where layout viewport == visible viewport, rendered all of them
+         fine, which is why the failure kept passing review. A sixth
+         model moved the tabs to a top strip to dodge that covered
+         edge; the user rejected it ("jangan di atas, taro bawah"), so
+         the seventh model puts the in-flow bottom row back — this
+         time on a shell pinned to the visible viewport (below), which
+         is the piece the earlier bottom models were missing.
+         The shell is now pinned to the VISIBLE viewport instead:
+         fitAppShell() (in the app script) copies visualViewport.height /
+         offsetTop onto the shell as inline top/height and re-applies on
+         every visualViewport resize/scroll, so the shell's bottom edge
+         sits as close to the visible bottom as the host allows. The
+         mobile tab bar is the shell's last in-flow row, so it rides
+         that pinned bottom edge (the user asked for the tabs back at
+         the bottom on 27 Nov after a top-strip model). inset:0 below
+         remains only as the pre-JS / no-visualViewport fallback, and
+         the old min-height:100dvh is gone: on a fixed inset:0 shell it
+         could only push the bottom further past the visible edge. */
+      #appView{position:fixed;inset:0;z-index:260;overflow:hidden}
+      #appView .app-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;display:flex;flex-direction:column;scroll-behavior:smooth}
       #appView[hidden]{display:none!important}
       #appView .app-backbar{position:relative;z-index:70;display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface);color:var(--text);padding:10px clamp(16px,3vw,32px);font-family:'Manrope',system-ui,sans-serif;border-bottom:1px solid var(--border)}
       #appView .app-backbar button{display:inline-flex;align-items:center;gap:9px;min-height:40px;padding:0 18px;border-radius:999px;background:var(--text);color:var(--bg);font-weight:700;font-size:14.5px;border:none;cursor:pointer}
@@ -756,7 +788,7 @@
 #appView[data-theme="dark"] .asc-page::before{background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1.3px);background-size:24px 24px}
 #appView *{box-sizing:border-box}
 #appView{scroll-behavior:smooth}
-#appView{margin:0;background:var(--bg);color:var(--text);font-family:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}
+#appView{margin:0;background:var(--bg);color:var(--text);font-family:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
 #appView .serif{font-family:"Newsreader",Georgia,"Times New Roman",serif}
 #appView .num{font-variant-numeric:tabular-nums}
 #appView a{color:inherit;text-decoration:none}
@@ -1201,7 +1233,7 @@
 #appView .review-head{display:flex;gap:13px;align-items:center;margin-bottom:8px}
 #appView .review-head img{width:52px;height:52px;border-radius:13px;object-fit:cover;background:var(--surface-3)}
 /* ---------- Modal & toast ---------- */
-#appView .modal-back{position:fixed;inset:0;background:rgba(10,10,16,.5);backdrop-filter:blur(3px);z-index:90;display:none;align-items:center;justify-content:center;padding:18px}
+#appView .modal-back{position:absolute;inset:0;background:rgba(10,10,16,.5);backdrop-filter:blur(3px);z-index:90;display:none;align-items:center;justify-content:center;padding:18px}
 #appView .modal-back.open{display:flex}
 #appView .modal{background:var(--surface);border-radius:18px;box-shadow:var(--shadow-lg);max-width:400px;width:100%;padding:22px}
 #appView .modal h3{margin:0 0 4px;font-size:19px;font-weight:800}
@@ -1210,7 +1242,7 @@
 #appView .wallet-opt:hover{background:var(--surface-2)}
 #appView .wallet-opt .st{margin-left:auto;font-size:12px;font-weight:700;color:var(--muted)}
 #appView .wallet-opt .st.ok{color:var(--green)}
-#appView .modal.wallet-modal{max-width:440px;display:flex;flex-direction:column;max-height:calc(100dvh - 36px)}
+#appView .modal.wallet-modal{max-width:440px;display:flex;flex-direction:column;max-height:calc(100% - 36px)}
 #appView .wm-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px}
 #appView .wm-head h3{margin:0}
 #appView .wm-x{border:0;background:var(--surface-2);color:var(--text);width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:none;padding:0}
@@ -1228,7 +1260,7 @@
 #appView .wm-alert p{font-size:13px;line-height:1.55;color:var(--text);margin:0 0 10px}
 #appView .wm-alert .wa-alt{margin:10px 0 0;color:var(--muted)}
 #appView .wm-alert .btn{width:100%}
-#appView .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:#0a1f1b;color:#fff;font-weight:600;font-size:14px;padding:12px 18px;border-radius:12px;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:all .25s ease;z-index:120;max-width:min(92vw,480px);text-align:center}
+#appView .toast{position:absolute;left:50%;bottom:26px;transform:translate(-50%,20px);background:#0a1f1b;color:#fff;font-weight:600;font-size:14px;padding:12px 18px;border-radius:12px;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:all .25s ease;z-index:120;max-width:min(92vw,480px);text-align:center}
 #appView[data-theme="dark"] .toast{background:#eef7f3;color:#0a1f1b}
 #appView .toast.show{opacity:1;transform:translate(-50%,0)}
 /* ---------- Footer: themed band, Vector Pad content ---------- */
@@ -1779,26 +1811,44 @@
 #appView .foot-soon{font-size:13px;flex-wrap:wrap;gap:5px}
 #appView .foot-soon em{font-size:9.5px;padding:1px 6px}
 #appView .foot-mark{padding-top:20px}}
-/* ---------- Mobile bottom tab bar (Ascend pattern, from the user's
-         screenshot 22 Nov 2026) ----------
-         Five tabs — Explore, Swap, Launch, Stake, Portfolio — with Launch
-         as a raised lavender pill in the centre. Shown only where the top
-         nav is hidden (<=1200px); the buttons reuse .nav-btn + [data-nav],
-         so showView() syncs their active state with the other navs. */
+/* ---------- Mobile tab bar — BOTTOM bar, last row of the shell
+         (27 Nov 2026, seventh model) ----------
+         The user asked for the tabs back at the bottom ("jangan di
+         atas, taro bawah"), so the bar returns to the shell's bottom
+         edge — but as a plain in-flow flex row, not a fixed overlay:
+         it is the shell's LAST row (its natural DOM position after
+         .app-scroll, no order trick), flex:none, and the content
+         scrolls in the flex:1 area above it, so the bar can never
+         cover content and content can never scroll under it. The
+         shell itself is pinned to the visible viewport by
+         fitAppShell() (visualViewport height/offsetTop), so this
+         bottom row sits on the visible bottom edge rather than on
+         the taller layout viewport that sank the earlier fixed and
+         dock models under the host app's chrome. Five equal cells,
+         the active cell filled with the soft accent tint, and Launch
+         as its own solid dark cell — icon over label. Bottom padding
+         includes the safe-area inset so the labels clear a home
+         indicator. Shown only where the top nav is hidden
+         (<=1200px); the buttons reuse .nav-btn + [data-nav], so
+         showView() syncs their active state with the other navs.
+         The toast rises from just above this bar instead of from
+         under it. */
 #appView .tabbar{display:none}
-@media (max-width:1200px){#appView .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;align-items:flex-start;background:var(--surface);border-top:1px solid var(--border);padding:7px 4px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -10px 28px -20px rgba(20,24,26,.25)}
-#appView .tabbar .tab-btn{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:0;border-radius:10px;color:var(--muted);font-size:12.5px;font-weight:600;line-height:1.2;padding:1px 0 0;min-height:0;-webkit-tap-highlight-color:transparent}
-#appView .tabbar .tab-btn .tab-slot{display:inline-flex;align-items:center;justify-content:center;height:40px}
-#appView .tabbar .tab-btn.active{color:var(--accent);font-weight:700}
-#appView .tabbar .tab-launch .tab-pill{display:inline-flex;align-items:center;justify-content:center;width:62px;height:40px;border-radius:13px;background:var(--text);color:var(--bg);transition:transform .08s ease}
-#appView .tabbar .tab-launch:active .tab-pill{transform:scale(.96)}
-#appView{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
-#appView .toast{bottom:calc(90px + env(safe-area-inset-bottom))}
-/* Anything scrolled into view (tab jumps, focus, error-card CTAs)
-           must land clear of the fixed bar, not underneath it. */
-#appView{scroll-padding-bottom:calc(92px + env(safe-area-inset-bottom))}
-#appView *{scroll-margin-bottom:calc(92px + env(safe-area-inset-bottom))}
-#appView .empty .btn{scroll-margin-bottom:calc(120px + env(safe-area-inset-bottom))}}
+@media (max-width:1200px){#appView .tabbar{display:flex;flex:none;width:100%;gap:4px;background:var(--surface);border-top:1px solid var(--border);padding:6px 6px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -10px 28px -18px rgba(20,24,26,.35)}
+#appView .tabbar .tab-btn{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:0;border-radius:14px;color:var(--muted);font-size:11px;font-weight:600;line-height:1.15;padding:7px 2px 6px;min-height:0;-webkit-tap-highlight-color:transparent;transition:background .15s ease,color .15s ease}
+#appView .tabbar .tab-btn .tab-slot{display:inline-flex;align-items:center;justify-content:center;height:25px}
+#appView .tabbar .tab-btn:active{background:var(--surface-2)}
+#appView .tabbar .tab-btn.active{background:var(--accent-soft);color:var(--accent);font-weight:700}
+#appView .tabbar .tab-launch{background:var(--text);color:var(--bg)}
+#appView .tabbar .tab-launch:active{background:var(--text);opacity:.85}
+#appView .tabbar .tab-launch.active{background:var(--accent);color:#fff}
+#appView .toast{bottom:calc(84px + env(safe-area-inset-bottom));top:auto}
+#appView footer.site{padding-bottom:32px}
+/* Anything scrolled into view inside .app-scroll (tab jumps, focus,
+           error-card CTAs) must land clear of the covered bottom strip. */
+#appView .app-scroll{scroll-padding-bottom:24px}
+#appView *{scroll-margin-bottom:24px}
+#appView .empty .btn{scroll-margin-bottom:40px}}
 /* Elysium build, phone widths: the header row (brand, menu, search,
          network toggle, wallet) must fit without clipping the Connect
          button, so the toggle and wallet button run tighter. */
@@ -1810,9 +1860,9 @@
          the bar (the same Mainnet/Testnet switch lives in the wallet
          modal), which gives Connect its full width back. */
 @media (max-width:560px){#appView #netToggle{display:none}}
-/* Where the fixed bottom tab bar exists (<=1200px), its Launch pill is
-         always on screen, so the Explore empty state's duplicate in-card
-         Launch button is hidden there — it otherwise rests under the bar. */
+/* Where the tab bar exists (<=1200px), its Launch cell is always on
+         screen, so the Explore empty state's duplicate in-card Launch
+         button is hidden there — it would only duplicate the tab. */
 @media (max-width:1200px){#appView #exploreEmpty .btn{display:none}}
 /* ================= Explore v2 — board + side rail (27 Nov 2026) =================
    Different model from the old flat header strip: a compact title row,
@@ -2488,6 +2538,7 @@ $ <span class="caret"></span></div>
 
     <!-- ================= APP VIEW (merged Vector Pad app) ================= -->
     <div id="appView" data-theme="light" hidden role="dialog" aria-modal="true" aria-label="Vector Pad app" data-lenis-prevent>
+     <div class="app-scroll" data-lenis-prevent>
       <div class="app-backbar">
         <button id="appClose" type="button" aria-label="Back to the Vector Pad site">← Back to site</button>
         <span>Vector Pad app · Elysium mainnet</span>
@@ -3802,7 +3853,9 @@ $ <span class="caret"></span></div>
       </div>
     </footer>
 
-    <!-- Mobile bottom tab bar (shown <=1200px, Ascend pattern) -->
+     </div><!-- /.app-scroll -->
+
+    <!-- Mobile tab bar (shown <=1200px; last in-flow row of the shell — a bottom bar) -->
     <nav class="tabbar" aria-label="Mobile">
       <button type="button" class="nav-btn tab-btn active" data-nav="explore">
         <span class="tab-slot"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M15.2 8.8l-1.9 4.5-4.5 1.9 1.9-4.5Z"/><circle cx="12" cy="12" r=".6" fill="currentColor" stroke="none"/></svg></span>
@@ -3813,7 +3866,7 @@ $ <span class="caret"></span></div>
         <span>Swap</span>
       </button>
       <button type="button" class="nav-btn tab-btn tab-launch" data-nav="create" aria-label="Launch a coin">
-        <span class="tab-slot"><span class="tab-pill"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></span>
+        <span class="tab-slot"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
         <span>Launch</span>
       </button>
       <button type="button" class="nav-btn tab-btn" data-nav="stake">
@@ -3901,11 +3954,39 @@ $ <span class="caret"></span></div>
 
       /* ---------- merged app: CTA opens the in-page app view (Pluvia model) ---------- */
       var appView = document.getElementById("appView");
+      /* Pin the app shell to the VISIBLE viewport. In the in-app browser
+         the user opens this page in, the layout viewport is taller than
+         the visible screen (the host app's bottom chrome covers the
+         difference), so a shell sized by inset:0 / 100dvh ran long.
+         visualViewport reports the part of the page the user can
+         actually see; copying its height/offsetTop onto the shell pulls
+         the shell's bottom edge up toward the visible bottom, and the
+         mobile tab bar — the shell's last in-flow row — rides that
+         edge. Re-applied on every visualViewport change (host chrome
+         showing/hiding, keyboard, rotation) while the app is open.
+         Browsers where layout == visible see identical values, so
+         nothing changes there. */
+      function fitAppShell(){
+        if (appView.hidden) return;
+        var vv = window.visualViewport;
+        if (!vv) return;
+        var h = Math.round(vv.height);
+        if (h > 0) appView.style.height = h + "px";
+        appView.style.top = Math.round(vv.offsetTop) + "px";
+      }
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", fitAppShell);
+        window.visualViewport.addEventListener("scroll", fitAppShell);
+      }
+      window.addEventListener("orientationchange", function(){ setTimeout(fitAppShell, 60); });
       function openApp(view){
         appView.hidden = false;
         document.body.classList.add("app-open");
+        fitAppShell();
+        requestAnimationFrame(fitAppShell);
         if (lenis) lenis.stop();
-        appView.scrollTop = 0;
+        var appScroller = appView.querySelector(".app-scroll");
+        if (appScroller) appScroller.scrollTop = 0;
         if (view) {
           var btn = appView.querySelector('header [data-nav="' + view + '"]') || appView.querySelector('[data-nav="' + view + '"]');
           if (btn) btn.click();
