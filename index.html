@@ -230,7 +230,7 @@
       #landingView .ca-chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:5px 5px 5px 12px;font-family:var(--mono);font-size:12px;color:var(--body-c);background:#fff;max-width:100%}
       #landingView .ca-chip .ca-dot{width:7px;height:7px;border-radius:50%;background:var(--teal-bright);flex:none}
       #landingView .ca-chip .ca-tag{color:var(--muted-c);font-size:11px;letter-spacing:.08em;flex:none}
-      #landingView .ca-chip .ca-addr{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px;color:var(--ink)}
+      #landingView .ca-chip .ca-addr{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px;color:var(--ink);-webkit-user-select:all;user-select:all;cursor:text}
       #landingView .ca-chip .ca-copy{flex:none;border:0;cursor:pointer;background:var(--ink);color:#fff;border-radius:999px;padding:5px 12px;font-family:var(--mono);font-size:11.5px;line-height:1.4}
       #landingView .ca-chip .ca-copy:hover{background:var(--teal)}
       @media (max-width:560px){#landingView .ca-chip .ca-addr{max-width:118px}}
@@ -1033,6 +1033,7 @@
 #appView .detail-head .sym{color:var(--muted);font-weight:700;font-size:19px}
 #appView .ca-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
 #appView .ca-chip{display:inline-flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:5px 6px 5px 11px;font-size:12.5px;font-weight:600;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+#appView .ca-chip>span{-webkit-user-select:all;user-select:all;cursor:text}
 #appView .ca-chip button{border:0;background:var(--surface);border-radius:7px;width:28px;height:28px;min-height:0;display:inline-flex;align-items:center;justify-content:center;color:var(--muted)}
 #appView .ca-chip button:hover{color:var(--text)}
 #appView .head-actions{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -1269,6 +1270,9 @@
 #appView .foot-col button{background:none;border:0;padding:0;min-height:0;font-size:14px;font-weight:500;color:var(--muted);text-align:left}
 #appView .foot-col button:hover{color:var(--text);text-decoration:underline}
 #appView .foot-soon{font-size:14px;font-weight:500;color:var(--faint);display:inline-flex;align-items:center;gap:8px}
+#appView .foot-x{font-size:14px;font-weight:500;color:var(--muted);display:inline-flex;align-items:center;gap:8px;text-decoration:none;min-height:0}
+#appView .foot-x em{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.05em;color:var(--teal);border:1px solid var(--border);border-radius:999px;padding:2px 8px}
+#appView .foot-x:hover{color:var(--text);text-decoration:underline}
 #appView .foot-soon em{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);border:1px solid var(--border);border-radius:999px;padding:2px 8px}
 #appView .foot-mark{display:flex;align-items:center;gap:clamp(10px,2.2vw,30px);padding:28px 0 4px}
 #appView .foot-mark img{height:clamp(48px,9.6vw,128px);width:auto;object-fit:contain}
@@ -1418,6 +1422,16 @@
 #appView #view-swap .quote-meta{border-top:0;margin-top:0;padding:8px 0}
 #appView #view-swap .quote-meta+.quote-meta{border-top:1px dashed var(--stage-border);padding-top:8px}
 #appView #view-swap .asc-cta{border-radius:16px;margin-top:14px}
+#appView .swap-ca{margin-top:14px;padding-top:13px;border-top:1px solid var(--stage-border)}
+#appView .swap-ca .sec-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--stage-faint)}
+#appView .swap-ca-row{display:flex;gap:8px;margin-top:9px}
+#appView .swap-ca-row input{flex:1;min-width:0;height:42px;border:1px solid var(--stage-border);border-radius:12px;background:var(--stage-panel-2);color:var(--text);padding:0 12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px}
+#appView .swap-ca-row input::placeholder{font-family:var(--font);font-size:13px}
+#appView .swap-ca-row button{flex:none;height:42px;padding:0 18px;border-radius:12px;background:var(--ink);color:#fff;font-weight:700;font-size:13.5px;min-height:0}
+#appView .swap-ca-row2{display:flex;gap:10px;align-items:flex-start;margin-top:9px;flex-wrap:wrap}
+#appView .swap-ca-chip{flex:none;border:1px solid var(--stage-border);background:var(--stage-panel);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--teal);min-height:0;height:28px}
+#appView .swap-ca-msg{flex:1;min-width:200px;font-size:12.5px;line-height:1.5;color:var(--muted)}
+#appView .swap-ca-msg b{color:var(--text)}
 #appView .swap-quick{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;padding-top:13px;border-top:1px solid var(--stage-border)}
 #appView .swap-quick .sec-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--stage-faint)}
 #appView #view-swap .asc-foot{text-align:center}
@@ -1833,6 +1847,8 @@
 #appView .foot-col h4{font-size:12.5px;margin-bottom:3px}
 #appView .foot-col button{font-size:13px}
 #appView .foot-soon{font-size:13px;flex-wrap:wrap;gap:5px}
+#appView .foot-x{font-size:13px;flex-wrap:wrap;gap:5px}
+#appView .foot-x em{font-size:9.5px;padding:1px 6px}
 #appView .foot-soon em{font-size:9.5px;padding:1px 6px}
 #appView .foot-mark{padding-top:20px}}
 /* ---------- Mobile tab bar, floating capsule dock, expanding
@@ -3054,6 +3070,17 @@ $ <span class="caret"></span></div>
                 </div>
                 <button type="button" class="action-btn asc-cta connect" id="actionBtn">Connect wallet to swap</button>
                 <div class="tx-status" id="swapStatus"></div>
+                <div class="swap-ca">
+                  <span class="sec-title">Trade another token</span>
+                  <div class="swap-ca-row">
+                    <input type="text" id="swapCaInput" placeholder="Paste token contract address (0x…)" aria-label="Token contract address" spellcheck="false" autocomplete="off" />
+                    <button type="button" id="swapCaBtn">Load token</button>
+                  </div>
+                  <div class="swap-ca-row2">
+                    <button type="button" class="swap-ca-chip" id="swapCaVector">Load $VECTOR</button>
+                    <span class="swap-ca-msg" id="swapCaMsg">Paste any Elysium token address: name, symbol and decimals are read on-chain, pools are checked on Uniswap V2 + V4, and a quote appears only when a real pool exists.</span>
+                  </div>
+                </div>
                 <div class="swap-quick">
                   <span class="sec-title">Quick amount</span>
                   <div class="chip-row" id="quickBuyRow">
@@ -3805,7 +3832,7 @@ $ <span class="caret"></span></div>
               <h2>Swap</h2>
               <p>Swap trades through <b>Uniswap V2 and Uniswap V4 on Elysium</b>, live now on mainnet. Every quote compares both venues and takes the better output: V2 quotes come from the verified Router02 contract (<code>0xE783DE89a7F0408687f051e3E6D0BEb62719EbAd</code>) via <code>getAmountsOut</code>; V4 quotes come from the verified V4 Quoter (<code>0x379F556c5a748BD7Cc9baF0F7A344094Ac1814f5</code>) against the V4 PoolManager (<code>0xE2e105d3F7209A9DA11f83cCf3E7398a753823F1</code>), and V4 execution runs through the Universal Router (<code>0x1B341FDD55d56F8E08409A2C25DDFad93Eb03C1a</code>). The route line under the quote names the venue that won.</p>
               <h3>Pairs</h3>
-              <p>The swap list covers the assets with verified Elysium contracts: <b>HYPE</b> (native), <b>WHYPE</b> (<code>0xbA876237B0F021A6c6D852d6c26E107997cC5E81</code>), <b>USDC</b> (<code>0xb47c4C8F73F009CC0C0d3f92B388d13E293F0B65</code>, 6 decimals) and <b>KNTQ</b> (<code>0xe45a355D9e9CaD2AD85F2d03e3Ee3102A036aCF0</code>, 18 decimals). HYPE ↔ WHYPE wraps and unwraps <b>1:1</b> with no pool fee. Most V4 liquidity on Elysium pairs against <b>native HYPE</b>, so the working HYPE/USD market is the hook-free V4 native HYPE/USDC pool (0.30% fee), the V2 WHYPE/USDC pool is dust by comparison. WHYPE pairs route through a 1:1 unwrap/wrap plus the native V4 pool, and USDC ↔ KNTQ routes USDC → HYPE → KNTQ through V4 in two steps, each simulated before it is sent. When no venue can quote a pair, the app says <b>“No liquidity for this pair”</b> instead of showing a price that isn't real. Tokens launched on Vector Pad join the list after graduation, when their Uniswap V2 pool exists. On testnet, swaps are off, V2 and V4 are verified on mainnet only.</p>
+              <p>The swap list covers the assets with verified Elysium contracts: <b>HYPE</b> (native), <b>WHYPE</b> (<code>0xbA876237B0F021A6c6D852d6c26E107997cC5E81</code>), <b>USDC</b> (<code>0xb47c4C8F73F009CC0C0d3f92B388d13E293F0B65</code>, 6 decimals) and <b>KNTQ</b> (<code>0xe45a355D9e9CaD2AD85F2d03e3Ee3102A036aCF0</code>, 18 decimals). HYPE ↔ WHYPE wraps and unwraps <b>1:1</b> with no pool fee. Most V4 liquidity on Elysium pairs against <b>native HYPE</b>, so the working HYPE/USD market is the hook-free V4 native HYPE/USDC pool (0.30% fee), the V2 WHYPE/USDC pool is dust by comparison. WHYPE pairs route through a 1:1 unwrap/wrap plus the native V4 pool, and USDC ↔ KNTQ routes USDC → HYPE → KNTQ through V4 in two steps, each simulated before it is sent. When no venue can quote a pair, the app says <b>“No liquidity for this pair”</b> instead of showing a price that isn't real. Any other Elysium token can be loaded by pasting its contract address into the Swap panel: the app reads its name, symbol and decimals on-chain, checks for Uniswap V2 pairs and V4 pools, and quotes it only when a real pool answers, a token with no Uniswap pool (for example one trading only on another venue) loads but shows no liquidity. Tokens launched on Vector Pad join the list after graduation, when their Uniswap V2 pool exists. On testnet, swaps are off, V2 and V4 are verified on mainnet only.</p>
               <h3>The flow</h3>
               <ol>
                 <li>Pick the pair and enter an amount. The quote updates live: <b>expected output, price impact, minimum received and the route</b>.</li>
@@ -3969,7 +3996,7 @@ $ <span class="caret"></span></div>
         <nav class="foot-col" aria-label="Vector Pad">
           <h4>Vector Pad</h4>
           <span class="foot-soon">Discord <em>Coming soon</em></span>
-          <span class="foot-soon">X (Twitter) <em>Coming soon</em></span>
+          <a class="foot-x" href="https://x.com/vectorpad" target="_blank" rel="noopener">X (Twitter) <em>@vectorpad</em></a>
         </nav>
         <nav class="foot-col" aria-label="Legal">
           <h4>Legal</h4>
@@ -4538,8 +4565,31 @@ $ <span class="caret"></span></div>
         b.addEventListener("click", function(){
           var ca = "0x09df14bf69916d21864d5f4af75c9625303fc6cd";
           function done(){ var old = b.textContent; b.textContent = "Copied ✓"; setTimeout(function(){ b.textContent = old; }, 1800); }
-          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ca).then(done, done);
-          else done();
+          function failed(){
+            /* Clipboard blocked (permissions / insecure context): select
+               the full address in the chip so a long-press or Ctrl+C gets
+               the whole CA, and say so instead of faking a copy. */
+            var chip = b.closest ? b.closest(".ca-chip") : null;
+            var addr = chip ? chip.querySelector(".ca-addr") : null;
+            if (addr && window.getSelection && document.createRange) {
+              var r = document.createRange(); r.selectNodeContents(addr);
+              var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+            }
+            var old = b.textContent; b.textContent = "Selected, copy it"; setTimeout(function(){ b.textContent = old; }, 2200);
+          }
+          function fallback(){
+            var ta = document.createElement("textarea");
+            ta.value = ca; ta.setAttribute("readonly", "");
+            ta.style.position = "fixed"; ta.style.top = "0"; ta.style.opacity = "0";
+            document.body.appendChild(ta);
+            ta.focus(); ta.select(); ta.setSelectionRange(0, ca.length);
+            var ok = false;
+            try { ok = document.execCommand("copy"); } catch(e) { ok = false; }
+            document.body.removeChild(ta);
+            if (ok) done(); else failed();
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ca).then(done, fallback);
+          else fallback();
         });
       });
 
@@ -4746,10 +4796,15 @@ $ <span class="caret"></span></div>
       } else fallback();
       function fallback(){
         var ta = document.createElement("textarea");
-        ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
-        document.body.appendChild(ta); ta.select();
-        try { document.execCommand("copy"); done(); } catch(e){ toast("Copy failed, copy it manually"); }
+        ta.value = txt; ta.setAttribute("readonly", "");
+        ta.style.position = "fixed"; ta.style.top = "0"; ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        try { ta.setSelectionRange(0, txt.length); } catch(e) {}
+        var ok = false;
+        try { ok = document.execCommand("copy"); } catch(e) { ok = false; }
         document.body.removeChild(ta);
+        if(ok) done(); else toast("Copy blocked here, long-press the address to copy it");
       }
     }
     function fetchJSON(url, opts){
@@ -4780,6 +4835,24 @@ $ <span class="caret"></span></div>
       if(valueHex) call.value = valueHex;
       return rpc("eth_call", [call, "latest"]);
     }
+    /* Quote-grade eth_call: the public Elysium RPCs are load-balanced and
+       a single node occasionally answers a valid call with a spurious
+       revert or a 403 (observed live 2026-11-27: identical V4 quote calls
+       reverted on one attempt and succeeded on the next). One swallowed
+       failure used to surface as a false "No route / no liquidity", so
+       quote and pool-discovery calls retry a few times (rpc() already
+       alternates the primary and fallback endpoints between attempts)
+       before the caller may conclude anything. */
+    function ethCallRetry(to, data, tries){
+      var n = tries || 3;
+      var attempt = function(i){
+        return ethCall(to, data).catch(function(e){
+          if(i + 1 >= n) throw e;
+          return new Promise(function(res){ setTimeout(res, 350 * (i + 1)); }).then(function(){ return attempt(i + 1); });
+        });
+      };
+      return attempt(0);
+    }
     /* ---- minimal ABI encoding (no library needed for these fixed shapes) ---- */
     function pad32(hex){ hex = hex.replace(/^0x/,""); while(hex.length < 64) hex = "0" + hex; return hex; }
     function encUint(v){ return pad32(BigInt(v).toString(16)); }
@@ -4787,7 +4860,7 @@ $ <span class="caret"></span></div>
     function callGetAmountsOut(amountIn, path){
       var data = "0xd06ca61f" + encUint(amountIn) + encUint(64) + encUint(path.length);
       path.forEach(function(a){ data += encAddr(a); });
-      return ethCall(UNI_V2_ROUTER, data).then(function(res){
+      return ethCallRetry(UNI_V2_ROUTER, data, 2).then(function(res){
         if(!res || res === "0x") return null;
         var hex = res.replace(/^0x/,"");
         var words = [];
@@ -5798,6 +5871,17 @@ $ <span class="caret"></span></div>
       var path = [inT.native ? WHYPE : inT.addr, outT.native ? WHYPE : outT.addr];
       return { kind:"router", path: path };
     }
+    /* V2 candidate paths for a pair: the direct pool, plus the two-hop
+       route through WHYPE when neither side is WHYPE itself. A token
+       loaded by pasted CA typically has exactly one of these pools. */
+    function v2CandidatePaths(inSym, outSym){
+      var inT = tokenDef(inSym), outT = tokenDef(outSym);
+      if(!inT || !outT) return [];
+      var a = inT.native ? WHYPE : inT.addr, b = outT.native ? WHYPE : outT.addr;
+      var paths = [[a, b]];
+      if(a.toLowerCase() !== WHYPE.toLowerCase() && b.toLowerCase() !== WHYPE.toLowerCase()) paths.push([a, WHYPE, b]);
+      return paths;
+    }
     function usdRef(sym, rawAmount){
       var t = tokenDef(sym);
       var unit = Number(rawAmount) / Math.pow(10, t.decimals);
@@ -5814,6 +5898,142 @@ $ <span class="caret"></span></div>
       $("swapInSel").innerHTML = opts; $("swapOutSel").innerHTML = opts;
       $("swapInSel").value = state.swapIn; $("swapOutSel").value = state.swapOut;
     }
+    /* ================= Paste-CA token loader (Swap) =================
+       Reads the ERC-20's name, symbol and decimals on-chain, adds it to
+       TOKENS (so balances, both selectors and both quote engines treat
+       it like any listed token), then checks for a real route: V2 pairs
+       against WHYPE and USDC, and V4 pools against native HYPE, WHYPE
+       and USDC at the standard fee tiers. A discovered V4 pool is
+       registered in V4_POOLS, so planV4Quote (direct, plus the two-hop
+       route through native HYPE) and the Universal Router execution
+       can use it unchanged. Nothing is invented: when no pool answers,
+       the token still loads and selects, and its pairs honestly show
+       no liquidity until a real pool opens. */
+    var VECTOR_CA = "0x09df14bf69916d21864d5f4af75c9625303fc6cd";
+    var V4_FEE_TIERS = [ { fee: 3000, ts: 60 }, { fee: 500, ts: 10 }, { fee: 100, ts: 1 }, { fee: 10000, ts: 200 } ];
+    function tokenByAddr(addr){
+      var a = (addr || "").toLowerCase();
+      return TOKENS.filter(function(t){ return t.addr && t.addr.toLowerCase() === a; })[0] || null;
+    }
+    function decodeBytes32String(res){
+      try {
+        var hex = (res || "").replace(/^0x/, "");
+        if(hex.length < 64) return "";
+        var bytes = [];
+        for(var i = 0; i < 64; i += 2){ var b = parseInt(hex.slice(i, i + 2), 16); if(b) bytes.push(b); }
+        return new TextDecoder("utf-8").decode(new Uint8Array(bytes)).trim();
+      } catch(e){ return ""; }
+    }
+    function erc20Meta(addr){
+      return Promise.all([
+        ethCallRetry(addr, SEL.ercName, 2).catch(function(){ return null; }),
+        ethCallRetry(addr, SEL.ercSymbol, 2).catch(function(){ return null; }),
+        ethCallRetry(addr, SEL.ercDecimals, 2).catch(function(){ return null; }),
+        rpc("eth_getCode", [addr, "latest"]).catch(function(){ return null; })
+      ]).then(function(r){
+        if(!r[3] || r[3] === "0x") throw new Error("No contract at this address on Elysium, check the address and the network.");
+        var decW = r[2] ? hexWords(r[2]) : [];
+        if(!decW.length) throw new Error("This contract does not answer ERC-20 decimals(), it is not a standard ERC-20.");
+        var decimals = Number(wordUint(decW[0]));
+        if(!(decimals >= 0 && decimals <= 36)) throw new Error("Unusual decimals value (" + decimals + "), token not loaded.");
+        var name = r[0] ? (decodeAbiString(r[0]) || decodeBytes32String(r[0])) : "";
+        var sym = r[1] ? (decodeAbiString(r[1]) || decodeBytes32String(r[1])) : "";
+        return { name: name || "Unknown token", sym: (sym || "TOKEN").toUpperCase().slice(0, 12), decimals: decimals };
+      });
+    }
+    function registerV4Pool(cA, cB, fee, ts){
+      var c0 = cA.toLowerCase() < cB.toLowerCase() ? cA : cB;
+      var c1 = c0 === cA ? cB : cA;
+      for(var i = 0; i < V4_POOLS.length; i++){
+        var p = V4_POOLS[i];
+        if(p.c0.toLowerCase() === c0.toLowerCase() && p.c1.toLowerCase() === c1.toLowerCase() && p.fee === fee && p.ts === ts) return p;
+      }
+      var pool = { c0: c0, c1: c1, fee: fee, ts: ts, hooks: NATIVE_ADDR };
+      V4_POOLS.push(pool);
+      return pool;
+    }
+    function probeV4PoolFor(tokenAddr){
+      var counters = [NATIVE_ADDR, WHYPE, USDC];
+      var jobs = [];
+      var found = [];
+      counters.forEach(function(counter){
+        V4_FEE_TIERS.forEach(function(tier){
+          var c0 = counter.toLowerCase() < tokenAddr.toLowerCase() ? counter : tokenAddr;
+          var c1 = c0 === counter ? tokenAddr : counter;
+          var pool = { c0: c0, c1: c1, fee: tier.fee, ts: tier.ts, hooks: NATIVE_ADDR };
+          var probeAmt = counter === USDC ? (10n ** 6n) : (10n ** 16n);
+          var zfo = c0 === counter;
+          jobs.push(callV4Quote(pool, zfo, probeAmt).then(function(out){
+            if(out && out > 0n) found.push(registerV4Pool(counter, tokenAddr, tier.fee, tier.ts));
+          }).catch(function(){}));
+        });
+      });
+      return Promise.all(jobs).then(function(){ return found; });
+    }
+    function probeV2For(tokenAddr, decimals){
+      var oneToken = 10n ** BigInt(decimals);
+      var probes = [
+        callGetAmountsOut(10n ** 16n, [WHYPE, tokenAddr]),
+        callGetAmountsOut(oneToken, [tokenAddr, WHYPE]),
+        callGetAmountsOut(10n ** 6n, [USDC, tokenAddr]),
+        callGetAmountsOut(oneToken, [tokenAddr, USDC])
+      ].map(function(p){ return p.catch(function(){ return null; }); });
+      return Promise.all(probes).then(function(rs){
+        return rs.some(function(a){ return a && a.length >= 2 && a[a.length - 1] > 0n; });
+      });
+    }
+    function selectSwapToken(sym){
+      if(state.swapIn === sym) state.swapIn = "HYPE";
+      state.swapOut = sym;
+      fillSwapSelects();
+      refreshSwapUI();
+    }
+    var swapCaLoading = false;
+    function loadSwapToken(addrRaw){
+      var msg = $("swapCaMsg");
+      var addr = (addrRaw || "").trim();
+      if(!isAddr(addr)){ msg.innerHTML = "That is not a valid EVM address. Paste the full 0x… contract address."; return; }
+      var existing = tokenByAddr(addr);
+      if(existing){
+        selectSwapToken(existing.sym);
+        msg.innerHTML = "<b>" + esc(existing.sym) + "</b> is already in the token list, selected as the token you receive.";
+        return;
+      }
+      if(swapCaLoading) return;
+      swapCaLoading = true;
+      $("swapCaBtn").disabled = true;
+      msg.textContent = "Reading the token on-chain…";
+      erc20Meta(addr).then(function(meta){
+        var sym = meta.sym;
+        if(tokenDef(sym)) sym = (sym + "-" + addr.slice(2, 5)).toUpperCase();
+        TOKENS.push({ sym: sym, name: meta.name, addr: addr, decimals: meta.decimals, custom: true });
+        msg.innerHTML = "Loaded <b>" + esc(sym) + "</b> (" + esc(meta.name) + ", " + meta.decimals + " decimals). Checking Uniswap V2 + V4 pools…";
+        return Promise.all([probeV2For(addr, meta.decimals), probeV4PoolFor(addr)]).then(function(r){
+          var routes = [];
+          if(r[0]) routes.push("Uniswap V2");
+          if(r[1].length) routes.push("Uniswap V4");
+          selectSwapToken(sym);
+          if(routes.length){
+            msg.innerHTML = "<b>" + esc(sym) + "</b> loaded · " + truncAddr(addr) + " · Route found: " + routes.join(" + ") + ". It is selected as the token you receive, enter an amount for a live quote.";
+          } else {
+            msg.innerHTML = "<b>" + esc(sym) + "</b> loaded · " + truncAddr(addr) + " · No Uniswap V2 or V4 pool exists for this token on Elysium yet, so its pairs show no liquidity until one opens. Trading on another venue does not by itself create a Uniswap pool.";
+          }
+          if(state.wallet) refreshBalances();
+        });
+      }).catch(function(e){
+        msg.textContent = (e && e.message) ? e.message : "Could not load this token, check the address and try again.";
+      }).then(function(){
+        swapCaLoading = false;
+        $("swapCaBtn").disabled = false;
+      });
+    }
+    $("swapCaBtn").addEventListener("click", function(){ loadSwapToken($("swapCaInput").value); });
+    $("swapCaInput").addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); loadSwapToken(this.value); } });
+    $("swapCaInput").addEventListener("paste", function(){
+      var inp = this;
+      setTimeout(function(){ if(isAddr(inp.value.trim())) loadSwapToken(inp.value); }, 60);
+    });
+    $("swapCaVector").addEventListener("click", function(){ $("swapCaInput").value = VECTOR_CA; loadSwapToken(VECTOR_CA); });
     function setSwapStatus(title, lines){
       var box = $("swapStatus");
       if(!title){ box.className = "tx-status"; box.innerHTML = ""; return; }
@@ -5821,7 +6041,9 @@ $ <span class="caret"></span></div>
       box.innerHTML = '<div class="st-title">' + esc(title) + '</div>' + lines.map(function(l){ return '<div class="st-line">' + l + '</div>'; }).join("");
     }
     var quoteTimer = null;
+    var quoteRetryCount = 0;
     function refreshSwapUI(){
+      quoteRetryCount = 0;
       var inT = tokenDef(state.swapIn);
       var bal = state.wallet ? balanceOf(state.swapIn) : null;
       $("balText").textContent = !state.wallet ? "Connect wallet to see balance"
@@ -5847,7 +6069,7 @@ $ <span class="caret"></span></div>
       if(state.swapIn === state.swapOut){ btn.disabled = true; btn.textContent = "Pick two different tokens"; return; }
       var bal = balanceOf(state.swapIn);
       if(bal != null && amtRaw > bal){ btn.disabled = true; btn.textContent = "Insufficient " + state.swapIn; return; }
-      if(!state.quote){ btn.disabled = true; btn.textContent = state.quoteState === "none" ? "No liquidity for this pair" : "Getting quote…"; return; }
+      if(!state.quote){ btn.disabled = true; btn.textContent = state.quoteState === "none" ? "No liquidity for this pair" : (state.quoteState === "error" ? "Quote failed, retrying…" : "Getting quote…"); return; }
       btn.disabled = false;
       btn.textContent = "Swap " + state.swapIn + " → " + state.swapOut;
     }
@@ -5870,33 +6092,38 @@ $ <span class="caret"></span></div>
       return hit ? hit.sym : truncAddr(a);
     }
     function v4PoolBetween(curA, curB){
+      var a = (curA || "").toLowerCase(), b = (curB || "").toLowerCase();
       for(var i = 0; i < V4_POOLS.length; i++){
         var p = V4_POOLS[i];
-        if((p.c0 === curA && p.c1 === curB) || (p.c0 === curB && p.c1 === curA)) return p;
+        var p0 = p.c0.toLowerCase(), p1 = p.c1.toLowerCase();
+        if((p0 === a && p1 === b) || (p0 === b && p1 === a)) return p;
       }
       return null;
     }
+    function sameAddr(a, b){ return !!a && !!b && a.toLowerCase() === b.toLowerCase(); }
+    var v4QuoteErr = false; /* set when a V4 quote failed at the RPC layer (after retries), as opposed to a pool genuinely not quoting */
     function callV4Quote(pool, zeroForOne, amountIn){
       /* quoteExactInputSingle(QuoteExactSingleParams) on this Quoter
          build: uint128 exactAmount, struct encoded with a leading
          offset word and the hookData offset at 256 (8 head words,
          verified live 2026-11-27 against the native/USDC and
-         native/KNTQ pools). */
+         native/KNTQ pools). Retried via ethCallRetry: a single spurious
+         node revert must not read as "no liquidity". */
       var data = "0xaa9d21cb" + encUint(32)
         + encAddr(pool.c0) + encAddr(pool.c1) + encUint(pool.fee) + encUint(pool.ts) + encAddr(pool.hooks)
         + encUint(zeroForOne ? 1 : 0) + encUint(amountIn) + encUint(256) + encUint(0);
-      return ethCall(V4_QUOTER, data).then(function(res){
+      return ethCallRetry(V4_QUOTER, data, 3).then(function(res){
         if(!res || res === "0x") return null;
         var w = hexWords(res);
         return w.length ? wordUint(w[0]) : null;
-      }).catch(function(){ return null; });
+      }).catch(function(){ v4QuoteErr = true; return null; });
     }
     function planV4Quote(inSym, outSym, amt){
       var inCur = currencyOf(inSym), outCur = currencyOf(outSym);
       if(inCur == null || outCur == null || inCur === outCur) return Promise.resolve(null);
       var pool = v4PoolBetween(inCur, outCur);
       if(pool){
-        var zfo = pool.c0 === inCur;
+        var zfo = sameAddr(pool.c0, inCur);
         return callV4Quote(pool, zfo, amt).then(function(out){
           if(out == null || out <= 0n) return null;
           return { amountOut: out, routeText: inSym + " → " + outSym + " · Uniswap V4",
@@ -5921,7 +6148,7 @@ $ <span class="caret"></span></div>
       }
       var p1 = v4PoolBetween(inCur, NATIVE_ADDR), p2 = v4PoolBetween(NATIVE_ADDR, outCur);
       if(p1 && p2){
-        var z1 = p1.c0 === inCur, z2 = p2.c0 === NATIVE_ADDR;
+        var z1 = sameAddr(p1.c0, inCur), z2 = sameAddr(p2.c0, NATIVE_ADDR);
         return callV4Quote(p1, z1, amt).then(function(out1){
           if(out1 == null || out1 <= 0n) return null;
           return callV4Quote(p2, z2, out1).then(function(out2){
@@ -5997,26 +6224,47 @@ $ <span class="caret"></span></div>
       /* Opportunistic KNTQ/HYPE reference quote for USD impact figures. */
       if((state.swapIn === "KNTQ" || state.swapOut === "KNTQ") && state.kntqPerHype == null){
         var kp = v4PoolBetween(NATIVE_ADDR, KNTQ);
-        if(kp) callV4Quote(kp, true, 10n ** 18n).then(function(o){ if(o && o > 0n) state.kntqPerHype = Number(o) / 1e18; });
+        if(kp) callV4Quote(kp, true, 10n ** 18n).then(function(o){ if(o && o > 0n) state.kntqPerHype = Number(o) / 1e18; }).catch(function(){});
       }
-      /* Compare V2 (Router02) and V4 (Quoter) and take the better output. */
+      /* Compare V2 (Router02) and V4 (Quoter) and take the better output.
+         V2 is tried on the direct path and, for ERC-20 ↔ ERC-20 pairs,
+         through WHYPE as well, so a pasted token with only a WHYPE pair
+         (or only a USDC pair) still quotes. V4 covers the direct pool
+         plus the two-hop route through native HYPE inside planV4Quote,
+         including pools discovered by the paste-CA loader. */
       var cands = [];
       var jobs = [];
-      jobs.push(callGetAmountsOut(amtRaw, route.path).then(function(amounts){
-        if(amounts && amounts.length >= 2 && amounts[amounts.length - 1] > 0n){
-          cands.push({ venue: "v2", amountOut: amounts[amounts.length - 1], route: route,
-            routeText: route.path.map(symForAddr).join(" → ") + " · Uniswap V2" });
-        }
-      }).catch(function(){}));
+      var v2Err = false;
+      v4QuoteErr = false;
+      v2CandidatePaths(state.swapIn, state.swapOut).forEach(function(p){
+        jobs.push(callGetAmountsOut(amtRaw, p).then(function(amounts){
+          if(amounts && amounts.length >= 2 && amounts[amounts.length - 1] > 0n){
+            cands.push({ venue: "v2", amountOut: amounts[amounts.length - 1], route: { kind: "router", path: p },
+              routeText: p.map(symForAddr).join(" → ") + " · Uniswap V2" });
+          }
+        }).catch(function(){ v2Err = true; }));
+      });
       jobs.push(planV4Quote(state.swapIn, state.swapOut, amtRaw).then(function(plan){
         if(plan && plan.amountOut > 0n) cands.push({ venue: "v4", amountOut: plan.amountOut, plan: plan, routeText: plan.routeText });
       }).catch(function(){}));
       Promise.all(jobs).then(function(){
         if(seq !== state.quoteSeq) return;
+        if(!cands.length && (v2Err || v4QuoteErr) && quoteRetryCount < 4){
+          /* The RPC layer failed, that is NOT "no liquidity": keep the
+             panel honest, say the quote failed, and retry on its own. */
+          quoteRetryCount++;
+          state.quote = null; state.quoteState = "error";
+          $("recvAmt").textContent = "-"; $("recvUnit").textContent = "Quote failed, retrying…";
+          $("qImpact").textContent = "-"; $("qMin").textContent = "-"; $("qRoute").textContent = "RPC did not answer, retry " + quoteRetryCount + " of 4";
+          paintActionBtn();
+          setTimeout(function(){ if(seq === state.quoteSeq) refreshQuote(); }, 2500);
+          return;
+        }
         if(!cands.length){
           $("recvAmt").textContent = "-"; $("recvUnit").textContent = "No route / no liquidity";
           state.quote = null; state.quoteState = "none"; paintActionBtn(); return;
         }
+        quoteRetryCount = 0;
         cands.sort(function(a, b){ return b.amountOut > a.amountOut ? 1 : (b.amountOut < a.amountOut ? -1 : 0); });
         var best = cands[0];
         var out = best.amountOut;
@@ -6201,13 +6449,13 @@ $ <span class="caret"></span></div>
             var minOut = st.expIn > 0n ? (st.expOut * amountIn / st.expIn) * BigInt(10000 - state.slippage) / 10000n : 0n;
             var curIn = st.zeroForOne ? st.pool.c0 : st.pool.c1;
             var curOut = st.zeroForOne ? st.pool.c1 : st.pool.c0;
-            var prep = curIn !== NATIVE_ADDR ? ensurePermit2(curIn, amountIn, symForAddr(curIn)) : Promise.resolve();
+            var prep = !sameAddr(curIn, NATIVE_ADDR) ? ensurePermit2(curIn, amountIn, symForAddr(curIn)) : Promise.resolve();
             return prep.then(function(){
-              var needDelta = curOut === NATIVE_ADDR && i < steps.length - 1;
+              var needDelta = sameAddr(curOut, NATIVE_ADDR) && i < steps.length - 1;
               var beforeP = needDelta ? rpc("eth_getBalance", [addr, "latest"]).then(function(r){ return BigInt(r); }) : Promise.resolve(null);
               return beforeP.then(function(before){
                 setSwapStatus(stepLabel, ["Swapping via <b>Uniswap V4</b> (Universal Router)…"]);
-                var tx = { from: addr, to: UNI_ROUTER_V4, data: buildV4Execute(st.pool, st.zeroForOne, amountIn, minOut, Math.floor(Date.now() / 1000) + 1200), value: curIn === NATIVE_ADDR ? "0x" + amountIn.toString(16) : "0x0" };
+                var tx = { from: addr, to: UNI_ROUTER_V4, data: buildV4Execute(st.pool, st.zeroForOne, amountIn, minOut, Math.floor(Date.now() / 1000) + 1200), value: sameAddr(curIn, NATIVE_ADDR) ? "0x" + amountIn.toString(16) : "0x0" };
                 return runTxP(tx, "Uniswap V4 swap").then(function(){
                   if(needDelta){
                     return rpc("eth_getBalance", [addr, "latest"]).then(function(r){
